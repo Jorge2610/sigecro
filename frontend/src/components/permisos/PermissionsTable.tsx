@@ -23,7 +23,7 @@ export default function PermissionsTable({
       {permissionsState.map((permission: any) => {
         return (
           <TableRow
-            className="flex flex-wrap items-center md:table-row h-[57px]"
+            className="flex flex-wrap items-center md:table-row min-h-[57px]"
             key={permission.id}
           >
             <TableCell className="w-[10%] md:w-[8%] xl:w-[4%] align-top">
