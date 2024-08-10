@@ -2,7 +2,7 @@
 export default function Navbar({ expandedSider, setExpandedSider }: { expandedSider: boolean, setExpandedSider: any }) {
 
     return (
-        <div className="sticky top-0 h-[100px] md:h-[60px]">
+        <div className="fixed top-0 z-10 w-full h-[100px] md:h-[60px]">
             <div className="flex justify-between h-[60px] bg-sig-purple px-4 py-2.5 border-b-2 border-sig-golden">
                 <div className="flex items-center gap-4 h-[40px] hover:cursor-pointer">
                     <div className="hidden md:block h-6">

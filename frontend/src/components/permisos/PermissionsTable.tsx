@@ -23,20 +23,20 @@ export default function PermissionsTable({
       {permissionsState.map((permission: any) => {
         return (
           <TableRow
-            className="flex flex-wrap items-center md:table-row"
-            key={permission.nro}
+            className="flex flex-wrap items-center md:table-row h-[57px]"
+            key={permission.id}
           >
-            <TableCell className="w-[10%] md:w-[8%] xl:w-[4%]">
-              {permission.nro}
+            <TableCell className="w-[10%] md:w-[8%] xl:w-[4%] align-top">
+              {permission.id}
             </TableCell>
-            <TableCell className="w-[76%] md:w-[42%] xl:2-[26%]">
+            <TableCell className="w-[76%] md:w-[42%] xl:2-[26%] align-top">
               {permission.name}
             </TableCell>
             <TableCell className="w-[13%] md:hidden">
               <Button
                 variant={"outline"}
                 size={"icon"}
-                onClick={(e) => updatePermissionsState(permission.nro)}
+                onClick={(e) => updatePermissionsState(permission.id)}
                 title="Mostrar descripción"
               >
                 <span className="material-symbols-outlined text-sig-blue hover:cursor-pointer hover:text-sig-hblue">

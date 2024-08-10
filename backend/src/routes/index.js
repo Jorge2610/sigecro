@@ -1,7 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const permissionsRoutes = require('./permissionsRoutes');
+import { Router } from "express";
+const router = Router();
+import permissionsRoutes from "./permissions.js";
 
 router.use("/permissions", permissionsRoutes);
 
-module.exports = router;
+export default router;

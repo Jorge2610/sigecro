@@ -1,6 +1,6 @@
-import { query, pool } from "../config/db.js";
+import { query, pool } from "../src/config/db.js";
 
-describe("Db test", () => {
+describe("Db Connection", () => {
   /**
    * It is a test that ensures that the pool is defined.
    * @return {Promise<void>} It does not return anything.
