@@ -17,7 +17,7 @@ export default function Sider({ isExpanded, setExpandedSider }: { isExpanded: bo
                     );
                 })}
             </div>
-            <div className={isExpanded ? 'z-10 absolute md:h-[calc(100svh-60px)] md:w-[calc(100svw-240px)] ms-[240px] backdrop-blur-[2px]' : ''}
+            <div className={isExpanded ? 'z-10 absolute md:h-[calc(100svh-60px)] md:w-[calc(100svw-240px)] ms-[240px] backdrop-blur-[1.5px]' : ''}
                 onClick={e => setExpandedSider(!isExpanded)}></div>
         </div>
     );
