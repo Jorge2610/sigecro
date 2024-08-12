@@ -1,7 +1,6 @@
 INSERT INTO
-    public.permissions(name, description)
-VALUES
-    (
+    public.permissions (name, description)
+VALUES (
         'Restringir acceso de un usuario al sistema.',
         'Restringir acceso de un usuario al sistema.'
     ),
@@ -109,3 +108,5 @@ VALUES
         'Gestionar roles de los usuarios del sistema',
         'Permite asignar, modificar y eliminar roles asignados a los usuarios del sistema.(Asignar, cambiar)'
     );
+
+INSERT INTO users (id) VALUES (1);

@@ -34,7 +34,7 @@ CREATE TABLE news (
     source VARCHAR(64) NOT NULL,
     url VARCHAR(255),
     summary TEXT NOT NULL,
-    image_url VARCHAR(255),
+    image_url VARCHAR(300),
     status VARCHAR(64) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

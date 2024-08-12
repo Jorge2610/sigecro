@@ -1,0 +1,31 @@
+{
+  "'messages": {
+    "new": {
+      "get": {},
+      "post": {
+        "success": "Noticia publicada correctamente",
+        "error": "No se pudo crear la noticia"
+      },
+      "put": {},
+      "delete": {}
+    },
+    "permission": {
+      "get": {},
+      "post": {},
+      "put": {},
+      "delete": {}
+    },
+    "category": {
+      "get": {},
+      "post": {},
+      "put": {},
+      "delete": {}
+    },
+    "user": {
+      "get": {},
+      "post": {},
+      "put": {},
+      "delete": {}
+    }
+  }
+}
