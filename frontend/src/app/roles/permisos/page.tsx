@@ -8,10 +8,8 @@ import {
 import PermissionsTable from "@/components/permisos/PermissionsTable";
 import axios from "axios";
 
-const API = process.env.API_HOST;
-
 export default async function Permisos() {
-  const permissions = await axios.get(`${API}/permissions`).then((response) => {
+  const permissions = await axios.get(`${process.env.API_HOST}/permissions`).then((response) => {
     return response.data;
   });
 

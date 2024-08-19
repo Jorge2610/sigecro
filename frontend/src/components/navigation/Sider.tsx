@@ -7,15 +7,26 @@ export default function Sider({
   isExpanded: boolean;
   setExpandedSider: any;
 }) {
-  const options = [{ link: "/", icon: "news", text: "Noticias" }];
+  const options = [
+    {
+      link: "/administrar-noticias",
+      icon: "news",
+      text: "Administrar noticias",
+    },
+    { link: "/roles", icon: "admin_panel_settings", text: "Roles" },
+  ];
+
+  const resetExpandedState = () => {
+    setExpandedSider(false);
+  };
 
   return (
-    <div className="fixed top-[60px] z-10">
+    <div className="fixed top-[100px] md:top-[60px] z-10">
       <div
         className={
           isExpanded
-            ? "flex absolute w-full md:min-h-[100svh] flex-col bg-sig-gray2 md:block md:w-[240px]"
-            : "flex absolute w-full md:min-h-[100svh] flex-col bg-sig-gray2 md:block md:w-[60px] hidden"
+            ? "absolute flex flex-col h-[100svh] w-[100svh] md:w-[240px]"
+            : "absolute h-[100svh] md:flex md:flex-col w-[100svh] md:w-[60px] hidden"
         }
       >
         {options.map((option) => {
@@ -26,9 +37,11 @@ export default function Sider({
               icon={option.icon}
               text={option.text}
               expanded={isExpanded}
+              resetExpanded={resetExpandedState}
             />
           );
         })}
+        <div className="grow md:bg-sig-gray2" onClick={(e) => setExpandedSider(!isExpanded)}></div>
       </div>
       <div
         className={

@@ -1,8 +1,13 @@
 import Image from "next/image";
+import Link from "next/link";
+
 export default function Navbar({
   expandedSider,
   setExpandedSider,
-}: Readonly<{ expandedSider: boolean; setExpandedSider: any }>) {
+}: {
+  expandedSider: boolean;
+  setExpandedSider: any;
+}) {
   return (
     <div className="fixed top-0 z-10 w-full h-[100px] md:h-[60px]">
       <div className="flex justify-between h-[60px] bg-sig-purple px-4 py-2.5 border-b-2 border-sig-golden">
@@ -14,19 +19,20 @@ export default function Navbar({
                   ? "material-symbols-outlined text-sig-gray3 hover:text-white hover:cursor-pointer"
                   : "material-symbols-outlined text-sig-golden hover:text-white hover:cursor-pointer"
               }
-              onClick={() => setExpandedSider(!expandedSider)}
+              onClick={(e) => setExpandedSider(!expandedSider)}
             >
               menu
             </span>
           </div>
-          <Image
-            src="/logo-sigecro.webp"
-            alt="logo_sig"
-            className="h-[35px]"
-            width={"100"}
-            height={"35"}
-            priority
-          />
+          <Link href={"/"}>
+            <Image
+              src="/logo-sigecro.webp"
+              alt="logo_sig"
+              className="h-[35px] w-[auto]"
+              width={100}
+              height={100}
+            />
+          </Link>
         </div>
         <div className="flex gap-4 justify-end items-center h-[40px]">
           <div className="text-lg font-semibold text-white hover:cursor-pointer hover:text-sig-gray3 hidden md:block">
@@ -51,7 +57,7 @@ export default function Navbar({
               ? "material-symbols-outlined text-sig-gray3 hover:text-white hover:cursor-pointer"
               : "material-symbols-outlined text-sig-golden hover:text-white hover:cursor-pointer"
           }
-          onClick={() => setExpandedSider(!expandedSider)}
+          onClick={(e) => setExpandedSider(!expandedSider)}
         >
           menu
         </span>
