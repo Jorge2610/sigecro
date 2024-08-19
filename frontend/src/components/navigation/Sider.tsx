@@ -14,8 +14,8 @@ export default function Sider({
       <div
         className={
           isExpanded
-            ? "flex flex-col absolute w-full md:min-h-[100svh] flex-col bg-sig-gray2 md:block md:w-[240px]"
-            : "flex flex-col absolute w-full md:min-h-[100svh] flex-col bg-sig-gray2 md:block md:w-[60px] hidden"
+            ? "flex absolute w-full md:min-h-[100svh] flex-col bg-sig-gray2 md:block md:w-[240px]"
+            : "flex absolute w-full md:min-h-[100svh] flex-col bg-sig-gray2 md:block md:w-[60px] hidden"
         }
       >
         {options.map((option) => {

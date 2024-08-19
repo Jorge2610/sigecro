@@ -6,9 +6,9 @@ import { useState } from "react";
 
 export default function PermissionsTable({
   permissions,
-}: {
+}: Readonly<{
   permissions: any;
-}) {
+}>) {
   const [permissionsState, setPermissionsState] = useState(permissions);
 
   const updatePermissionsState = (index: number) => {

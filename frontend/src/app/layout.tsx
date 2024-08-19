@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import "material-symbols/outlined.css";
 import Navigation from "@/components/navigation/Navigation";
 import Footer from "@/components/navigation/Footer";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "SIGECRO",
@@ -25,6 +26,7 @@ export default function RootLayout({
           {children}
         </div>
         <Footer />
+        <Toaster />
       </body>
     </html>
   );
