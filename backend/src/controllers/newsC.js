@@ -7,18 +7,19 @@ import fs from "fs";
 dotenv.config();
 
 const messages = JSON.parse(
-  fs.readFileSync(path.join("./src/controllers/messages.json"))
+  fs.readFileSync(path.join("./src/utils/JSON/messages.json"))
 );
 
 /**
- * Creates a new news entry in the database.
- *
- * @param {Object} req - The HTTP request object.
- * @param {Object} res - The HTTP response object.
- * @param {Function} next - The next middleware function in the stack.
- * @return {Promise<void>} A promise that resolves when the operation is complete.
+ * Crea una nueva noticia en la base de datos.
+ * 
+ * @param{Object} req - El objeto de solicitud HTTP.
+ * @param{Object} res - El objeto de respuesta HTTP.
+ * @param{Function} next - La función de middleware siguiente.
+ * @return{Promise<void>} Una promesa que resuelve cuando la operación es completada.
  */
 const setNews = async (req, res, next) => {
+  console.log(req.body);
   try {
     const imageURL = await uploadImage(req);
     const data = [
@@ -34,6 +35,7 @@ const setNews = async (req, res, next) => {
       req.body.user_id,
     ];
     await News.create(data);
+    console.log(req.ip);
     res.status(201).json({ message: messages["'messages"].new.post.success });
     next();
   } catch (error) {
@@ -44,10 +46,10 @@ const setNews = async (req, res, next) => {
 };
 
 /**
- * Uploads an image from the HTTP request to the server's file system.
+ * Sube una imagen al sistema de archivos desde una solicitud HTTP.
  *
- * @param {Object} req - The HTTP request object containing the image file.
- * @return {string|null} The URL of the uploaded image, or null if no image was provided.
+ * @param {Object} req - El objeto de solicitud HTTP.
+ * @return {string|null} La ruta de la imagen subida o null si no se proporcionó una imagen.
  */
 const uploadImage = async (req) => {
   if (req.file) {
@@ -57,7 +59,7 @@ const uploadImage = async (req) => {
     }
     const imagePath = path.join(dirPath, `${req.body.title}.webp`);
     await sharp(req.file.buffer).webp({ quality: 75 }).toFile(imagePath);
-    return `${process.env.API_URL}/news/image/${req.body.title}.webp`;
+    return `${process.env.API_URL}/images/news/${req.body.title}.webp`;
   }
   return null;
 };

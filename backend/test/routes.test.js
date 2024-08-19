@@ -1,9 +1,9 @@
 import request from "supertest";
 import app from "../src/app";
-import { pool } from "../src/config/db"; // Importa el pool de conexiones
+import { pool } from "../src/config/db"; 
 
 afterAll(async () => {
-  await pool.end(); // Cierra el pool de conexiones de PostgreSQL
+  await pool.end(); 
 });
 
 describe("GET /permissions", () => {

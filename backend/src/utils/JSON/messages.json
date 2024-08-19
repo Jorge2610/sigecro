@@ -3,17 +3,14 @@
     "new": {
       "get": {},
       "post": {
-        "success": "Noticia publicada correctamente",
+        "success": "Noticia enviada a revisión",
         "error": "No se pudo crear la noticia"
       },
       "put": {},
       "delete": {}
     },
     "permission": {
-      "get": {},
-      "post": {},
-      "put": {},
-      "delete": {}
+      "get": {}
     },
     "category": {
       "get": {},

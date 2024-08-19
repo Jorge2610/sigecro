@@ -4,7 +4,7 @@ import { useState } from "react";
 import Sider from "@/components/navigation/Sider";
 import Navbar from "./Navbar";
 
-export default function () {
+export default function Navigation() {
   const [expandedSider, setExpandedSider] = useState(false);
 
   return (
