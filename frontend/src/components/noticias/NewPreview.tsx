@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import Resumen from "./resumen";
+import Resumen from "./summary";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 

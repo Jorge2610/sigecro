@@ -118,15 +118,6 @@ const InputFile = () => {
 
   const categories: null | Data[] = [
     { id: "1", name: "Categoría 1" },
-    { id: "2", name: "Categoría 2" },
-    { id: "3", name: "Categoría 3" },
-    { id: "4", name: "Categoría 4" },
-    { id: "5", name: "Categoría 5" },
-    { id: "6", name: "Categoría 6" },
-    { id: "7", name: "Categoría 7" },
-    { id: "8", name: "Categoría 8" },
-    { id: "9", name: "Categoría 9" },
-    { id: "10", name: "Categoría 10" },
   ];
 
   /**
@@ -203,7 +194,6 @@ const InputFile = () => {
             title: "Error",
             description: response.data?.message,
           });
-
       cleanForm();
       setData(null);
     } catch (error) {
@@ -301,7 +291,7 @@ const InputFile = () => {
 
             <InputFileForm
               name="image"
-              label="Imagen*"
+              label="Imagen"
               control={form.control}
               ref={imageInputRef}
             />
@@ -319,7 +309,7 @@ const InputFile = () => {
             <div className="flex justify-end gap-4">
               <Popup
                 title="Cancelar noticia"
-                description="¿Desea cancelar esta noticia? Todos los cambios no guardados se perderán."
+                description="Todos los cambios no guardados se perderán."
                 action={cleanForm}
                 href="/noticias"
               >
