@@ -1,6 +1,5 @@
 import express, { json, urlencoded } from "express";
 import { corsMiddleware } from "./middlewares/cors.js";
-import cors from "cors";
 import morgan from "morgan";
 import routes from "./routes/index.js";
 import path from "path";
@@ -15,8 +14,8 @@ app.use(express.static(path.join("./public/")));
 // Middleware
 app.use(json());
 app.use(urlencoded({ extended: true }));
-app.use(cors());
-app.options("*", cors());
+app.options(process.env.APP_HOST, corsMiddleware());
+app.use(corsMiddleware());
 
 // Rutas
 app.use("/api", routes);

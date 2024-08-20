@@ -19,7 +19,7 @@ import Preview from "./NewPreview";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
-import Popup from "../ui/popup";
+import Popup from "../../ui/popup";
 import axios from "axios";
 
 const ACCEPTED_IMAGE_TYPES = [
@@ -116,9 +116,7 @@ const InputFile = () => {
     name: string;
   };
 
-  const categories: null | Data[] = [
-    { id: "1", name: "Categoría 1" },
-  ];
+  const categories: null | Data[] = [{ id: "1", name: "Categoría 1" }];
 
   /**
    * Maneja el envío del formulario actualizando el estado del componente con los datos enviados.
@@ -233,7 +231,7 @@ const InputFile = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-6"
+            className="space-y-6"
           >
             <InputForm
               name="title"
@@ -305,7 +303,6 @@ const InputFile = () => {
                 form.setValue("tags", newTags);
               }}
             />
-
             <div className="flex justify-end gap-4">
               <Popup
                 title="Cancelar noticia"

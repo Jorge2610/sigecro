@@ -26,7 +26,7 @@ export default function PermissionsTable({
             className="flex flex-wrap items-center md:table-row min-h-[57px]"
             key={permission.id}
           >
-            <TableCell className="w-[10%] md:w-[8%] xl:w-[4%] align-top">
+            <TableCell className="w-[10%] md:w-[8%] xl:w-[4%] align-top h-[57px]">
               {permission.id}
             </TableCell>
             <TableCell className="w-[76%] md:w-[42%] xl:2-[26%] align-top">
@@ -47,8 +47,8 @@ export default function PermissionsTable({
             <TableCell
               className={
                 permission.expanded
-                  ? "ps-[12%] w-[95%] pt-0 md:p-2"
-                  : "hidden md:table-cell"
+                  ? "ps-[12%] w-[95%] pt-0 md:p-2 align-top"
+                  : "hidden md:table-cell align-top"
               }
             >
               {permission.description}

@@ -1,4 +1,5 @@
 import { News } from "../models/newsM.js";
+import { newsScraping } from "../utils/scraping/newsScraping.js";
 import sharp from "sharp";
 import dotenv from "dotenv";
 import path from "path";
@@ -12,7 +13,7 @@ const messages = JSON.parse(
 
 /**
  * Crea una nueva noticia en la base de datos.
- * 
+ *
  * @param{Object} req - El objeto de solicitud HTTP.
  * @param{Object} res - El objeto de respuesta HTTP.
  * @param{Function} next - La función de middleware siguiente.
@@ -64,4 +65,9 @@ const uploadImage = async (req) => {
   return null;
 };
 
-export { setNews };
+const getNewsData = async (req, res, next) => {
+  const newsData = await newsScraping(req.body.url);
+  res.json(newsData);
+};
+
+export { getNewsData, setNews };
