@@ -1,9 +1,10 @@
 "use client";
 
-import RecordType from "@/components/registrar_noticia/RecordType";
+import RecordType from "@/components/noticias/automatico/RecordType";
 import { Separator } from "@/components/ui/separator";
-import AutomaticRecord from "@/components/registrar_noticia/AutomaticRecord";
+import AutomaticRecord from "@/components/noticias/automatico/AutomaticRecord";
 import { useState } from "react";
+import InputFile from "@/components/noticias/manual/NewsForm";
 
 export default function RegistrarNoticia() {
   const [recordType, setRecordType] = useState("automatic");
@@ -19,7 +20,7 @@ export default function RegistrarNoticia() {
         </h1>
         <RecordType setRecordType={setRecordType} />
         <Separator />
-        {recordType === "automatic" ? <AutomaticRecord /> : <></>}
+        {recordType === "automatic" ? <AutomaticRecord /> : <InputFile />}
       </div>
     </div>
   );
