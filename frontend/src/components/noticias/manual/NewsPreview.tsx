@@ -8,7 +8,8 @@ import { Data, createFormData } from "./formSchema";
 import { splitIntoParagraphs } from "@/lib/stringsUtil";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
-import axios from "axios";
+import { postNews } from "./api";
+import { v4 as uuidv4 } from "uuid";
 
 interface PreviewProps {
   data?: Data | null;
@@ -18,17 +19,21 @@ interface PreviewProps {
 
 const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
   const { toast } = useToast();
-  const parapraphs = splitIntoParagraphs(data?.content || "");
-  const publicar = async () => {
+  const parapraphs = splitIntoParagraphs(data?.content ?? "");
+
+  /**
+   * Envia la noticia a revision para ser publicada.
+   *
+   * Esta funcion es responsable de crear un objeto FormData a partir de los datos de la noticia,
+   * enviar el articulo de noticia al servidor, y mostrar un toast basado en la respuesta del servidor.
+   
+   * @return {Promise<void>} Una promesa que se resuelva cuando se complete la operación.
+   */
+  const publicar = async (): Promise<void> => {
     if (data) {
       const form = createFormData(data);
       try {
-        const response = await axios.post(
-          `http://localhost:3001/api/news`,
-          form, {
-            timeout: 10000
-          }
-        );
+        const response = await postNews(form);
         response.status === 201
           ? toast({
               title: messages.toast.successTitle,
@@ -76,9 +81,9 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
         </div>
       )}
       <div>
-        {parapraphs.map((paragraph, i) => {
+        {parapraphs.map((paragraph) => {
           return (
-            <p className="mb-4" key={i}>
+            <p className="mb-4" key={uuidv4()}>
               {paragraph}
             </p>
           );

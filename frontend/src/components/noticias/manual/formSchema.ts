@@ -47,6 +47,12 @@ const FormSchema = z.object({
 
 type Data = z.infer<typeof FormSchema>;
 
+/**
+ * Cra un FormData a partir de los datos proporcionados de una noticia.
+ *
+ * @param {z.infer<typeof FormSchema>} data - Los datos que se van a incluir en el FormData.
+ * @return {FormData} El FormData creado a partir de los datos.
+ */
 const createFormData = (data: z.infer<typeof FormSchema>): FormData => {
   const formData = new FormData();
   if (data) {
@@ -61,7 +67,6 @@ const createFormData = (data: z.infer<typeof FormSchema>): FormData => {
     formData.append("category_id", data?.category.id ?? "");
     formData.append("user_id", data?.user_id ?? "");
   }
-
   return formData;
 };
 

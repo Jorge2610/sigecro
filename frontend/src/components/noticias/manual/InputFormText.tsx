@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import { es } from "date-fns/locale";
-import React, { forwardRef } from "react";
+import React from "react";
 
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import {
@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import FormSchema from "./formSchema";
 
 type Props = {
   control: any;
@@ -29,7 +28,7 @@ type Props = {
   max?: number;
   array?: { id: string; name: string }[];
   rows?: number;
-  tags?: string[] | undefined;
+  tags?: string[];
   setTags?: React.Dispatch<React.SetStateAction<string[]>>;
 };
 const InputForm = ({ control, name, label, placeholder, max }: Props) => {
@@ -105,13 +104,7 @@ const InputTextAreaForm = ({
   );
 };
 
-const InputSelectForm = ({
-  control,
-  name,
-  label,
-  placeholder,
-  array,
-}: Props) => {
+const InputSelectForm = ({ control, name, label, array }: Props) => {
   return (
     <FormField
       control={control}

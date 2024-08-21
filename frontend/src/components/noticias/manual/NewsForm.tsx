@@ -1,5 +1,3 @@
-"use client";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import React, { useState } from "react";
@@ -14,37 +12,29 @@ import {
   InputFileForm,
 } from "./InputFormText";
 
-import InputTagsForm from "./tags";
-
+// import InputTagsForm from "./tags";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import Popup from "../../ui/popup";
-import FormSchema from "./formSchema";
-import Preview from "./NewPreview";
+import Popup from "@/components/ui/popup";
+import FormSchema, { Data } from "./formSchema";
+import Preview from "./NewsPreview";
+
 const NewsForm = ({
   preview,
   setPreview,
   setRecordType,
+  categories,
 }: {
   preview: boolean;
   setPreview: React.Dispatch<React.SetStateAction<boolean>>;
   setRecordType: React.Dispatch<React.SetStateAction<string>>;
+  categories: any;
 }) => {
-  const [tags, setTags] = useState<string[]>([]);
-  const [data, setData] = useState<z.infer<typeof FormSchema> | null>(null);
+  //const [tags, setTags] = useState<string[]>([]);
+  const [data, setData] = useState<Data | null>(null);
   const [imageURL, setImageURL] = useState<null | string>(null);
 
-  type Data = {
-    id: string;
-    name: string;
-  };
-
-  const categories: null | Data[] = [
-    { id: "1", name: "Noticias" },
-    { id: "2", name: "Categoría 2" },
-  ];
-
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<Data>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: "",
@@ -56,7 +46,7 @@ const NewsForm = ({
       image: undefined,
       status: "draft",
       tags: [],
-      category: categories[0] || { id: "1", name: "Noticias" },
+      category: categories[0],
       user_id: "1",
     },
   });
@@ -67,7 +57,7 @@ const NewsForm = ({
    * @param {z.infer<typeof FormSchema>} data - Los datos enviados por el formulario.
    * @return {void}
    */
-  const onSubmit = (data: z.infer<typeof FormSchema>): void => {
+  const onSubmit = (data: Data): void => {
     data.source = capitalizeWords(data.source);
     setImageURL(data.image ? URL.createObjectURL(data.image) : null);
     setData(data);
@@ -76,7 +66,7 @@ const NewsForm = ({
   };
 
   /**
-   * Resets the form to its initial state, clearing the image preview and setting the preview mode to false.
+   * Resete el formulario al estado inicial, limpiando la imagen previa y estableciendo el modo de vista previa en falso.
    *
    * @return {void}
    */
@@ -102,7 +92,7 @@ const NewsForm = ({
       image: undefined,
       status: "draft",
       tags: [],
-      category: categories[0] || { id: "1", name: "Noticias" },
+      category: categories[0],
       user_id: "1",
     });
     setData(null);

@@ -3,12 +3,30 @@
 import RecordType from "@/components/noticias/automatico/RecordType";
 import { Separator } from "@/components/ui/separator";
 import AutomaticRecord from "@/components/noticias/automatico/AutomaticRecord";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NewsForm from "@/components/noticias/manual/NewsForm";
+import { getAllCategories } from "@/components/noticias/manual/api";
 
 export default function RegistrarNoticia() {
   const [recordType, setRecordType] = useState("automatic");
   const [preview, setPreview] = useState(false);
+  const [categories, setCategories] = useState<any>([]);
+
+  useEffect(() => {
+    /**
+     * Recupera todas las categorias desde la API y las actualiza en el estado del componente.
+     *
+     * @return {Promise<void>}
+     */
+    const getCategories = async () => {
+      const resp = await getAllCategories();
+      if (resp) {
+        setCategories(resp);
+      }
+    };
+    getCategories();
+  }, []);
+
   return (
     <div className="flex justify-center">
       <div className="flex flex-col gap-4 w-full max-w-[1024px]">
@@ -34,6 +52,7 @@ export default function RegistrarNoticia() {
             preview={preview}
             setPreview={setPreview}
             setRecordType={setRecordType}
+            categories={categories}
           />
         )}
       </div>

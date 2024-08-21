@@ -12,17 +12,16 @@ const capitalizeWords = (text: string): string => {
 };
 
 /**
- * Splits the given text into paragraphs by splitting it at double newline characters.
- * Filters out empty paragraphs and returns the resulting array of paragraphs.
  *
- * @param {string} text - The input text to be split into paragraphs.
- * @return {string[]} An array of paragraphs.
+ * Divide el texto dado en parrafos separado por saltos de linea.
+ * Filtra los saltos de linea vacios y devuelve un array de parrafos.
+ *
+ * @param {string} text - La entrada de texto que sera dividida en parrafos.
+ * @return {string[]} Un arreglo de parrafos.
  */
 const splitIntoParagraphs = (text: string): string[] => {
-  const paragraphs = text.split(/\n\n+/);
-  return paragraphs.filter(paragraph => paragraph.trim() !== '');
-}
-
-
+  const paragraphs = text.split(/\n+/);
+  return paragraphs.filter((paragraph) => paragraph.trim() !== "");
+};
 
 export { capitalizeWords, splitIntoParagraphs };

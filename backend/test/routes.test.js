@@ -1,9 +1,9 @@
 import request from "supertest";
 import app from "../src/app";
-import { pool } from "../src/config/db"; 
+import { pool } from "../src/config/db";
 
 afterAll(async () => {
-  await pool.end(); 
+  await pool.end();
 });
 
 describe("GET /permissions", () => {
@@ -120,5 +120,18 @@ describe("POST /news", () => {
     });
     console.log(response.body.message);
     expect(response.statusCode).toBe(500);
+  });
+});
+
+describe("GET /categories", () => {
+  test("should respond with a 200 status code", async () => {
+    const response = await request(app).get("/api/categories").send();
+    console.log(response.body.rows);
+    expect(response.statusCode).toBe(200);
+  });
+
+  test("should respond with one row of categories", async () => {
+    const response = await request(app).get("/api/categories").send();
+    expect(response.body.rows.length).toBeGreaterThan(0);
   });
 });
