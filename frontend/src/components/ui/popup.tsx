@@ -10,7 +10,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import Link from "next/link";
-import { Button } from "./button";
 
 interface Props {
   action: () => void;
@@ -31,11 +30,12 @@ const Popup = ({ action, title, description, children, href }: Props) => {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           {href ? (
-            <AlertDialogAction onClick={action}>
-              <Link href={href} className="w-full">
-                Aceptar
-              </Link>
-            </AlertDialogAction>
+            <Link href={href} className="w-auto">
+              <AlertDialogAction onClick={action} className="w-full">
+                {" "}
+                Aceptar{" "}
+              </AlertDialogAction>
+            </Link>
           ) : (
             <AlertDialogAction onClick={action}>Aceptar</AlertDialogAction>
           )}

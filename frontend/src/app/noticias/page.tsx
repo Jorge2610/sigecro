@@ -5,7 +5,7 @@ const Noticias = async () => {
   return (
     <>
       <h1>Noticias</h1>
-      <Link href="/noticias/registro-noticias">
+      <Link href="administrar-noticias/registrar">
         <Button>Registrar Noticias</Button>
       </Link>
     </>

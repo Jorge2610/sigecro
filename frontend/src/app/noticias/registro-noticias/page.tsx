@@ -1,4 +1,4 @@
-import InputForm from "@/components/noticias/NewsForm";
+import InputForm from "@/components/noticias/manual/NewsForm";
 
 const RegistrarNoticias = async () => {
   return <InputForm />;

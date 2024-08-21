@@ -1,0 +1,59 @@
+{
+  "title": {
+    "required": "El título es obligatorio",
+    "label": "Título*",
+    "placeholder": "Escriba el título de la noticia... "
+  },
+  "source": {
+    "required": "La fuente es obligatoria (Ej: Los Tiempos, Opinión, etc)",
+    "label": "Fuente*",
+    "placeholder": "Escriba la fuente de la noticia..."
+  },
+  "date": {
+    "required": "La fecha es obligatoria",
+    "max": "La fecha no puede ser mayor a la fecha actual",
+    "label": "Fecha*",
+    "placeholder": "Seleccione una fecha"
+  },
+  "content": {
+    "required": "El contenido es obligatorio",
+    "label": "Contenido*",
+    "placeholder": "Escriba el contenido de la noticia..."
+  },
+  "summary": {
+    "required": "El resumen es obligatoria",
+    "label": "Resumen*",
+    "placeholder": "Escriba el resumen de la noticia..."
+  },
+  "url": {
+    "format": "La URL no es válida",
+    "label": "URL",
+    "placeholder": "Escriba la URL de la noticia..."
+  },
+  "image": {
+    "format": "El formato del archivo no es válido por favor sube una imagen en formato JPG, PNG o WEBP",
+    "size": "El tamaño de la imagen no puede ser mayor a 2MB",
+    "label": "Imagen"
+  },
+  "tags": {
+    "max": "El número de etiquetas no puede ser mayor a 5",
+    "placeholder": "Escriba las etiquetas de la noticia...",
+    "label": "Etiquetas"
+  },
+  "category": {
+    "label": "Categoría",
+    "placeholder": "Escriba la categoría de la noticia..."
+  },
+  "popupCancel": {
+    "title": "Cancelar noticia",
+    "description": "Todos los cambios no guardados se perderán."
+  },
+  "popupPublic": {
+    "title": "Publicar noticia",
+    "description": "¿Deseas enviar la noticia para revisión antes de su publicación?"
+  },
+  "toast": {
+    "errorTitle": "Error",
+    "successTitle": "Enviado correctamente"
+  }
+}

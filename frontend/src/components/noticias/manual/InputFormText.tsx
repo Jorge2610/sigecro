@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import { es } from "date-fns/locale";
-import React, { forwardRef } from "react";
+import React from "react";
 
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import {
@@ -26,9 +26,9 @@ type Props = {
   label: string;
   placeholder?: string;
   max?: number;
-  array?: Array<{ id: string; name: string }>;
+  array?: { id: string; name: string }[];
   rows?: number;
-  tags?: string[] | undefined;
+  tags?: string[];
   setTags?: React.Dispatch<React.SetStateAction<string[]>>;
 };
 const InputForm = ({ control, name, label, placeholder, max }: Props) => {
@@ -104,13 +104,7 @@ const InputTextAreaForm = ({
   );
 };
 
-const InputSelectForm = ({
-  control,
-  name,
-  label,
-  placeholder,
-  array,
-}: Props) => {
+const InputSelectForm = ({ control, name, label, array }: Props) => {
   return (
     <FormField
       control={control}
@@ -119,9 +113,12 @@ const InputSelectForm = ({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <Select
-            onValueChange={field.onChange}
+            onValueChange={(id) => {
+              const selectedItem = array?.find((item) => item.id === id);
+              field.onChange(selectedItem);
+            }}
             defaultValue={array && array?.length > 0 ? array[0].id : undefined}
-            value={field.value}
+            value={field.value?.id}
           >
             <FormControl>
               <SelectTrigger>
@@ -143,33 +140,30 @@ const InputSelectForm = ({
   );
 };
 
-const InputFileForm = forwardRef<HTMLInputElement, Props>(
-  ({ control, name, label }, ref) => {
-    return (
-      <FormField
-        control={control}
-        name={name}
-        render={({ field: { value, onChange, ...fieldProps } }) => (
-          <FormItem>
-            <FormLabel>{label}</FormLabel>
-            <FormControl>
-              <Input
-                {...fieldProps}
-                type="file"
-                accept="image/jpg,image/jpeg,image/png,image/webp"
-                ref={ref}
-                onChange={(e) => {
-                  onChange(e.target.files ? e.target.files[0] : undefined);
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    );
-  }
-);
+const InputFileForm = ({ control, name, label }: Props) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field: { value, onChange, ...fieldProps } }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <Input
+              {...fieldProps}
+              type="file"
+              accept="image/jpg,image/jpeg,image/png,image/webp"
+              onChange={(e) => {
+                onChange(e.target.files ? e.target.files[0] : undefined);
+              }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};
 
 export {
   InputForm,
