@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { capitalizeWords } from "@/lib/stringsUtil";
 import messages from "@/lib/JSON/newsMessages.json";
 
@@ -10,9 +10,9 @@ import {
   InputTextAreaForm,
   InputSelectForm,
   InputFileForm,
+  InputTagsForm,
 } from "./InputFormText";
 
-// import InputTagsForm from "./tags";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import Popup from "@/components/ui/popup";
@@ -30,9 +30,18 @@ const NewsForm = ({
   setRecordType: React.Dispatch<React.SetStateAction<string>>;
   categories: any;
 }) => {
-  //const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [data, setData] = useState<Data | null>(null);
   const [imageURL, setImageURL] = useState<null | string>(null);
+  const [duplicatedTags, setDuplicatedTags] = useState<boolean>(false);
+
+  useEffect(() => {
+    form.setValue("tags", tags);
+    duplicatedTags
+      ? form.setError("tags", { type: "manual", message: messages.tags.unique })
+      : form.clearErrors("tags");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tags, duplicatedTags]);
 
   const form = useForm<Data>({
     resolver: zodResolver(FormSchema),
@@ -162,6 +171,15 @@ const NewsForm = ({
               name="image"
               label={messages.image.label}
               control={form.control}
+            />
+
+            <InputTagsForm
+              setDuplicatedTags={setDuplicatedTags}
+              control={form.control}
+              name="tags"
+              label={messages.tags.label}
+              tags={tags}
+              setTags={setTags}
             />
 
             <div className="flex justify-end gap-4">

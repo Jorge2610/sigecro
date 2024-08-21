@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import { es } from "date-fns/locale";
 import React from "react";
 
@@ -19,6 +18,8 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import InputTags from "./tags";
+import { Control } from "react-hook-form";
 
 type Props = {
   control: any;
@@ -28,8 +29,6 @@ type Props = {
   max?: number;
   array?: { id: string; name: string }[];
   rows?: number;
-  tags?: string[];
-  setTags?: React.Dispatch<React.SetStateAction<string[]>>;
 };
 const InputForm = ({ control, name, label, placeholder, max }: Props) => {
   return (
@@ -164,6 +163,36 @@ const InputFileForm = ({ control, name, label }: Props) => {
     />
   );
 };
+interface Tags {
+  control: any;
+  name: string;
+  label: string;
+  tags: string[];
+  setDuplicatedTags: React.Dispatch<React.SetStateAction<boolean>>;
+  setTags: React.Dispatch<React.SetStateAction<string[]>>;
+}
+const InputTagsForm = ({ control, name, label, tags, setTags, setDuplicatedTags }: Tags) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <InputTags
+              setTags={setTags}
+              tags={tags}
+              inputProps={field}
+              setDuplicatedTags={setDuplicatedTags}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};
 
 export {
   InputForm,
@@ -171,4 +200,5 @@ export {
   InputTextAreaForm,
   InputSelectForm,
   InputFileForm,
+  InputTagsForm,
 };

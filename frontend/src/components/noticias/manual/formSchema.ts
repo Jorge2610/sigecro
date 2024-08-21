@@ -34,10 +34,7 @@ const FormSchema = z.object({
     })
     .optional(),
   status: z.enum(["draft", "published", "refused"]).default("draft"),
-  tags: z
-    .array(z.string().max(20))
-    .max(5, { message: messages.tags.max })
-    .optional(),
+  tags: z.array(z.string()).optional(),
   category: z.object({
     id: z.string().min(1).max(10),
     name: z.string(),
