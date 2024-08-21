@@ -11,4 +11,18 @@ const capitalizeWords = (text: string): string => {
     .join(" ");
 };
 
-export { capitalizeWords };
+/**
+ * Splits the given text into paragraphs by splitting it at double newline characters.
+ * Filters out empty paragraphs and returns the resulting array of paragraphs.
+ *
+ * @param {string} text - The input text to be split into paragraphs.
+ * @return {string[]} An array of paragraphs.
+ */
+const splitIntoParagraphs = (text: string): string[] => {
+  const paragraphs = text.split(/\n\n+/);
+  return paragraphs.filter(paragraph => paragraph.trim() !== '');
+}
+
+
+
+export { capitalizeWords, splitIntoParagraphs };

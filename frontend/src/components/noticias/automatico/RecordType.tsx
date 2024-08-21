@@ -8,8 +8,10 @@ import {
 import { Label } from "@/components/ui/label";
 
 export default function TipoRegistro({
+  placeholder,
   setRecordType,
 }: {
+  placeholder?: string;
   setRecordType: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
@@ -17,10 +19,10 @@ export default function TipoRegistro({
       <Label htmlFor="recordType">Modo de obtención</Label>
       <Select
         onValueChange={(value) => setRecordType(value)}
-        defaultValue="automatic"
+        defaultValue={placeholder}
       >
         <SelectTrigger className="w-full mt-4" id="recordType">
-          <SelectValue placeholder="Automático" />
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="automatic">Automático</SelectItem>

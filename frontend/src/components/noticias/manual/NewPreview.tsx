@@ -1,24 +1,69 @@
-import React, { ReactNode } from "react";
-import Resumen from "./summary";
+import React from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import messages from "@/lib/JSON/newsMessages.json";
+import Popup from "@/components/ui/popup";
+import { Data, createFormData } from "./formSchema";
+import { splitIntoParagraphs } from "@/lib/stringsUtil";
+import { useToast } from "@/components/ui/use-toast";
+import { format } from "date-fns";
+import axios from "axios";
 
 interface PreviewProps {
-  children: ReactNode;
-  imageURL: string;
-  summary: string | undefined;
-  tags: string[] | null;
+  data?: Data | null;
+  action?: () => void;
+  imageURL: string | null;
 }
 
-const Preview: React.FC<PreviewProps> = ({
-  children,
-  summary,
-  imageURL,
-  tags,
-}) => {
+const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
+  const { toast } = useToast();
+  const parapraphs = splitIntoParagraphs(data?.content || "");
+  const publicar = async () => {
+    if (data) {
+      const form = createFormData(data);
+      try {
+        const response = await axios.post(
+          `http://localhost:3001/api/news`,
+          form, {
+            timeout: 10000
+          }
+        );
+        response.status === 201
+          ? toast({
+              title: messages.toast.successTitle,
+              description: response.data?.message,
+            })
+          : toast({
+              title: messages.toast.errorTitle,
+              description: response.data?.message,
+              variant: "destructive",
+            });
+      } catch (error: any) {
+        toast({
+          title: messages.toast.errorTitle,
+          description: JSON.stringify(error.message),
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
-    <div className="flex flex-col">
-      <Resumen summary={summary} />
+    <div className="flex flex-col gap-4">
+      <h3>{data?.category?.name}</h3>
+      <h2 className="text-3xl font-lora font-medium">{data?.title}</h2>
+      <div className="flex items-center">
+        <span className="material-symbols-outlined text-sig-text mr-2">
+          newspaper
+        </span>
+        {data?.source}
+        <span className="material-symbols-outlined text-sig-text ml-20 mr-2">
+          calendar_clock
+        </span>
+        {data?.date && format(data.date, "dd-MM-yyyy HH:mm")}
+      </div>
+      <Summary summary={data?.summary} />
       {imageURL && (
         <div className="w-full h-[300px]">
           <Image
@@ -30,8 +75,17 @@ const Preview: React.FC<PreviewProps> = ({
           />
         </div>
       )}
-      <div className="flex flex-wrap gap-2 my-4">
-        {tags?.map((tag) => (
+      <div>
+        {parapraphs.map((paragraph, i) => {
+          return (
+            <p className="mb-4" key={i}>
+              {paragraph}
+            </p>
+          );
+        })}
+      </div>
+      <div className="flex flex-wrap gap-2 mt-4">
+        {data?.tags?.map((tag) => (
           <Badge
             key={tag}
             variant="secondary"
@@ -41,8 +95,45 @@ const Preview: React.FC<PreviewProps> = ({
           </Badge>
         ))}
       </div>
+      {data?.url && (
+        <div className="flex flex-row gap-4 align-middle">
+          <span className="material-symbols-outlined">link</span>
+          <a
+            href={data?.url}
+            target="_blank"
+            className="underline flex align-middle"
+          >
+            {data?.url}
+          </a>
+        </div>
+      )}
+      <div className="flex flex-row justify-end gap-4">
+        <Button onClick={action} variant="outline">
+          {" "}
+          Regresar{" "}
+        </Button>
+        <Popup
+          title={messages.popupPublic.title}
+          description={messages.popupPublic.description}
+          href="/administrar-noticias"
+          action={publicar}
+        >
+          <Button>publicar</Button>
+        </Popup>
+      </div>
+    </div>
+  );
+};
 
-      {children}
+interface Props {
+  summary: string | undefined;
+}
+const Summary = ({ summary }: Props) => {
+  return (
+    <div className="w-full p-4 bg-sig-gray2 rounded-xl">
+      <h3 className="font-lora font-semibold text-sig-blue">Resumen</h3>
+      <br />
+      <p className="text-sm font-regular">{summary}</p>
     </div>
   );
 };

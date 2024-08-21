@@ -31,11 +31,9 @@ const Popup = ({ action, title, description, children, href }: Props) => {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           {href ? (
-            <AlertDialogAction onClick={action}>
-              <Link href={href} className="w-full">
-                Aceptar
-              </Link>
-            </AlertDialogAction>
+            <Link href={href}>
+              <AlertDialogAction onClick={action}> Aceptar </AlertDialogAction>
+            </Link>
           ) : (
             <AlertDialogAction onClick={action}>Aceptar</AlertDialogAction>
           )}
