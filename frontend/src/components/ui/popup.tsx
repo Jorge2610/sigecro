@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 
 interface Props {
-  action: () => void;
+  action?: () => void;
   children: React.ReactNode;
   title: string;
   description: string;

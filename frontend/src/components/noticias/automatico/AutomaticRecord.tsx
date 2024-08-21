@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { useState } from "react";
 import AutomaticPreview from "./AutomaticPreview";
-import { NewsData } from "./newsInterfaces";
+import { NewsData } from "../newsInterfaces";
 
 export default function RegistroAutomatico() {
   const [newsData, setNewsData] = useState<NewsData>();
@@ -35,7 +35,7 @@ export default function RegistroAutomatico() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     axios
-      .post(`${process.env.NEXT_PUBLIC_API_HOST}/news/scraping`, {
+      .post("/api/news/scraping", {
         url: values.url,
       })
       .then((response) => {
