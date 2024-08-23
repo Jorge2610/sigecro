@@ -122,7 +122,7 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
           href="/administrar-noticias"
           action={publicar}
         >
-          <Button>publicar</Button>
+          <Button>Publicar</Button>
         </Popup>
       </div>
     </div>
