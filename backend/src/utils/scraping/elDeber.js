@@ -12,6 +12,12 @@ monthsMap.set("octubre", "10");
 monthsMap.set("noviembre", "11");
 monthsMap.set("diciembre", "12");
 
+/**
+ * Obtiene los datos de la noticia desde El Deber.
+ *
+ * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
+ * @return {JSON} - La información de la noticia.
+ */
 const getElDeberData = ($) => {
   const title = $("h1").text().trim();
   const dateTime = getDateTime($(".dateNote:first").text().trim());
@@ -19,6 +25,12 @@ const getElDeberData = ($) => {
   return { title: title, dateTime: dateTime, content: content };
 };
 
+/**
+ * Obtiene el la fecha de la noticia.
+ *
+ * @param {string} text - Fecha y hora de la noticia.
+ * @return {Date} - La fecha de publicación de la noticia.
+ */
 const getDateTime = (text) => {
   text = text.split(" ");
   const day = text[0];
@@ -31,6 +43,12 @@ const getDateTime = (text) => {
   return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
 };
 
+/**
+ * Obtiene el contenido de la noticia.
+ *
+ * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
+ * @return {Date} - El contenido de la noticia.
+ */
 const getContent = ($) => {
   const content = [];
   $(".text-editor div > p, .text-editor div > h3").each((i, element) => {

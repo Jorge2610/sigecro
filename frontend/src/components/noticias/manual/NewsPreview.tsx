@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import messages from "@/lib/JSON/newsMessages.json";
+import messages from "../newsMessages.json";
 import Popup from "@/components/ui/popup";
 import { Data, createFormData } from "./formSchema";
 import { splitIntoParagraphs } from "@/lib/stringsUtil";

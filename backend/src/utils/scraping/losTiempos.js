@@ -1,3 +1,9 @@
+/**
+ * Obtiene los datos de una noticia desde Los tiempos.
+ *
+ * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
+ * @return {JSON} - La información de la noticia.
+ */
 const getLosTiemposData = ($) => {
   const title = $("h1").text().trim();
   const dateTime = getDateTime($(".date-publish").text().trim());
@@ -5,6 +11,12 @@ const getLosTiemposData = ($) => {
   return { title: title, dateTime: dateTime, content: content };
 };
 
+/**
+ * Obtiene el la fecha de la noticia.
+ *
+ * @param {string} text - Fecha y hora de la noticia.
+ * @return {Date} - La fecha de publicación de la noticia.
+ */
 const getDateTime = (text) => {
   const day = text[13] + text[14];
   const month = text[16] + text[17];
@@ -15,6 +27,12 @@ const getDateTime = (text) => {
   return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
 };
 
+/**
+ * Obtiene el contenido de la noticia.
+ *
+ * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
+ * @return {Date} - El contenido de la noticia.
+ */
 const getContent = ($) => {
   const content = [];
   $(".field-items p").each((i, element) => {

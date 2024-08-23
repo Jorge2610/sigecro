@@ -10,7 +10,7 @@
       "delete": {}
     },
     "permission": {
-      "get": {}
+      "get": {"error":"No se pudo obtener los permisos."}
     },
     "category": {
       "get": {},

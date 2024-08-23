@@ -1,5 +1,5 @@
 import { z } from "zod";
-import messages from "@/lib/JSON/newsMessages.json";
+import messages from "../newsMessages.json";
 
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",

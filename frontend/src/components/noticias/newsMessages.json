@@ -46,7 +46,7 @@
     "placeholder": "Escriba la categoría de la noticia..."
   },
   "popupCancel": {
-    "title": "Cancelar noticia",
+    "title": "Cancelar registro",
     "description": "Todos los cambios no guardados se perderán."
   },
   "popupPublic": {

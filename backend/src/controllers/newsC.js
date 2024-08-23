@@ -14,10 +14,10 @@ const messages = JSON.parse(
 /**
  * Crea una nueva noticia en la base de datos.
  *
- * @param{Object} req - El objeto de solicitud HTTP.
- * @param{Object} res - El objeto de respuesta HTTP.
- * @param{Function} next - La función de middleware siguiente.
- * @return{Promise<void>} Una promesa que resuelve cuando la operación es completada.
+ * @param {Object} req - El objeto de solicitud HTTP.
+ * @param {Object} res - El objeto de respuesta HTTP.
+ * @param {Function} next - La función de middleware siguiente.
+ * @return {Promise<void>} Una promesa que resuelve cuando la operación es completada.
  */
 const setNews = async (req, res, next) => {
     try {
@@ -68,6 +68,14 @@ const uploadImage = async (req) => {
     return null;
 };
 
+/**
+ * Obtiene la informacion de una noticia a partir de su URL.
+ *
+ * @param {Object} req - El objeto de solicitud HTTP.
+ * @param {Object} res - El objeto de respuesta HTTP.
+ * @param {Function} next - La función de middleware siguiente.
+ * @return {Promise<JSON>} Una promesa que resuelve cuando la operación es completada.
+ */
 const getNewsData = async (req, res, next) => {
     const newsData = await newsScraping(req.body.url);
     res.json(newsData);
