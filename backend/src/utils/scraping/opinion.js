@@ -12,6 +12,12 @@ monthsMap.set("octubre", "10");
 monthsMap.set("noviembre", "11");
 monthsMap.set("diciembre", "12");
 
+/**
+ * Obtiene los datos de la noticia desde Opinión.
+ *
+ * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
+ * @return {JSON} - La información de la noticia.
+ */
 const getOpinionData = ($) => {
   const title = $("h2.title").text().trim();
   const dateTime = getDateTime($(".content-time").text().trim());
@@ -19,6 +25,12 @@ const getOpinionData = ($) => {
   return { title: title, dateTime: dateTime, content: content };
 };
 
+/**
+ * Obtiene el la fecha de la noticia.
+ *
+ * @param {string} text - Fecha y hora de la noticia.
+ * @return {Date} - La fecha de publicación de la noticia.
+ */
 const getDateTime = (text) => {
   text = text.split(" ");
   const day = text[0];
@@ -30,6 +42,12 @@ const getDateTime = (text) => {
   return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
 };
 
+/**
+ * Obtiene el contenido de la noticia.
+ *
+ * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
+ * @return {Date} - El contenido de la noticia.
+ */
 const getContent = ($) => {
   const content = [];
   $(".body p").each((i, element) => {

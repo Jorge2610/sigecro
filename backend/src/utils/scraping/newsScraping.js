@@ -4,6 +4,12 @@ import { getLosTiemposData } from "./losTiempos.js";
 import { getOpinionData } from "./opinion.js";
 import { getElDeberData } from "./elDeber.js";
 
+/**
+ * Obtiene la informacion de la noticia.
+ *
+ * @param {string} url - URL de la noticia.
+ * @return {JSON} - La información de la noticia.
+ */
 const newsScraping = async (url) => {
   const source = getSource(url);
   const newsData = await getNewsData(url, source);
@@ -12,6 +18,12 @@ const newsScraping = async (url) => {
   return newsData;
 };
 
+/**
+ * Determina la fuente de la noticia a partir de la URL.
+ *
+ * @param {string} url - URL de la noticia.
+ * @return {string} - La fuente de la noticia.
+ */
 const getSource = (url) => {
   if (url.includes("lostiempos")) {
     return "Los Tiempos";
@@ -25,6 +37,13 @@ const getSource = (url) => {
   return "Otros";
 };
 
+/**
+ * Realiza la peticion HTTP del contenido mediante la URL.
+ *
+ * @param {string} url - URL de la noticia.
+ * @param {string} source - Fuente de la noticia.
+ * @return {JSON} - La información de la noticia.
+ */
 const getNewsData = async (url, source) => {
   const $ = await axios
     .get(url)
@@ -37,6 +56,13 @@ const getNewsData = async (url, source) => {
   return getData(source, $);
 };
 
+/**
+ * Obtiene los datos de la noticia segun la fuente de la misma.
+ *
+ * @param {string} source - Fuente de la noticia.
+ * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
+ * @return {JSON} - La información de la noticia.
+ */
 const getData = (source, $) => {
   switch (source) {
     case "Los Tiempos":

@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import React, { useState, useEffect } from "react";
 import { capitalizeWords } from "@/lib/stringsUtil";
-import messages from "@/lib/JSON/newsMessages.json";
+import messages from "../newsMessages.json";
 
 import {
   InputForm,
