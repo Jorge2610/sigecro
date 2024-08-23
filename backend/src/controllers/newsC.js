@@ -20,9 +20,8 @@ const messages = JSON.parse(
  * @return{Promise<void>} Una promesa que resuelve cuando la operación es completada.
  */
 const setNews = async (req, res, next) => {
-  console.log(req.body);
   try {
-    const imageURL = await uploadImage(req);
+    const imageURL = uploadImage(req);
     const data = [
       req.body.title,
       req.body.content,
@@ -35,10 +34,10 @@ const setNews = async (req, res, next) => {
       req.body.category_id,
       req.body.user_id,
     ];
-    await News.create(data);
-    console.log(req.ip);
+    const response = await News.create(data);
+    const tags = JSON.parse(req.body.tags);
+    tags && (await News.setTags([response[0].id, tags]));
     res.status(201).json({ message: messages["'messages"].new.post.success });
-    next();
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: messages["'messages"].new.post.error });

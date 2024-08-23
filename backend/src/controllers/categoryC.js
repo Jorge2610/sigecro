@@ -8,11 +8,10 @@ import Category from "../models/categoryM.js";
  * @param {function} next - La función de middleware siguiente.
  * @return {json} Un JSON con las categorias.
  */
-const getAllCategories = async (req, res, next) => {
+const getAllCategories = (req, res, next) => {
   try {
-    const categories = await Category.getCategories();
+    const categories = Category.getCategories();
     res.status(200).json(categories);
-    next();
   } catch (error) {
     res.status(500).json({ message: error.message });
     next(error);

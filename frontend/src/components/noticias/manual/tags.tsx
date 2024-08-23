@@ -79,7 +79,7 @@ const InputTags = ({
           <Badge
             key={tag}
             variant="secondary"
-            className="bg-sig-gray3 hover:bg-sig-gray3 h-7"
+            className="bg-sig-gray2 hover:bg-sig-gray2 h-7"
           >
             {tag}
             <button

@@ -51,6 +51,7 @@ type Data = z.infer<typeof FormSchema>;
  * @return {FormData} El FormData creado a partir de los datos.
  */
 const createFormData = (data: z.infer<typeof FormSchema>): FormData => {
+  console.log(data);
   const formData = new FormData();
   if (data) {
     formData.append("title", data?.title ?? "");
@@ -61,6 +62,7 @@ const createFormData = (data: z.infer<typeof FormSchema>): FormData => {
     formData.append("summary", data?.summary ?? "");
     data?.image && formData.append("image", data?.image, data?.image.name);
     formData.append("status", data?.status ?? "");
+    data?.tags && formData.append("tags", JSON.stringify(data?.tags));
     formData.append("category_id", data?.category.id ?? "");
     formData.append("user_id", data?.user_id ?? "");
   }

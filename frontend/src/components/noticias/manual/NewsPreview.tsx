@@ -9,7 +9,6 @@ import { splitIntoParagraphs } from "@/lib/stringsUtil";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { postNews } from "./api";
-import { v4 as uuidv4 } from "uuid";
 
 interface PreviewProps {
   data?: Data | null;
@@ -81,9 +80,9 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
         </div>
       )}
       <div>
-        {parapraphs.map((paragraph) => {
+        {parapraphs.map((paragraph, i) => {
           return (
-            <p className="mb-4" key={uuidv4()}>
+            <p className="mb-4" key={i}>
               {paragraph}
             </p>
           );
@@ -94,7 +93,7 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
           <Badge
             key={tag}
             variant="secondary"
-            className="bg-sig-gray2 hover:bg-sig-text h-7"
+            className="bg-sig-gray2 h-7 hover:bg-sig-gray2"
           >
             {tag}
           </Badge>

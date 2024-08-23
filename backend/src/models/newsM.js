@@ -14,6 +14,11 @@ class News {
     );
     return res.rows;
   }
+
+  static async setTags(data) {
+    const res = await query("call insert_tags($1, $2)", data);
+    return res.rows;
+  }
 }
 
 export { News };

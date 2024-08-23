@@ -24,6 +24,7 @@ describe("POST /news", () => {
       url: "test",
       summary: "test",
       status: "test",
+      tags: ["test", "test2"],
       category_id: 1,
       user_id: 1,
     });
