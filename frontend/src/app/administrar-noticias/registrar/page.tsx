@@ -18,7 +18,7 @@ export default function RegistrarNoticia() {
      *
      * @return {Promise<void>}
      */
-    const getCategories = async () => {
+    const getCategories = async (): Promise<void> => {
       const resp = await getAllCategories();
       if (resp) {
         setCategories(resp);

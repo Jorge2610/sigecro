@@ -6,7 +6,7 @@ class Category {
    * @return {object[]} Un arreglo de objetos que representan las categorias.
    */
   static async getCategories() {
-    const res = await query("SELECT id, name FROM categories;", []);
+    const res = await query("SELECT id, name FROM public.categories;", []);
     return res;
   }
 }

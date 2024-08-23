@@ -132,6 +132,7 @@ describe("GET /categories", () => {
 
   test("should respond with one row of categories", async () => {
     const response = await request(app).get("/api/categories").send();
+    console.log(response.body);
     expect(response.body.rows.length).toBeGreaterThan(0);
   });
 });

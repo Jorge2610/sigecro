@@ -1,3 +1,4 @@
+-- DATA PERMISSION
 INSERT INTO
     public.permissions (name, description)
 VALUES (
@@ -109,4 +110,8 @@ VALUES (
         'Permite asignar, modificar y eliminar roles asignados a los usuarios del sistema.(Asignar, cambiar)'
     );
 
+-- DATA USERS
 INSERT INTO users (id) VALUES (1);
+
+-- DATA CATEGORIES
+INSERT INTO categories (id, name) VALUES (1, 'Noticias');

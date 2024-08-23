@@ -12,7 +12,6 @@ const getAllCategories = async (req, res, next) => {
   try {
     const categories = await Category.getCategories();
     res.status(200).json(categories);
-    next();
   } catch (error) {
     res.status(500).json({ message: error.message });
     next(error);

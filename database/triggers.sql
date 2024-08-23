@@ -11,18 +11,35 @@ $$ LANGUAGE plpgsql;
 
 -- UPDATE TIMESTAMP CATEGORIES
 DROP TRIGGER IF EXISTS set_timestamp ON categories;
+
 CREATE TRIGGER set_timestamp BEFORE
 UPDATE ON categories FOR EACH ROW
 EXECUTE FUNCTION update_timestamp ();
 
 -- UPDATE TIMESTAMP NEWS
 DROP TRIGGER IF EXISTS set_timestamp ON news;
+
 CREATE TRIGGER set_timestamp BEFORE
 UPDATE ON news FOR EACH ROW
 EXECUTE FUNCTION update_timestamp ();
 
 -- UPDATE TIMESTAMP PERMISSIONS
 DROP TRIGGER IF EXISTS set_timestamp ON permissions;
+
 CREATE TRIGGER set_timestamp BEFORE
 UPDATE ON permissions FOR EACH ROW
+EXECUTE FUNCTION update_timestamp ();
+
+-- UPDATE TIMESTAMP TAGS
+DROP TRIGGER IF EXISTS set_timestamp ON tags;
+
+CREATE TRIGGER set_timestamp BEFORE
+UPDATE ON tags FOR EACH ROW
+EXECUTE FUNCTION update_timestamp ();
+
+-- UPDATE TIMESTAMP NEWS_TAG
+DROP TRIGGER IF EXISTS set_timestamp ON news_tag;
+
+CREATE TRIGGER set_timestamp BEFORE
+UPDATE ON news_tag FOR EACH ROW
 EXECUTE FUNCTION update_timestamp ();

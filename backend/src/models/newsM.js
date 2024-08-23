@@ -14,6 +14,16 @@ class News {
     );
     return res.rows;
   }
+  /**
+   * Guarda las etiquetas de una noticia en la base de datos.
+   *
+   * @param {object} tags - Un objeto que contiene las etiquetas de la noticia.
+   * @return {array}  Un arreglo de campos provistos por la consulta.
+   */
+  static async setTags(tags) {
+    const res = await query("call insert_tags($1, $2)", tags);
+    return res.rows;
+  }
 }
 
 export { News };

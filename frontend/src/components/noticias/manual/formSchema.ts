@@ -34,10 +34,7 @@ const FormSchema = z.object({
     })
     .optional(),
   status: z.enum(["draft", "published", "refused"]).default("draft"),
-  tags: z
-    .array(z.string().max(20))
-    .max(5, { message: messages.tags.max })
-    .optional(),
+  tags: z.array(z.string()).optional(),
   category: z.object({
     id: z.string().min(1).max(10),
     name: z.string(),
@@ -64,6 +61,7 @@ const createFormData = (data: z.infer<typeof FormSchema>): FormData => {
     formData.append("summary", data?.summary ?? "");
     data?.image && formData.append("image", data?.image, data?.image.name);
     formData.append("status", data?.status ?? "");
+    data?.tags && formData.append("tags", JSON.stringify(data?.tags));
     formData.append("category_id", data?.category.id ?? "");
     formData.append("user_id", data?.user_id ?? "");
   }

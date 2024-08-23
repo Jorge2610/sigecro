@@ -38,6 +38,7 @@
   "tags": {
     "max": "El número de etiquetas no puede ser mayor a 5",
     "placeholder": "Escriba las etiquetas de la noticia...",
+    "unique" : "Las etiquetas deben ser únicas",
     "label": "Etiquetas"
   },
   "category": {
