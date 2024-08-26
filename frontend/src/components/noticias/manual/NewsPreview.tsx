@@ -8,19 +8,19 @@ import { Data, createFormData } from "./formSchema";
 import { splitIntoParagraphs } from "@/lib/stringsUtil";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
-import { postNews } from "./api";
+import axios from "axios";
 
 interface PreviewProps {
-  data?: Data | null;
-  action?: () => void;
-  imageURL: string | null;
+    data?: Data | null;
+    action?: () => void;
+    imageURL: string | null;
 }
 
 const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
-  const { toast } = useToast();
-  const parapraphs = splitIntoParagraphs(data?.content ?? "");
+    const { toast } = useToast();
+    const parapraphs = splitIntoParagraphs(data?.content ?? "");
 
-  /**
+    /**
    * Envia la noticia a revision para ser publicada.
    *
    * Esta funcion es responsable de crear un objeto FormData a partir de los datos de la noticia,
@@ -28,30 +28,30 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
    
    * @return {Promise<void>} Una promesa que se resuelva cuando se complete la operación.
    */
-  const publicar = async (): Promise<void> => {
-    if (data) {
-      const form = createFormData(data);
-      try {
-        const response = await postNews(form);
-        response.status === 201
-          ? toast({
-              title: messages.toast.successTitle,
-              description: response.data?.message,
-            })
-          : toast({
-              title: messages.toast.errorTitle,
-              description: response.data?.message,
-              variant: "destructive",
-            });
-      } catch (error: any) {
-        toast({
-          title: messages.toast.errorTitle,
-          description: JSON.stringify(error.message),
-          variant: "destructive",
-        });
-      }
-    }
-  };
+    const publicar = async (): Promise<void> => {
+        if (data) {
+            const formData = createFormData(data);
+            try {
+                const response = await axios.post(`/api/news`, formData);
+                response.status === 201
+                    ? toast({
+                          title: messages.toast.successTitle,
+                          description: response.data?.message,
+                      })
+                    : toast({
+                          title: messages.toast.errorTitle,
+                          description: response.data?.message,
+                          variant: "destructive",
+                      });
+            } catch (error: any) {
+                toast({
+                    title: messages.toast.errorTitle,
+                    description: JSON.stringify(error.message),
+                    variant: "destructive",
+                });
+            }
+        }
+    };
 
   return (
     <div className="flex flex-col gap-4">
@@ -130,16 +130,16 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
 };
 
 interface Props {
-  summary: string | undefined;
+    summary: string | undefined;
 }
 const Summary = ({ summary }: Props) => {
-  return (
-    <div className="w-full p-4 bg-sig-gray2 rounded-xl">
-      <h3 className="font-lora font-semibold text-sig-blue">Resumen</h3>
-      <br />
-      <p className="text-sm font-regular">{summary}</p>
-    </div>
-  );
+    return (
+        <div className="w-full p-4 bg-sig-gray2 rounded-xl">
+            <h3 className="font-lora font-semibold text-sig-blue">Resumen</h3>
+            <br />
+            <p className="text-sm font-regular">{summary}</p>
+        </div>
+    );
 };
 
 export default Preview;
