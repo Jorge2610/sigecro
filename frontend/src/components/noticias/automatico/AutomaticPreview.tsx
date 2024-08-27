@@ -11,7 +11,7 @@ import Popup from "../../ui/popup";
 import { InputTextAreaForm, InputSelectForm } from "../manual/InputFormText";
 import { InputFileForm } from "./InputFile";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
 import Image from "next/image";
@@ -24,6 +24,7 @@ const AutomaticPreview = ({
     categories: any;
 }) => {
     const [imageURL, setImageURL] = useState<string>("");
+    const imageRef = useRef<HTMLImageElement>(null);
     const formSchema = z.object({
         summary: z.string().min(1, { message: MESSAGES.summary.required }),
         image: z
@@ -55,9 +56,11 @@ const AutomaticPreview = ({
      */
     const updateImage = (): void => {
         const image = form.getValues().image;
-        image !== undefined
-            ? setImageURL(URL.createObjectURL(image))
-            : setImageURL("");
+        if (image !== undefined) {
+            setImageURL(URL.createObjectURL(image));
+        } else {
+            setImageURL("");
+        }
     };
 
     /**
@@ -126,46 +129,59 @@ const AutomaticPreview = ({
     };
     return (
         <div className="flex flex-col gap-4">
-            <a href={newsData.url} target="_blank" className="underline">
-                {newsData.url}
-            </a>
-            <h2 className="text-3xl font-lora font-medium">{newsData.title}</h2>
-            <div className="flex items-center">
-                <span className="material-symbols-outlined text-sig-text mr-2">
-                    newspaper
-                </span>
-                {newsData.source}
-                <span className="material-symbols-outlined text-sig-text ml-4 mr-2">
-                    calendar_clock
-                </span>
-                {format(newsData.dateTime, "dd-MM-yyyy HH:mm")}
-            </div>
-            {imageURL && (
-                <div className="w-full h-[300px]">
-                    <Image
-                        src={imageURL}
-                        width={300}
-                        height={200}
-                        className="h-[300px] w-auto m-auto p-4"
-                        alt="image"
-                    />
-                </div>
-            )}
-            <div>
-                {newsData.content.map((paragraph, i) => {
-                    return (
-                        <p className="mb-4" key={i}>
-                            {paragraph}
-                        </p>
-                    );
-                })}
-            </div>
-            <Separator className="mt-[-1rem]" />
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-6"
                 >
+                    <a
+                        href={newsData.url}
+                        target="_blank"
+                        className="underline"
+                    >
+                        {newsData.url}
+                    </a>
+                    <h2 className="text-3xl font-lora font-medium">
+                        {newsData.title}
+                    </h2>
+                    <div className="flex items-center">
+                        <span className="material-symbols-outlined text-sig-text mr-2">
+                            newspaper
+                        </span>
+                        {newsData.source}
+                        <span className="material-symbols-outlined text-sig-text ml-4 mr-2">
+                            calendar_clock
+                        </span>
+                        {format(newsData.dateTime, "dd-MM-yyyy HH:mm")}
+                    </div>
+                    <InputFileForm
+                        name="image"
+                        label="Imagen"
+                        control={form.control}
+                        updateImage={updateImage}
+                    />
+                    {imageURL && (
+                        <div className="w-full h-[300px]">
+                            <Image
+                                src={imageURL}
+                                width={300}
+                                height={200}
+                                className="h-[300px] w-auto m-auto p-4"
+                                alt="image"
+                                ref={imageRef}
+                            />
+                        </div>
+                    )}
+                    <div>
+                        {newsData.content.map((paragraph, i) => {
+                            return (
+                                <p className="mb-4" key={i}>
+                                    {paragraph}
+                                </p>
+                            );
+                        })}
+                    </div>
+                    <Separator className="mt-[-1rem]" />
                     <InputSelectForm
                         name="category_id"
                         label="Categoría*"
@@ -178,12 +194,6 @@ const AutomaticPreview = ({
                         label="Resumen*"
                         control={form.control}
                         placeholder="Escriba el resumen..."
-                    />
-                    <InputFileForm
-                        name="image"
-                        label="Imagen"
-                        control={form.control}
-                        updateImage={updateImage}
                     />
                     <div className="flex justify-end gap-4">
                         <Popup
