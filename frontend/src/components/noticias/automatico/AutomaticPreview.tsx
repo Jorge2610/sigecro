@@ -8,17 +8,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ACCEPTED_IMAGE_TYPES, MESSAGES } from "../newsInterfaces";
 import Popup from "../../ui/popup";
-import {
-    InputTextAreaForm,
-    InputSelectForm,
-    InputFileForm,
-} from "../manual/InputFormText";
+import { InputTextAreaForm, InputSelectForm } from "../manual/InputFormText";
+import { InputFileForm } from "./InputFile";
 import axios from "axios";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
+import Image from "next/image";
 
-export default function AutomaticPreview({ newsData }: { newsData: NewsData }) {
+const AutomaticPreview = ({
+    newsData,
+    categories,
+}: {
+    newsData: NewsData;
+    categories: any;
+}) => {
+    const [imageURL, setImageURL] = useState<string>("");
     const formSchema = z.object({
         summary: z.string().min(1, { message: MESSAGES.summary.required }),
         image: z
@@ -33,20 +38,27 @@ export default function AutomaticPreview({ newsData }: { newsData: NewsData }) {
         category_id: z.string().min(1).max(10),
     });
 
-    type Data = {
-        id: string;
-        name: string;
-    };
-    const categories: null | Data[] = [{ id: "1", name: "Categoría 1" }];
     const { toast } = useToast();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             summary: "",
             image: undefined,
-            category_id: "1",
+            category_id: categories[0],
         },
     });
+
+    /**
+     * Actualiza la interfaz de usuario cuando se añade una imagen a la noticia.
+     *
+     * @return {void}
+     */
+    const updateImage = (): void => {
+        const image = form.getValues().image;
+        image !== undefined
+            ? setImageURL(URL.createObjectURL(image))
+            : setImageURL("");
+    };
 
     /**
      * Formatea los parrafos del contenido en uno solo para su envio a la base de datos.
@@ -83,11 +95,11 @@ export default function AutomaticPreview({ newsData }: { newsData: NewsData }) {
     };
 
     /**
-     * Envia la noticia a revision para ser publicada.
+     * Envia la noticia a revisión para ser publicada.
      *
-     * Esta funcion es responsable de enviar el articulo de noticia al servidor, 
-	 * y mostrar un toast basado en la respuesta del servidor.
-	 * 
+     * Esta función es responsable de enviar el articulo de noticia al servidor,
+     * y mostrar un toast basado en la respuesta del servidor.
+     *
      * @return {Promise<void>}
      */
     const onSubmit = async (): Promise<void> => {
@@ -128,6 +140,17 @@ export default function AutomaticPreview({ newsData }: { newsData: NewsData }) {
                 </span>
                 {format(newsData.dateTime, "dd-MM-yyyy HH:mm")}
             </div>
+            {imageURL && (
+                <div className="w-full h-[300px]">
+                    <Image
+                        src={imageURL}
+                        width={300}
+                        height={200}
+                        className="h-[300px] w-auto m-auto p-4"
+                        alt="image"
+                    />
+                </div>
+            )}
             <div>
                 {newsData.content.map((paragraph, i) => {
                     return (
@@ -160,6 +183,7 @@ export default function AutomaticPreview({ newsData }: { newsData: NewsData }) {
                         name="image"
                         label="Imagen"
                         control={form.control}
+                        updateImage={updateImage}
                     />
                     <div className="flex justify-end gap-4">
                         <Popup
@@ -182,4 +206,6 @@ export default function AutomaticPreview({ newsData }: { newsData: NewsData }) {
             </Form>
         </div>
     );
-}
+};
+
+export default AutomaticPreview;

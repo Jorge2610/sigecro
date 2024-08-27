@@ -4,11 +4,7 @@ import { TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-export default function PermissionsTable({
-    permissions,
-}: {
-    permissions: any;
-}) {
+const PermissionsTable = ({ permissions }: { permissions: any }) => {
     const [permissionsState, setPermissionsState] = useState(permissions);
 
     /**
@@ -66,4 +62,6 @@ export default function PermissionsTable({
             })}
         </TableBody>
     );
-}
+};
+
+export default PermissionsTable;

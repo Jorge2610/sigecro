@@ -1,5 +1,8 @@
 import { News } from "../models/newsM.js";
-import { newsScraping } from "../utils/scraping/newsScraping.js";
+import { getData, getSource } from "../utils/scraping/newsScraping.js";
+import axios from "axios";
+import http from "http";
+import https from "https";
 import sharp from "sharp";
 import dotenv from "dotenv";
 import path from "path";
@@ -10,6 +13,14 @@ dotenv.config();
 const messages = JSON.parse(
     fs.readFileSync(path.join("./src/utils/JSON/messages.json"))
 );
+
+const httpAgent = new http.Agent({ keepAlive: false });
+const httpsAgent = new https.Agent({ keepAlive: false });
+
+const axiosInstance = axios.create({
+    httpAgent,
+    httpsAgent,
+});
 
 /**
  * Crea una nueva noticia en la base de datos.
@@ -77,8 +88,18 @@ const uploadImage = async (req) => {
  * @return {Promise<JSON>} Una promesa que resuelve cuando la operación es completada.
  */
 const getNewsData = async (req, res, next) => {
-    const newsData = await newsScraping(req.body.url);
-    res.json(newsData);
+    const source = getSource(req.body.url);
+    try {
+        const response = await axiosInstance
+            .get(req.body.url)
+            .then((res) => res.data);
+        const data = getData(source, response);
+        data.source = source;
+        data.url = req.body.url;
+        res.json(data);
+    } catch (error) {
+        res.sendStatus(503);
+    }
 };
 
 export { getNewsData, setNews };

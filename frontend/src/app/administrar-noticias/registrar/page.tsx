@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import NewsForm from "@/components/noticias/manual/NewsForm";
 import axios from "axios";
 
-export default function RegistrarNoticia() {
+const RegistrarNoticia = () => {
     const [recordType, setRecordType] = useState("automatic");
     const [preview, setPreview] = useState(false);
     const [categories, setCategories] = useState<any>([]);
@@ -46,7 +46,7 @@ export default function RegistrarNoticia() {
                     </>
                 )}
                 {recordType === "automatic" ? (
-                    <AutomaticRecord />
+                    <AutomaticRecord categories={categories} />
                 ) : (
                     <NewsForm
                         preview={preview}
@@ -58,4 +58,6 @@ export default function RegistrarNoticia() {
             </div>
         </div>
     );
-}
+};
+
+export default RegistrarNoticia;

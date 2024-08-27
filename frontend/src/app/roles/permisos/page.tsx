@@ -8,7 +8,7 @@ import {
 import PermissionsTable from "@/components/permisos/PermissionsTable";
 import axios from "axios";
 
-export default async function Permisos() {
+const Permisos = async () => {
     try {
         const res = await axios.get(`${process.env.API_HOST}/permissions`);
         return (
@@ -27,4 +27,6 @@ export default async function Permisos() {
     } catch (error: any) {
         return <div>No se pudo obtener la información.</div>;
     }
-}
+};
+
+export default Permisos;

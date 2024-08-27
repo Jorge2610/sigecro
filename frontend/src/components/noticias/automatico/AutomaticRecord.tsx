@@ -19,7 +19,7 @@ import { NewsData } from "../newsInterfaces";
 import messages from "../newsMessages.json";
 import { useToast } from "@/components/ui/use-toast";
 
-export default function RegistroAutomatico() {
+const RegistroAutomatico = ({ categories }: { categories: any }) => {
     const { toast } = useToast();
     const [newsData, setNewsData] = useState<NewsData>();
     const [extracting, setExtracting] = useState(false);
@@ -129,10 +129,12 @@ export default function RegistroAutomatico() {
             </Form>
             <Separator className="my-4" />
             {newsData !== undefined ? (
-                <AutomaticPreview newsData={newsData} />
+                <AutomaticPreview newsData={newsData} categories={categories} />
             ) : (
                 ""
             )}
         </div>
     );
-}
+};
+
+export default RegistroAutomatico;
