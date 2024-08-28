@@ -15,6 +15,7 @@ import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const AutomaticPreview = ({
     newsData,
@@ -25,6 +26,9 @@ const AutomaticPreview = ({
 }) => {
     const [imageURL, setImageURL] = useState<string>("");
     const imageRef = useRef<HTMLImageElement>(null);
+    const { toast } = useToast();
+    const [open, setOpen] = useState(false);
+    const router = useRouter();
     const formSchema = z.object({
         summary: z
             .string()
@@ -45,8 +49,6 @@ const AutomaticPreview = ({
         }),
     });
 
-    const { toast } = useToast();
-    const [open, setOpen] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -105,36 +107,24 @@ const AutomaticPreview = ({
     };
 
     /**
-     * Hace visible la alerta de confirmación de publicación de la noticia.
-     * @return {void}
-     */
-    const onSubmit = (): void => {
-        setOpen(true);
-    };
-
-    /**
      * Esta función es responsable de enviar el articulo de noticia al servidor,
      * y mostrar un toast basado en la respuesta del servidor.
      * @return {Promise<void>}
      */
     const submitData = async (): Promise<void> => {
+        setOpen(false);
         try {
             const formData = getFormData(form.getValues());
             const response = await axios.post(`/api/news`, formData);
-            response.status === 201
-                ? toast({
-                      title: messages.toast.successTitle,
-                      description: response.data?.message,
-                  })
-                : toast({
-                      title: messages.toast.errorTitle,
-                      description: response.data?.message,
-                      variant: "destructive",
-                  });
+            router.push("/administrar-noticias");
+            toast({
+                title: messages.toast.successTitle,
+                description: response.data?.message,
+            });
         } catch (error: any) {
             toast({
                 title: messages.toast.errorTitle,
-                description: JSON.stringify(error.message),
+                description: "Ocurrio un problema al enviar la noticia.",
                 variant: "destructive",
             });
         }
@@ -143,7 +133,7 @@ const AutomaticPreview = ({
         <div className="flex flex-col gap-4">
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={form.handleSubmit(() => setOpen(true))}
                     className="space-y-6"
                 >
                     <a
@@ -196,7 +186,7 @@ const AutomaticPreview = ({
                     <Separator className="mt-[-1rem]" />
                     <InputSelectForm
                         name="category_id"
-                        label="Categoría*"
+                        label="Categoría"
                         control={form.control}
                         placeholder="Seleccione una categoría"
                         array={categories}
@@ -219,15 +209,11 @@ const AutomaticPreview = ({
                         <PopupState
                             title={messages.popupPublic.title}
                             description={messages.popupPublic.description}
-                            href="/administrar-noticias"
                             openState={open}
                             onClose={() => {
                                 setOpen(false);
                             }}
-                            onConfirm={() => {
-                                submitData();
-                                setOpen(false);
-                            }}
+                            onConfirm={submitData}
                         />
                     </div>
                 </form>
