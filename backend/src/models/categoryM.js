@@ -9,6 +9,10 @@ class Category {
     const res = await query("SELECT id, name FROM public.categories;", []);
     return res;
   }
+  static async postCategory(data){
+    const res= await query("INSERT INTO categories(name,description) values ($1,$2);",[data.name,data.description]);
+    return res;
+  }
 }
 
 export default Category;

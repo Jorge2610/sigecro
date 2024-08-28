@@ -14,6 +14,7 @@ const Sider = ({
             text: "Administrar noticias",
         },
         { link: "/roles", icon: "admin_panel_settings", text: "Roles" },
+        { link: "/categorias", icon: "label", text: "Categorias" },
     ];
 
     const resetExpandedState = () => {
