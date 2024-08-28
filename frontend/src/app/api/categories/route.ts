@@ -14,4 +14,20 @@ const GET = async (request: NextRequest): Promise<NextResponse> => {
     }
 };
 
-export { GET };
+const POST = async (request: NextRequest): Promise<NextResponse> => {
+    try {
+        const data = await request.json();
+        const res = await api.post("/categories", data);
+        return NextResponse.json(
+            { message: res.data.message },
+            { status: res.status }
+        );
+    } catch (error: any) {
+        return NextResponse.json(
+            { error: "Failed to submit data" },
+            { status: error.response.status }
+        );
+    }
+};
+
+export { GET, POST };
