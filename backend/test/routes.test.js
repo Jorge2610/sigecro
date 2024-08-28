@@ -66,7 +66,6 @@ describe("POST /news", () => {
                 user_id: 1,
             })
             .attach("image", "test/files/test-peso.jpg");
-        console.log(response.body.message);
         expect(response.statusCode).toBe(500);
     });
 
@@ -153,3 +152,21 @@ describe("POST /news/scraping", () => {
         expect(response.statusCode).toBe(503);
     });
 });
+
+describe("POST /categories",()=>{
+  const name= "name"+ Math.random();
+  test("should respond with a 200 status code", async()=>{
+    const response = await request(app).post("/api/categories").send({
+      data:{name:name,
+        description:""}
+    });
+    expect(response.statusCode).toBe(200);
+  })
+  test("should respond with a 409 status code", async()=>{
+    const response = await request(app).post("/api/categories").send({
+      data:{name:name,
+        description:""}
+    });
+    expect(response.statusCode).toBe(409);
+  })
+})
