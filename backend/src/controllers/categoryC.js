@@ -17,12 +17,19 @@ const getAllCategories = async (req, res, next) => {
     next(error);
   }
 };
+/**
+ * Envia los datos de una categoria a la base de datos.
+ *
+ * @param {object} req - La entrada HTTP.
+ * @param {object} res - La respuesta HTTP.
+ * @param {function} next - La función de middleware siguiente.
+ * @return {json} Un JSON con las categorias.
+ */
 const addCategory= async (req,res,next)=>{
   try{
     const category =await Category.postCategory(req.body.data);
-    res.status(200).json(category);
+    res.sendStatus(200);
   }catch(error){
-    console.log(error)
     if(error.code=='ECONNREFUSED')
       res.status(503).json({message:error.message})
     else{

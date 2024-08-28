@@ -17,7 +17,6 @@ const GET = async (request: NextRequest): Promise<NextResponse> => {
 const POST = async (request: NextRequest): Promise<NextResponse> => {
     try {
         const data = await request.json();
-        console.log(data)
         const res = await api.post("/categories", data);
         return NextResponse.json(
             { message: res.data.message },
