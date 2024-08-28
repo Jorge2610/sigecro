@@ -7,7 +7,7 @@ import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ACCEPTED_IMAGE_TYPES, MESSAGES } from "../newsInterfaces";
-import Popup from "../../ui/popup";
+import { Popup, PopupState } from "../../ui/popup";
 import { InputTextAreaForm, InputSelectForm } from "../manual/InputFormText";
 import { InputFileForm } from "./InputFile";
 import axios from "axios";
@@ -26,7 +26,10 @@ const AutomaticPreview = ({
     const [imageURL, setImageURL] = useState<string>("");
     const imageRef = useRef<HTMLImageElement>(null);
     const formSchema = z.object({
-        summary: z.string().min(1, { message: MESSAGES.summary.required }),
+        summary: z
+            .string()
+            .trim()
+            .min(1, { message: MESSAGES.summary.required }),
         image: z
             .instanceof(File)
             .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
@@ -36,10 +39,14 @@ const AutomaticPreview = ({
                 message: MESSAGES.image.size,
             })
             .optional(),
-        category_id: z.string().min(1).max(10),
+        category_id: z.object({
+            id: z.string().min(1).max(10),
+            name: z.string(),
+        }),
     });
 
     const { toast } = useToast();
+    const [open, setOpen] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -92,20 +99,25 @@ const AutomaticPreview = ({
         formData.append("summary", data?.summary ?? "");
         data?.image && formData.append("image", data?.image, data?.image.name);
         formData.append("status", "draft");
-        formData.append("category_id", data?.category_id ?? "");
+        formData.append("category_id", data?.category_id.id ?? "");
         formData.append("user_id", "1");
         return formData;
     };
 
     /**
-     * Envia la noticia a revisión para ser publicada.
-     *
+     * Hace visible la alerta de confirmación de publicación de la noticia.
+     * @return {void}
+     */
+    const onSubmit = (): void => {
+        setOpen(true);
+    };
+
+    /**
      * Esta función es responsable de enviar el articulo de noticia al servidor,
      * y mostrar un toast basado en la respuesta del servidor.
-     *
      * @return {Promise<void>}
      */
-    const onSubmit = async (): Promise<void> => {
+    const submitData = async (): Promise<void> => {
         try {
             const formData = getFormData(form.getValues());
             const response = await axios.post(`/api/news`, formData);
@@ -203,14 +215,20 @@ const AutomaticPreview = ({
                         >
                             <Button variant="outline">Cancelar</Button>
                         </Popup>
-                        <Popup
+                        <Button type="submit"> Publicar </Button>
+                        <PopupState
                             title={messages.popupPublic.title}
                             description={messages.popupPublic.description}
                             href="/administrar-noticias"
-                            action={onSubmit}
-                        >
-                            <Button> Publicar </Button>
-                        </Popup>
+                            openState={open}
+                            onClose={() => {
+                                setOpen(false);
+                            }}
+                            onConfirm={() => {
+                                submitData();
+                                setOpen(false);
+                            }}
+                        />
                     </div>
                 </form>
             </Form>

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
+import api from "../../apiConfig";
 
 export async function POST(request: NextRequest) {
     try {
         const data = await request.json();
-        const res = await axios.post(process.env.API_HOST + "/news/scraping", {
+        const res = await api.post("/news/scraping", {
             url: data.url,
         });
         return NextResponse.json(res.data, { status: res.status });
