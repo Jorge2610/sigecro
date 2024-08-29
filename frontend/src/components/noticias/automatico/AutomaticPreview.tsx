@@ -8,8 +8,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ACCEPTED_IMAGE_TYPES, MESSAGES } from "../newsInterfaces";
 import { Popup, PopupState } from "../../ui/popup";
-import { InputTextAreaForm, InputSelectForm } from "../manual/InputFormText";
-import { InputFileForm } from "./InputFile";
+import {
+    InputTextAreaForm,
+    InputSelectForm,
+    InputFileForm,
+} from "../manual/InputFormText";
 import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -158,8 +161,9 @@ const AutomaticPreview = ({
                     </div>
                     <InputFileForm
                         name="image"
-                        label="Imagen"
+                        label={messages.image.label}
                         control={form.control}
+                        nameImage={form.getValues().image?.name ?? null}
                         updateImage={updateImage}
                     />
                     {imageURL && (

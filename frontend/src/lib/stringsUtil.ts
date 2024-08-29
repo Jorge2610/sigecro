@@ -26,19 +26,4 @@ const splitIntoParagraphs = (text: string): string[] => {
     return paragraphs.filter((paragraph) => paragraph.trim() !== "");
 };
 
-/**
- * Trunca un texto dado a una longitud especificada.
- *
- * @param {string} text - La entrada de texto a ser truncada.
- * @param {number} length - La longitud de la cadena truncada.
- * @return {string} El texto truncado.
- */
-
-const truncateText = (text: string, length: number): string => {
-    if (text.length > length) {
-        return text.substring(0, length) + "...";
-    }
-    return text;
-};
-
-export { capitalizeWords, splitIntoParagraphs, truncateText };
+export { capitalizeWords, splitIntoParagraphs };

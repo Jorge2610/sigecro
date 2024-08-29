@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import InputTags from "./tags";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { truncateText } from "@/lib/stringsUtil";
+
 type Props = {
     control: any;
     name: string;
@@ -31,6 +31,7 @@ type Props = {
     array?: { id: string; name: string }[];
     rows?: number;
     nameImage?: string | null;
+    updateImage?: () => void;
 };
 const InputForm = ({ control, name, label, placeholder, max }: Props) => {
     return (
@@ -149,7 +150,13 @@ const InputSelectForm = ({ control, name, label, array }: Props) => {
     );
 };
 
-const InputFileForm = ({ control, name, label, nameImage }: Props) => {
+const InputFileForm = ({
+    control,
+    name,
+    label,
+    nameImage,
+    updateImage,
+}: Props) => {
     const inputFileRef = useRef<HTMLInputElement>(null);
     const [fileName, setFileName] = useState<string | null>(nameImage ?? null);
 
@@ -169,6 +176,7 @@ const InputFileForm = ({ control, name, label, nameImage }: Props) => {
             setFileName(file.name);
             onChange(file);
         }
+        updateImage !== undefined ? updateImage() : "";
     };
 
     /**
@@ -192,6 +200,7 @@ const InputFileForm = ({ control, name, label, nameImage }: Props) => {
         if (inputFileRef.current) {
             inputFileRef.current.value = "";
         }
+        updateImage !== undefined ? updateImage() : "";
     };
 
     return (
@@ -202,12 +211,12 @@ const InputFileForm = ({ control, name, label, nameImage }: Props) => {
                 <FormItem>
                     <FormLabel>{label}</FormLabel>
                     <FormControl>
-                        <div className="flex flex-nowrap flex-row max-w-full w-full gap-4 justify-between">
+                        <div className="flex flex-nowrap w-full gap-4 justify-between">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={handleButtonClick}
-                                className="flex flex-auto align-middle gap-2"
+                                className="flex flex-auto align-middle gap-2 w-[85%]"
                             >
                                 <span className="material-symbols-outlined text-sig-gray3 font-thin">
                                     image
@@ -232,7 +241,7 @@ const InputFileForm = ({ control, name, label, nameImage }: Props) => {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => handleClearFile(onChange)}
-                                    className="hover:bg-sig-red hover:text-sig-gray1 h-auto max-w-10 p-2 flex-auto"
+                                    className="hover:bg-sig-red hover:text-sig-gray1 h-auto p-2"
                                 >
                                     <X className="h-4 w-4" />
                                 </Button>
