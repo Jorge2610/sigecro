@@ -177,6 +177,7 @@ const NewsForm = ({
                             name="image"
                             label={messages.image.label}
                             control={form.control}
+                            nameImage={form.getValues().image?.name ?? null}
                         />
 
                         <InputTagsForm

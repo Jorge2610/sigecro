@@ -9,12 +9,12 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const FormSchema = z.object({
-  title: z.string().min(1, { message: messages.title.required }),
-  content: z.string().min(1, { message: messages.content.required }),
+  title: z.string().trim().min(1, { message: messages.title.required }),
+  content: z.string().trim().min(1, { message: messages.content.required }),
   date: z
     .date({ required_error: messages.date.required })
     .max(new Date(), { message: messages.date.max }),
-  source: z.string().min(1, { message: messages.source.required }),
+  source: z.string().trim().min(1, { message: messages.source.required }),
   url: z
     .union([
       z.string().regex(new RegExp(/https?:\/{2}(\w+\.)+\w+\/\w*/), {
@@ -23,7 +23,7 @@ const FormSchema = z.object({
       z.literal(""),
     ])
     .optional(),
-  summary: z.string().min(1, { message: messages.summary.required }),
+  summary: z.string().trim().min(1, { message: messages.summary.required }),
   image: z
     .instanceof(File)
     .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
@@ -34,12 +34,12 @@ const FormSchema = z.object({
     })
     .optional(),
   status: z.enum(["draft", "published", "refused"]).default("draft"),
-  tags: z.array(z.string()).optional(),
+  tags: z.array(z.string().trim()).optional(),
   category: z.object({
-    id: z.string().min(1).max(10),
+    id: z.string().trim().min(1).max(10),
     name: z.string(),
   }),
-  user_id: z.string().min(1).max(10),
+  user_id: z.string().trim().min(1).max(10),
 });
 
 type Data = z.infer<typeof FormSchema>;
