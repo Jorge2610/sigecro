@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -14,7 +16,7 @@ import {
     InputTagsForm,
 } from "../manual/InputFormText";
 import axios from "axios";
-import { useState, useRef, SetStateAction } from "react";
+import { useState, useRef, SetStateAction, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
 import Image from "next/image";
@@ -49,13 +51,27 @@ const AutomaticPreview = ({ newsData, setNewsData }: AutomaticPreviewProps) => {
                 message: MESSAGES.image.size,
             })
             .optional(),
+        tags: z.array(z.string().trim()).optional(),
+        status: z.enum(["draft", "published", "refused"]).default("draft"),
     });
+
+    useEffect(() => {
+        form.setValue("tags", tags);
+        duplicatedTags
+            ? form.setError("tags", {
+                  type: "manual",
+                  message: messages.tags.unique,
+              })
+            : form.clearErrors("tags");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tags, duplicatedTags]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             summary: "",
             image: undefined,
+            tags: [],
         },
     });
 
@@ -101,7 +117,8 @@ const AutomaticPreview = ({ newsData, setNewsData }: AutomaticPreviewProps) => {
         formData.append("url", newsData?.url ?? "");
         formData.append("summary", data?.summary ?? "");
         data?.image && formData.append("image", data?.image, data?.image.name);
-        formData.append("status", "draft");
+        formData.append("status", data?.status ?? "");
+        data?.tags && formData.append("tags", JSON.stringify(data?.tags));
         formData.append("category_id", newsData?.category_id ?? "");
         formData.append("user_id", "1");
         return formData;
