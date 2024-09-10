@@ -21,9 +21,9 @@ const RootLayout = ({
             <head>
                 <link rel="icon" href="/logo.webp" sizes="any" />
             </head>
-            <body className="relative flex flex-col max-w-[100svw] min-h-[100svh] font-montserrat text-sig-text">
+            <body className="relative flex flex-col max-w-[100dvw] min-h-[100dvh] font-montserrat text-sig-text">
                 <Navigation />
-                <div className="grow pb-14 pt-4 px-[5%] md:px-[10%] bg-sig-gray1">
+                <div className="grow pb-14 pt-4 px-[5%] md:pl-[calc(10%+60px)] md:pr-[10%] bg-sig-gray1">
                     <SigBread />
                     {children}
                 </div>

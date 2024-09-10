@@ -1,7 +1,11 @@
+"use client";
+
+import { InputSelectForm } from "../manual/InputFormText";
+import { useRouter } from "next/navigation";
 import axios from "axios";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -13,20 +17,27 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
-import AutomaticPreview from "./AutomaticPreview";
-import { NewsData } from "../newsInterfaces";
+import { useState, useContext } from "react";
 import messages from "../newsMessages.json";
 import { useToast } from "@/components/ui/use-toast";
+import { AutomaticContext } from "./AutomaticProvider";
+import { NewsData } from "../newsInterfaces";
 
-const RegistroAutomatico = ({ categories }: { categories: any }) => {
+const RegistroAutomatico = () => {
+    const router = useRouter();
+    const context = useContext(AutomaticContext);
+    const categories = context?.categories;
+    const setNewsData = context?.setNewsData;
     const { toast } = useToast();
-    const [newsData, setNewsData] = useState<NewsData>();
     const [extracting, setExtracting] = useState(false);
 
     const formSchema = z.object({
         url: z.string().regex(new RegExp(/https?:\/{2}(\w+\.)+\w+\/\w*/), {
             message: "La URL ingresada no es válida",
+        }),
+        category_id: z.object({
+            id: z.string().min(1).max(10),
+            name: z.string(),
         }),
     });
 
@@ -34,11 +45,12 @@ const RegistroAutomatico = ({ categories }: { categories: any }) => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             url: "",
+            category_id: categories[0],
         },
     });
 
     /**
-     * Envia la URL de la noticia para la obtención de sus datos .
+     * Envia la URL de la noticia para la obtención de sus datos y si los datos se obtienen correctamente redirecciona la pagina.
      *
      * @param {z.infer<typeof FormSchema>} values - Los datos de el formulario.
      * @return {Promise<void>}
@@ -52,14 +64,18 @@ const RegistroAutomatico = ({ categories }: { categories: any }) => {
                 url: values.url,
             })
             .then((response) => {
-                const data: NewsData = {
+                const newsData: NewsData = {
                     url: response.data.url,
                     title: response.data.title,
                     dateTime: new Date(response.data.dateTime),
                     source: response.data.source,
                     content: response.data.content,
+                    category_id: form.getValues().category_id.id,
                 };
-                setNewsData(data);
+                setNewsData ? setNewsData(newsData) : "";
+                router.push(
+                    "/administrar-noticias/registro/asistido/vista-previa"
+                );
             })
             .catch((error) => {
                 toast({
@@ -78,12 +94,19 @@ const RegistroAutomatico = ({ categories }: { categories: any }) => {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-4"
                 >
+                    <InputSelectForm
+                        name="category_id"
+                        label="Categoría"
+                        control={form.control}
+                        placeholder="Seleccione una categoría"
+                        array={categories}
+                    />
                     <FormField
                         control={form.control}
                         name="url"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>URL*</FormLabel>
+                                <FormLabel>URL *</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="url"
@@ -95,7 +118,12 @@ const RegistroAutomatico = ({ categories }: { categories: any }) => {
                             </FormItem>
                         )}
                     />
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-4">
+                        <Button asChild variant={"outline"}>
+                            <Link href="/administrar-noticias/registro">
+                                Atrás
+                            </Link>
+                        </Button>
                         <Button type="submit" disabled={extracting}>
                             {extracting ? (
                                 <>
@@ -127,12 +155,6 @@ const RegistroAutomatico = ({ categories }: { categories: any }) => {
                     </div>
                 </form>
             </Form>
-            <Separator className="my-4" />
-            {newsData !== undefined ? (
-                <AutomaticPreview newsData={newsData} categories={categories} />
-            ) : (
-                ""
-            )}
         </div>
     );
 };

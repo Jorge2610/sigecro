@@ -9,7 +9,15 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
+    BreadcrumbEllipsis,
 } from "@/components/ui/breadcrumb";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Divide } from "lucide-react";
 
 const SigBread = () => {
     interface BreadData {
@@ -19,6 +27,7 @@ const SigBread = () => {
 
     let paths: Array<string> = usePathname().split("/");
     const page: string = paths[paths.length - 1];
+    const penultimatePage: string = paths[paths.length - 2];
     paths = paths.slice(1, paths.length - 1);
 
     const getURL = (index: number) => {
@@ -63,7 +72,7 @@ const SigBread = () => {
                         return (
                             <div
                                 key={data.path}
-                                className="inline-flex items-center gap-1.5"
+                                className="hidden md:inline-flex items-center gap-1.5"
                             >
                                 <BreadcrumbItem>
                                     <BreadcrumbLink asChild>
@@ -76,6 +85,31 @@ const SigBread = () => {
                             </div>
                         );
                     })}
+                    <div className="inline-flex items-center gap-1.5 md:hidden">
+                        <BreadcrumbItem>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger className="flex items-center gap-1">
+                                    <BreadcrumbEllipsis className="h-4 w-4" />
+                                    <span className="sr-only">Toggle menu</span>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                    {breadData.map((data) => {
+                                        return (
+                                            <DropdownMenuItem
+                                                asChild
+                                                key={data.path}
+                                            >
+                                                <Link href={data.pathUrl}>
+                                                    {data.path}
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        );
+                                    })}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator>/</BreadcrumbSeparator>
+                    </div>
                     {page.length > 0 ? (
                         <BreadcrumbItem>
                             <BreadcrumbPage>

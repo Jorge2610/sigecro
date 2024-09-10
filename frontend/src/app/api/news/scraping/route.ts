@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import api from "../../apiConfig";
 
-export async function POST(request: NextRequest) {
+const POST = async (request: NextRequest) => {
     try {
         const data = await request.json();
         const res = await api.post("/news/scraping", {
@@ -14,4 +14,6 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         );
     }
-}
+};
+
+export { POST };

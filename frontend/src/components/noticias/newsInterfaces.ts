@@ -4,6 +4,7 @@ interface NewsData {
   dateTime: Date;
   source: string;
   content: Array<string>;
+  category_id: string;
 }
 
 const ACCEPTED_IMAGE_TYPES = [

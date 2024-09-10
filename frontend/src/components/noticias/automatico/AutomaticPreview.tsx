@@ -10,28 +10,31 @@ import { ACCEPTED_IMAGE_TYPES, MESSAGES } from "../newsInterfaces";
 import { Popup, PopupState } from "../../ui/popup";
 import {
     InputTextAreaForm,
-    InputSelectForm,
     InputFileForm,
+    InputTagsForm,
 } from "../manual/InputFormText";
 import axios from "axios";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, SetStateAction } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const AutomaticPreview = ({
-    newsData,
-    categories,
-}: {
-    newsData: NewsData;
-    categories: any;
-}) => {
+type AutomaticPreviewProps = {
+    newsData: NewsData | undefined;
+    setNewsData:
+        | React.Dispatch<SetStateAction<NewsData | undefined>>
+        | undefined;
+};
+
+const AutomaticPreview = ({ newsData, setNewsData }: AutomaticPreviewProps) => {
+    const router = useRouter();
     const [imageURL, setImageURL] = useState<string>("");
     const imageRef = useRef<HTMLImageElement>(null);
     const { toast } = useToast();
     const [open, setOpen] = useState(false);
-    const router = useRouter();
+    const [duplicatedTags, setDuplicatedTags] = useState<boolean>(false);
+    const [tags, setTags] = useState<string[]>([]);
     const formSchema = z.object({
         summary: z
             .string()
@@ -46,10 +49,6 @@ const AutomaticPreview = ({
                 message: MESSAGES.image.size,
             })
             .optional(),
-        category_id: z.object({
-            id: z.string().min(1).max(10),
-            name: z.string(),
-        }),
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -57,7 +56,6 @@ const AutomaticPreview = ({
         defaultValues: {
             summary: "",
             image: undefined,
-            category_id: categories[0],
         },
     });
 
@@ -82,7 +80,7 @@ const AutomaticPreview = ({
      */
     const getFormatedContent = (): string => {
         let formatedContent: string = "";
-        newsData.content.map((paragraph) => {
+        newsData?.content.map((paragraph) => {
             formatedContent += paragraph + "\n\n";
         });
         return formatedContent;
@@ -96,15 +94,15 @@ const AutomaticPreview = ({
      */
     const getFormData = (data: z.infer<typeof formSchema>): FormData => {
         const formData = new FormData();
-        formData.append("title", newsData.title);
+        formData.append("title", newsData?.title ?? "");
         formData.append("content", getFormatedContent());
-        formData.append("date", newsData.dateTime.toISOString());
-        formData.append("source", newsData.source);
-        formData.append("url", newsData.url);
+        formData.append("date", newsData?.dateTime.toISOString() ?? "");
+        formData.append("source", newsData?.source ?? "");
+        formData.append("url", newsData?.url ?? "");
         formData.append("summary", data?.summary ?? "");
         data?.image && formData.append("image", data?.image, data?.image.name);
         formData.append("status", "draft");
-        formData.append("category_id", data?.category_id.id ?? "");
+        formData.append("category_id", newsData?.category_id ?? "");
         formData.append("user_id", "1");
         return formData;
     };
@@ -133,96 +131,93 @@ const AutomaticPreview = ({
         }
     };
     return (
-        <div className="flex flex-col gap-4">
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(() => setOpen(true))}
-                    className="space-y-6"
-                >
-                    <a
-                        href={newsData.url}
-                        target="_blank"
-                        className="underline"
-                    >
-                        {newsData.url}
-                    </a>
-                    <h2 className="text-3xl font-lora font-medium">
-                        {newsData.title}
-                    </h2>
-                    <div className="flex items-center">
-                        <span className="material-symbols-outlined text-sig-text mr-2">
-                            newspaper
-                        </span>
-                        {newsData.source}
-                        <span className="material-symbols-outlined text-sig-text ml-4 mr-2">
-                            calendar_clock
-                        </span>
-                        {format(newsData.dateTime, "dd-MM-yyyy HH:mm")}
-                    </div>
-                    <InputFileForm
-                        name="image"
-                        label={messages.image.label}
-                        control={form.control}
-                        nameImage={form.getValues().image?.name ?? null}
-                        updateImage={updateImage}
-                    />
-                    {imageURL && (
-                        <div className="w-full h-[300px]">
-                            <Image
-                                src={imageURL}
-                                width={300}
-                                height={200}
-                                className="h-[300px] w-auto m-auto p-4"
-                                alt="image"
-                                ref={imageRef}
-                            />
-                        </div>
-                    )}
-                    <div>
-                        {newsData.content.map((paragraph, i) => {
-                            return (
-                                <p className="mb-4" key={i}>
-                                    {paragraph}
-                                </p>
-                            );
-                        })}
-                    </div>
-                    <Separator className="mt-[-1rem]" />
-                    <InputSelectForm
-                        name="category_id"
-                        label="Categoría"
-                        control={form.control}
-                        placeholder="Seleccione una categoría"
-                        array={categories}
-                    />
-                    <InputTextAreaForm
-                        name="summary"
-                        label="Resumen*"
-                        control={form.control}
-                        placeholder="Escriba el resumen..."
-                    />
-                    <div className="flex justify-end gap-4">
-                        <Popup
-                            title={messages.popupCancel.title}
-                            description={messages.popupCancel.description}
-                            href="/administrar-noticias"
-                        >
-                            <Button variant="outline">Cancelar</Button>
-                        </Popup>
-                        <Button type="submit"> Publicar </Button>
-                        <PopupState
-                            title={messages.popupPublic.title}
-                            description={messages.popupPublic.description}
-                            openState={open}
-                            onClose={() => {
-                                setOpen(false);
-                            }}
-                            onConfirm={submitData}
+        <Form {...form}>
+            <form
+                onSubmit={form.handleSubmit(() => setOpen(true))}
+                className="space-y-4"
+            >
+                <h2 className="text-3xl font-lora font-medium mb-2">
+                    {newsData?.title}
+                </h2>
+                <a href={newsData?.url} target="_blank" className="underline">
+                    {newsData?.url}
+                </a>
+                <div className="flex items-center">
+                    <span className="material-symbols-outlined text-sig-text mr-2">
+                        newspaper
+                    </span>
+                    {newsData?.source}
+                    <span className="material-symbols-outlined text-sig-text ml-4 mr-2">
+                        calendar_clock
+                    </span>
+                    {newsData !== undefined
+                        ? format(newsData.dateTime, "dd-MM-yyyy HH:mm")
+                        : ""}
+                </div>
+                <InputFileForm
+                    name="image"
+                    label={messages.image.label}
+                    control={form.control}
+                    nameImage={form.getValues().image?.name ?? null}
+                    updateImage={updateImage}
+                />
+                {imageURL && (
+                    <div className="w-full h-[300px]">
+                        <Image
+                            src={imageURL}
+                            width={300}
+                            height={200}
+                            className="h-[300px] w-auto m-auto p-4"
+                            alt="image"
+                            ref={imageRef}
                         />
                     </div>
-                </form>
-            </Form>
-        </div>
+                )}
+                <div>
+                    {newsData?.content.map((paragraph: any, i: any) => {
+                        return (
+                            <p className="mb-4" key={i}>
+                                {paragraph}
+                            </p>
+                        );
+                    })}
+                </div>
+                <Separator />
+                <InputTextAreaForm
+                    name="summary"
+                    label="Resumen *"
+                    control={form.control}
+                    placeholder="Escriba el resumen..."
+                />
+                <InputTagsForm
+                    setDuplicatedTags={setDuplicatedTags}
+                    control={form.control}
+                    name="tags"
+                    label={messages.tags.label}
+                    tags={tags}
+                    setTags={setTags}
+                />
+                <div className="flex justify-end gap-4">
+                    <Popup
+                        title={messages.popupCancel.title}
+                        description={messages.popupCancel.description}
+                        href="/administrar-noticias/registro/asistido"
+                    >
+                        <Button variant="outline">Cancelar</Button>
+                    </Popup>
+                    <Button type="submit"> Publicar </Button>
+                    <PopupState
+                        title={messages.popupPublic.title}
+                        description={messages.popupPublic.description}
+                        openState={open}
+                        onClose={() => {
+                            setOpen(false);
+                        }}
+                        onConfirm={submitData}
+                    />
+                </div>
+            </form>
+        </Form>
     );
 };
 

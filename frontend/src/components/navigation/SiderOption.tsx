@@ -29,14 +29,22 @@ const SiderOption = ({
                 <Link href={link}>
                     <span
                         className={
-                            isSelected
-                                ? "material-symbols-outlined text-sig-white hover:cursor-pointer me-4"
-                                : "material-symbols-outlined text-sig-blue hover:cursor-pointer hover:text-sig-hblue me-4"
+                            "material-symbols-outlined hover:cursor-pointer me-4" +
+                            (isSelected
+                                ? " text-sig-white"
+                                : " text-sig-blue hover:text-sig-hblue ")
                         }
                     >
                         {icon}
                     </span>
-                    {expanded ? text : ""}
+                    <span
+                        className={
+                            "transition-all duration-300 ease-in-out " +
+                            (expanded ? "opacity-100" : "opacity-0")
+                        }
+                    >
+                        {expanded ? text : ""}
+                    </span>
                 </Link>
             </Button>
         </div>

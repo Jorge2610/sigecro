@@ -4,7 +4,7 @@ import Link from "next/link";
 const AdministrarNoticias = () => {
     return (
         <Button asChild title={"Registrar noticia"}>
-            <Link href={"/administrar-noticias/registrar"}>
+            <Link href={"/administrar-noticias/registro"}>
                 Registrar noticia
             </Link>
         </Button>
