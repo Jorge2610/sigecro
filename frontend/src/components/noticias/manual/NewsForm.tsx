@@ -156,6 +156,8 @@ const NewsForm = ({
                             control={form.control}
                             placeholder={messages.summary.placeholder}
                         />
+                        
+                        <Button>Resumen</Button>
 
                         <InputForm
                             name="url"
