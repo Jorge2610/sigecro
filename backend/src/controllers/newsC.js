@@ -1,5 +1,6 @@
 import { News } from "../models/newsM.js";
 import { getSource } from "../utils/scraping/newsScraping.js";
+import URLs from "../models/urlsM.js";
 import workerPool from "../utils/workers/WorkerPool.js";
 import axios from "axios";
 import http from "http";
@@ -94,7 +95,7 @@ const getNewsData = async (req, res, next) => {
         const response = await axiosInstance
             .get(req.body.url)
             .then((res) => res.data);
-        const data = await workerPool.run("getData", source, response);
+        const data = await workerPool.run("urlScraping", source, response);
         data.source = source;
         data.url = req.body.url;
         res.json(data);
@@ -103,4 +104,34 @@ const getNewsData = async (req, res, next) => {
     }
 };
 
-export { getNewsData, setNews };
+/**
+ * Processes a batch of URLs from the request body, prepares them for insertion into the database,
+ * and executes a batch insert operation.
+ *
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<void>} Sends an HTTP status code in the response after attempting to insert the URLs.
+ */
+const setURLsBatch = async (req, res) => {
+    if (req.body.urls === "") {
+        res.sendStatus(503);
+        return;
+    }
+    const urls = req.body.urls.split("\n");
+    let valuesPlaceholders = "";
+    for (let i = 0; i < urls.length; i++) {
+        urls[i] = [urls[i], req.body.user_id, req.body.category_id];
+        valuesPlaceholders += `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`;
+        if (i < urls.length - 1) {
+            valuesPlaceholders += ", ";
+        }
+    }
+    const values = urls.flat();
+    const result = await URLs.setURLsBatch(valuesPlaceholders, values);
+    if (result === 200 && !workerPool.processingURLs) {
+        workerPool.run("processURLs");
+    }
+    res.sendStatus(result);
+};
+
+export { getNewsData, setNews, setURLsBatch };

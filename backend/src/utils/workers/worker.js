@@ -1,5 +1,5 @@
 import { parentPort } from "worker_threads";
-import { getData } from "../scraping/newsScraping.js";
+import { getData, processURLs } from "../scraping/newsScraping.js";
 
 /**
  * Handles messages received from the main thread.
@@ -13,12 +13,14 @@ import { getData } from "../scraping/newsScraping.js";
 parentPort.on("message", async ({ taskName, args }) => {
     let result;
     switch (taskName) {
-        case "getData":
-            console.log("args", ...args);
+        case "urlScraping":
             result = getData(...args);
             break;
+        case "processURLs":
+            result = await processURLs();
+            break;
         default:
-            result = null;
+            result = "Task not supported";
     }
     parentPort.postMessage(result);
 });

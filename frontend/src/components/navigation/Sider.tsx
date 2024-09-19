@@ -26,7 +26,7 @@ const Sider = ({
 
     const getSiderClass = () => {
         let baseClass =
-            "absolute flex flex-col w-[100svw] md:h-[calc(100svh-100px)] rounded-b-lg md:rounded-none transition-all duration-300 ease-in-out bg-sig-gray2 z-20 ";
+            "absolute flex flex-col w-[100svw] md:h-[100svh] rounded-b-lg md:rounded-none transition-all duration-300 ease-in-out bg-sig-gray2 z-20 ";
         return isExpanded
             ? baseClass + `h-[166px] md:w-[240px]`
             : baseClass + "h-0 md:w-[60px]";

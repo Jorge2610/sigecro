@@ -170,3 +170,21 @@ describe("POST /categories",()=>{
     expect(response.statusCode).toBe(409);
   })
 })
+
+describe("POST /news/scraping/batch", () => {
+    test("should respond with a 200 status if everything its ok.", async () => {
+        const response = await request(app).post("/api/news/scraping/batch").send({
+            urls: "https://www.lostiempos.com/actualidad/pais/20240826/tse-preve-entregar-alp-ley-distribucion-escanos-mediados-septiembre\nhttps://www.lostiempos.com/actualidad/economia/20240918/temen-que-bloqueos-impidan-llegar-us-10-mil-millones-exportaciones\nhttps://www.lostiempos.com/actualidad/pais/20240918/del-castillo-advierte-procesar-evo-impulsar-golpe-estado",
+            user_id: 1
+        });
+        expect(response.statusCode).toBe(200);
+    });
+
+    test("should respond with a 503 status code if the URLs are empty.", async () => {
+        const response = await request(app).post("/api/news/scraping/batch").send({
+            urls: "",
+            user_id: 1
+        });
+        expect(response.statusCode).toBe(503);
+    });
+});

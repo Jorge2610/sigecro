@@ -30,6 +30,7 @@ class WorkerPool {
         this.#queue = [];
         this.#workers = [];
         this.#freeWorkers = [];
+        this.processingURLs = false;
         for (let i = 0; i < numThreads; i++) {
             this.#addNewWorker();
         }
@@ -47,6 +48,9 @@ class WorkerPool {
 
             worker.on("message", (result) => {
                 const job = worker.currentJob;
+                if (job.taskName === "processURLs") {
+                    this.processingURLs = false;
+                }
                 job.resolve(result);
                 worker.currentJob = null;
                 this.#freeWorkers.push(worker);
@@ -54,8 +58,9 @@ class WorkerPool {
             });
 
             worker.on("error", (error) => {
+                console.error("Worker error", error);
                 const job = worker.currentJob;
-                job.reject(error);
+                job.reject(new Error(error));
                 this.#workers = this.#workers.filter((w) => w !== worker);
                 worker.terminate();
                 this.#addNewWorker();
@@ -91,6 +96,9 @@ class WorkerPool {
             const worker = this.#freeWorkers.pop();
             const job = this.#queue.shift();
             worker.currentJob = job;
+            if (job.taskName === "processURLs") {
+                this.processingURLs = true;
+            }
             worker.postMessage({
                 taskName: job.taskName,
                 args: job.args,
