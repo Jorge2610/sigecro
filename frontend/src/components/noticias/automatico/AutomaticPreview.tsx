@@ -16,7 +16,7 @@ import {
     InputTagsForm,
 } from "../manual/InputFormText";
 import axios from "axios";
-import { useState, useRef, SetStateAction, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
 import Image from "next/image";

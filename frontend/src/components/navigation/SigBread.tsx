@@ -17,7 +17,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Divide } from "lucide-react";
 
 const SigBread = () => {
     interface BreadData {
@@ -27,7 +26,6 @@ const SigBread = () => {
 
     let paths: Array<string> = usePathname().split("/");
     const page: string = paths[paths.length - 1];
-    const penultimatePage: string = paths[paths.length - 2];
     paths = paths.slice(1, paths.length - 1);
 
     const getURL = (index: number) => {

@@ -111,7 +111,7 @@ VALUES (
     );
 
 -- DATA USERS
-INSERT INTO users (id) VALUES (1);
+INSERT INTO users (id, name) VALUES (1, 'Admin');
 
 -- DATA CATEGORIES
 INSERT INTO categories (id, name) VALUES (1, 'Noticias');

@@ -19,10 +19,10 @@ monthsMap.set("diciembre", "12");
  * @return {JSON} - La información de la noticia.
  */
 const getOpinionData = ($) => {
-  const title = $("h2.title").text().trim();
-  const dateTime = getDateTime($(".content-time").text().trim());
-  const content = getContent($);
-  return { title: title, dateTime: dateTime, content: content };
+    const title = $("h2.title").text().trim();
+    const dateTime = getDateTime($(".content-time").text().trim());
+    const content = getContent($);
+    return { title: title, dateTime: dateTime, content: content };
 };
 
 /**
@@ -32,14 +32,17 @@ const getOpinionData = ($) => {
  * @return {Date} - La fecha de publicación de la noticia.
  */
 const getDateTime = (text) => {
-  text = text.split(" ");
-  const day = text[0];
-  const month = monthsMap.get(text[2]);
-  const year = text[4];
-  const hours = text[5].length === 5 ? text[5][1] + text[5][2] : "0" + text[5][1];
-  const minutes =
-    text[5].length === 5 ? text[5][4] + text[5][5] : text[5][3] + text[5][4];
-  return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
+    text = text.split(" ");
+    const day = text[0];
+    const month = monthsMap.get(text[2]);
+    const year = text[4];
+    const hours =
+        text[5].length === 6 ? text[5][1] + text[5][2] : "0" + text[5][1];
+    const minutes =
+        text[5].length === 6
+            ? text[5][4] + text[5][5]
+            : text[5][3] + text[5][4];
+    return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
 };
 
 /**
@@ -49,17 +52,17 @@ const getDateTime = (text) => {
  * @return {Date} - El contenido de la noticia.
  */
 const getContent = ($) => {
-  const content = [];
-  $(".body p").each((i, element) => {
-    const text = $(element).text().trim();
-    content.push(text);
-  });
-  if (content[content.length - 1].includes("Visítanos en nuestro Canal de")) {
-    content.pop();
-    content.pop();
-    content.pop();
-  }
-  return content;
+    const content = [];
+    $(".body p").each((i, element) => {
+        const text = $(element).text().trim();
+        content.push(text);
+    });
+    if (content[content.length - 1].includes("Visítanos en nuestro Canal de")) {
+        content.pop();
+        content.pop();
+        content.pop();
+    }
+    return content;
 };
 
 export { getOpinionData };

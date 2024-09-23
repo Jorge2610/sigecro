@@ -10,6 +10,8 @@ import { News } from "../../models/newsM.js";
 import dotenv from "dotenv";
 
 dotenv.config();
+const delay = parseInt(process.env.DELAY);
+const retry = parseInt(Math.floor(delay / 2));
 
 const httpAgent = new http.Agent({ keepAlive: false });
 const httpsAgent = new https.Agent({ keepAlive: false });
@@ -77,25 +79,21 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
  * @returns {Promise<string>} A message indicating the process is complete.
  */
 const processURLs = async () => {
-    let urlsQueue = await URLs.getURLs();
-    let processedURLsIds = [];
-    while (urlsQueue.length > 0) {
-        const data = urlsQueue.shift();
-        const source = getSource(data.url);
-        if (source === "Fuente no admitida" || data.trys > 2) {
-            processedURLsIds.push(data.id);
-            await sleep(process.env.RETRY_DELAY);
-        } else {
-            proccesURL(processedURLsIds, urlsQueue, data, source);
-        }
-        if (urlsQueue.length === 0) {
-            const deletedURLs = await URLs.deleteURLs(processedURLsIds);
-            if (deletedURLs) {
-                urlsQueue = await URLs.getURLs();
+    let firstURL = [];
+    do {
+        firstURL = await URLs.getFirstURL();
+        if (firstURL.length > 0) {
+            const data = firstURL[0];
+            const source = getSource(data.url);
+            if (source !== "Fuente no admitida") {
+                let processedURL = false;
+                while (data.trys < 3 && !processedURL) {
+                    processedURL = await proccesURL(data, source);
+                }
             }
-            processedURLsIds = [];
+            await URLs.deleteURL([data.id]);
         }
-    }
+    } while (firstURL.length > 0);
     return "Proccess done...";
 };
 
@@ -103,24 +101,22 @@ const processURLs = async () => {
  * Processes a single URL by fetching data and creating a news record.
  * If an error occurs, the URL is retried a limited number of times.
  *
- * @param {number[]} processedURLsIds - An array of IDs of processed URLs.
- * @param {Object[]} urlsQueue - The queue of URLs to process.
  * @param {Object} data - The data object representing a URL and its associated information.
  * @param {string} source - The source of the URL (used to determine how to process it).
  * @returns {Promise<void>} Resolves when the URL is processed or retried.
  */
-const proccesURL = async (processedURLsIds, urlsQueue, data, source) => {
+const proccesURL = async (data, source) => {
     try {
         const reponse = await axiosInstance.get(data.url);
         const newsData = getData(source, reponse.data);
         newsData.source = source;
         await createNews(newsData, data);
-        processedURLsIds.push(data.id);
-        await sleep(process.env.DELAY);
+        await sleep(delay);
+        return true;
     } catch (error) {
         data.trys = data.trys + 1;
-        urlsQueue.push(data);
-        await sleep(process.env.RETRY_DELAY);
+        await sleep(retry);
+        return false;
     }
 };
 
@@ -149,6 +145,7 @@ const createNews = async (newsData, data) => {
         //Insertar tags en la bd...
     } catch (error) {
         console.error("Error al crear la noticia", error);
+        return new Error(error);
     }
 };
 

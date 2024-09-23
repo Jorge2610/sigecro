@@ -6,7 +6,7 @@ const helps = [
     "Selecciona una categoría la cual será común para todas las URLs.",
     "Ingresa una lista de URLs, una por línea.",
     'Haz clic en "Procesar lote". El sistema procesará cada URL de manera secuencial.',
-    'Monitorea el progreso en la sección "Mis URLs en proceso".',
+    'Monitorea el progreso en la sección "URLs pendientes".',
 ];
 
 const Lote = async () => {

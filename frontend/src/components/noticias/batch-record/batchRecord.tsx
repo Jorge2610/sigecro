@@ -18,9 +18,13 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import { PopupState } from "../../ui/popup";
+import { useState } from "react";
+import { sleep } from "@/lib/utils";
 
 const BatchRecord = ({ categories }: { categories: any }) => {
     const router = useRouter();
+    const [open, setOpen] = useState(false);
     const { toast } = useToast();
 
     const formSchema = z.object({
@@ -41,10 +45,18 @@ const BatchRecord = ({ categories }: { categories: any }) => {
         },
     });
 
-    const onSubmit = async () => {
+    /**
+     * Handles the submission of a form to register a batch of URLs for scraping.
+     * Sends a POST request to the server with the form data, displays a success or failure message,
+     * and redirects the user to the pending URLs page if successful.
+     *
+     * @returns {Promise<void>} Submits the form data, displays a toast notification, and redirects the user on success.
+     */
+    const onSubmit = async (): Promise<void> => {
         try {
+            setOpen(false);
             const res = await axios.post("/api/news/scraping/batch", {
-                urls: form.getValues().urls,
+                urls: form.getValues().urls.trim(),
                 user_id: 1,
                 category_id: form.getValues().category_id.id,
             });
@@ -54,7 +66,8 @@ const BatchRecord = ({ categories }: { categories: any }) => {
                     "El lote de URLs fue registrado y se encuentra en proceso de captura.",
                 variant: "default",
             });
-            //router.push("/administrar-noticias/lote-urls");
+            await sleep(1000);
+            router.push("/administrar-noticias/registro/URLs-pendientes");
         } catch (error) {
             toast({
                 title: "Registro fallido",
@@ -66,7 +79,10 @@ const BatchRecord = ({ categories }: { categories: any }) => {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+                onSubmit={form.handleSubmit(() => setOpen(true))}
+                className="space-y-4"
+            >
                 <InputSelectForm
                     name="category_id"
                     label="Categoría"
@@ -97,6 +113,15 @@ const BatchRecord = ({ categories }: { categories: any }) => {
                         <Link href="/administrar-noticias/registro">Atrás</Link>
                     </Button>
                     <Button type="submit">Procesar lote</Button>
+                    <PopupState
+                        title="Registrar lote"
+                        description="¿Deseas enviar este lote de URLs para su extracción?"
+                        openState={open}
+                        onClose={() => {
+                            setOpen(false);
+                        }}
+                        onConfirm={onSubmit}
+                    />
                 </div>
             </form>
         </Form>

@@ -28,7 +28,7 @@ const registerTypes = [
             "Sube múltiples URLs y procesa los datos de cada una automáticamente.\n",
         href: "/administrar-noticias/registro/lote",
         buttonText: "Iniciar",
-        secondHref: "/administrar-noticias/registro/lote-urls",
+        secondHref: "/administrar-noticias/registro/URLs-pendientes",
         secondButtonText: "Ver URLs",
     },
     {
