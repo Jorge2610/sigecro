@@ -53,7 +53,6 @@ const RegistroAutomatico = () => {
      * Envia la URL de la noticia para la obtención de sus datos y si los datos se obtienen correctamente redirecciona la pagina.
      *
      * @param {z.infer<typeof FormSchema>} values - Los datos de el formulario.
-     * @return {Promise<void>}
      */
     const onSubmit = async (
         values: z.infer<typeof formSchema>

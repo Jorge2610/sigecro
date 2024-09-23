@@ -8,7 +8,7 @@ import { z } from "zod";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ACCEPTED_IMAGE_TYPES, MESSAGES } from "../newsInterfaces";
+import { ACCEPTED_IMAGE_TYPES } from "../newsInterfaces";
 import { Popup, PopupState } from "../../ui/popup";
 import {
     InputTextAreaForm,
@@ -16,7 +16,7 @@ import {
     InputTagsForm,
 } from "../manual/InputFormText";
 import axios from "axios";
-import { useState, useRef, SetStateAction, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
 import Image from "next/image";
@@ -24,12 +24,9 @@ import { useRouter } from "next/navigation";
 
 type AutomaticPreviewProps = {
     newsData: NewsData | undefined;
-    setNewsData:
-        | React.Dispatch<SetStateAction<NewsData | undefined>>
-        | undefined;
 };
 
-const AutomaticPreview = ({ newsData, setNewsData }: AutomaticPreviewProps) => {
+const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
     const router = useRouter();
     const [imageURL, setImageURL] = useState<string>("");
     const imageRef = useRef<HTMLImageElement>(null);
@@ -41,14 +38,14 @@ const AutomaticPreview = ({ newsData, setNewsData }: AutomaticPreviewProps) => {
         summary: z
             .string()
             .trim()
-            .min(1, { message: MESSAGES.summary.required }),
+            .min(1, { message: messages.summary.required }),
         image: z
             .instanceof(File)
             .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
-                message: MESSAGES.image.format,
+                message: messages.image.format,
             })
             .refine((file) => file.size <= 2097152, {
-                message: MESSAGES.image.size,
+                message: messages.image.size,
             })
             .optional(),
         tags: z.array(z.string().trim()).optional(),
@@ -63,7 +60,6 @@ const AutomaticPreview = ({ newsData, setNewsData }: AutomaticPreviewProps) => {
                   message: messages.tags.unique,
               })
             : form.clearErrors("tags");
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tags, duplicatedTags]);
 
     const form = useForm<z.infer<typeof formSchema>>({

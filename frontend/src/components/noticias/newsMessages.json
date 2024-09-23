@@ -1,28 +1,28 @@
 {
   "title": {
     "required": "El título es obligatorio",
-    "label": "Título*",
+    "label": "Título *",
     "placeholder": "Escriba el título de la noticia... "
   },
   "source": {
     "required": "La fuente es obligatoria (Ej: Los Tiempos, Opinión, etc)",
-    "label": "Fuente*",
+    "label": "Fuente *",
     "placeholder": "Escriba la fuente de la noticia..."
   },
   "date": {
     "required": "La fecha es obligatoria",
     "max": "La fecha no puede ser mayor a la fecha actual",
-    "label": "Fecha*",
+    "label": "Fecha *",
     "placeholder": "Seleccione una fecha"
   },
   "content": {
     "required": "El contenido es obligatorio",
-    "label": "Contenido*",
+    "label": "Contenido *",
     "placeholder": "Escriba el contenido de la noticia..."
   },
   "summary": {
-    "required": "El resumen es obligatoria",
-    "label": "Resumen*",
+    "required": "El resumen es obligatorio",
+    "label": "Resumen *",
     "placeholder": "Escriba el resumen de la noticia..."
   },
   "url": {

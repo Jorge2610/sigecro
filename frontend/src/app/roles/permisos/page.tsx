@@ -12,7 +12,7 @@ const Permisos = async () => {
     try {
         const res = await axios.get(`${process.env.API_HOST}/permissions`);
         return (
-            <div>
+            <div className="border rounded-md bg-white">
                 <Table>
                     <TableCaption>Lista de permisos SIGECRO</TableCaption>
                     <TableHeader>

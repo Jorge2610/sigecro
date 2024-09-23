@@ -1,5 +1,6 @@
 import { News } from "../models/newsM.js";
-import { getData, getSource } from "../utils/scraping/newsScraping.js";
+import { getSource } from "../utils/scraping/newsScraping.js";
+import workerPool from "../utils/workers/WorkerPool.js";
 import axios from "axios";
 import http from "http";
 import https from "https";
@@ -93,7 +94,7 @@ const getNewsData = async (req, res, next) => {
         const response = await axiosInstance
             .get(req.body.url)
             .then((res) => res.data);
-        const data = getData(source, response);
+        const data = await workerPool.run("urlScraping", source, response);
         data.source = source;
         data.url = req.body.url;
         res.json(data);
