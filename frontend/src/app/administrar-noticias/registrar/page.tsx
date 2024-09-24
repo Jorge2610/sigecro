@@ -46,7 +46,8 @@ const RegistrarNoticia = () => {
                     </>
                 )}
                 {recordType === "automatic" ? (
-                    <AutomaticRecord categories={categories} />
+                    //<AutomaticRecord categories={categories} />
+                    <></>
                 ) : (
                     <NewsForm
                         preview={preview}

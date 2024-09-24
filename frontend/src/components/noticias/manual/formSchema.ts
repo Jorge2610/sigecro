@@ -23,7 +23,7 @@ const FormSchema = z.object({
       z.literal(""),
     ])
     .optional(),
-  summary: z.string().trim().min(1, { message: messages.summary.required }),
+  summary: z.string().trim().min(1, { message: messages.summary.required }).max(768,{message: messages.summary.max}),
   image: z
     .instanceof(File)
     .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {

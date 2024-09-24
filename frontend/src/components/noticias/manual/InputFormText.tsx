@@ -87,6 +87,7 @@ const InputTextAreaForm = ({
     label,
     placeholder,
     rows = 3,
+    max,
 }: Props) => {
     return (
         <FormField
@@ -101,6 +102,7 @@ const InputTextAreaForm = ({
                             className="resize-none"
                             rows={rows}
                             {...field}
+                            maxLength={max}
                         />
                     </FormControl>
                     <FormMessage />

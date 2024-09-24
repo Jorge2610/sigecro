@@ -82,9 +82,8 @@ const InputTags = ({
         }
     };
 
-
     /**
-     * Genera un conjunto de etiquetas mediante la IA 
+     * Genera un conjunto de etiquetas mediante la IA
      *
      * @return {void}
      */
@@ -148,14 +147,6 @@ const InputTags = ({
                         className="px-3 py-1 text-sm w-100  transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300  "
                     />
                 )}
-            </div>
-            <div className="w-full flex flex-row justify-between align-middle">
-                <p className="text-sig-text text-xs">
-                    {tags.length}/5 Etiquetas
-                </p>
-                <Button onClick={generateIA} type="button">
-                    Generar IA
-                </Button>
             </div>
         </>
     );
