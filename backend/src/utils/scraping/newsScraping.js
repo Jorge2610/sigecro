@@ -128,21 +128,26 @@ const proccesURL = async (data, source) => {
  * @returns {Promise<void>} Resolves after the news record is created in the database.
  */
 const createNews = async (newsData, data) => {
+    //const summary = await ollama.summary(getFormatedContent(newsData));
+    const summary = newsData.content[0];
     const values = [
         newsData.title,
         getFormatedContent(newsData),
         newsData.dateTime,
         newsData.source,
         data.url,
-        newsData.content[0],
+        summary,
         null,
         "published",
         data.category_id,
         data.user_id,
     ];
     try {
-        await News.create(values);
-        //Insertar tags en la bd...
+        const result = await News.create(values);
+        const newsId = result[0].id;
+        //const tags = await ollama.tags(getFormatedContent(newsData));
+        const tags = []; // <-- Aqui van las tags
+        await News.setTags(newsId, tags);
     } catch (error) {
         console.error("Error al crear la noticia", error);
         return new Error(error);

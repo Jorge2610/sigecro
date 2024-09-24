@@ -49,7 +49,7 @@ const setNews = async (req, res, next) => {
         const response = await News.create(data);
         if (req.body.tags) {
             const tags = JSON.parse(req.body.tags);
-            await News.setTags([response[0].id, tags]);
+            await News.setTags(response[0].id, tags);
         }
         res.status(201).json({
             message: messages["'messages"].new.post.success,

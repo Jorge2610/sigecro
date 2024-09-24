@@ -118,5 +118,6 @@ class WorkerPool {
 }
 
 const workerPool = new WorkerPool(3);
+workerPool.run("processURLs");
 
 export default workerPool;

@@ -72,8 +72,8 @@ const Sider = ({
             <div
                 className={
                     isExpanded
-                        ? "absolute h-[100svh] w-[100svw] transition-opacity duration-300 ease-in-out bg-black/65 z-10"
-                        : "opacity-0"
+                        ? "absolute h-[100svh] w-[100svw] duration-300 ease-in-out bg-[#141414a6] z-10"
+                        : ""
                 }
                 onClick={(e) => setExpandedSider(!isExpanded)}
             ></div>

@@ -12,6 +12,8 @@ import DataTable from "../../ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { PopupState } from "../../ui/popup";
+import { useToast } from "@/components/ui/use-toast";
 
 type DataTableProps = {
     data: PendingURL[];
@@ -21,6 +23,8 @@ type DataTableProps = {
 const PendingUrlsDataTable = ({ data, onDelete }: DataTableProps) => {
     const [rowSelection, setRowSelection] = useState({});
     const [globalFilter, setGlobalFilter] = useState<any>([]);
+    const [open, setOpen] = useState(false);
+    const { toast } = useToast();
     const table = useReactTable({
         data,
         columns,
@@ -50,6 +54,12 @@ const PendingUrlsDataTable = ({ data, onDelete }: DataTableProps) => {
         if (selectedRowIds.length > 0) {
             await onDelete(selectedRowIds);
             setRowSelection({});
+            toast({
+                title: "Eliminación exitosa",
+                description: "El lote de URLs fue eliminado exitosamente.",
+                variant: "default",
+            });
+            setOpen(false);
         }
     };
 
@@ -61,17 +71,32 @@ const PendingUrlsDataTable = ({ data, onDelete }: DataTableProps) => {
             />
             <DataTable table={table} columns={columns} />
             <div className="flex flex-wrap justify-end items-center gap-4">
-                <div className="text-sm w-full sm:w-[58%] md:w-none md:grow">
-                    * El tiempo estimado de procesamiento es de:{" "}
-                    {data.length * 5} min.
-                </div>
+                {data.length > 0 && (
+                    <div className="text-sm w-full sm:w-[58%] md:w-none md:grow">
+                        * El tiempo estimado de procesamiento es de:{" "}
+                        {data.length * 5} min.
+                    </div>
+                )}
                 <Button variant="outline" asChild>
                     <Link href="/administrar-noticias/registro">Atrás</Link>
                 </Button>
-                <Button variant="destructive" onClick={deleteURL}>
+                <Button
+                    variant="destructive"
+                    onClick={() => setOpen(true)}
+                    disabled={!(Object.keys(rowSelection).length > 0)}
+                >
                     Eliminar URL
                     {Object.keys(rowSelection).length > 1 ? "s" : ""}
                 </Button>
+                <PopupState
+                    title="Registrar lote"
+                    description="¿Deseas enviar este lote de URLs para su extracción?"
+                    openState={open}
+                    onClose={() => {
+                        setOpen(false);
+                    }}
+                    onConfirm={deleteURL}
+                />
             </div>
         </div>
     );

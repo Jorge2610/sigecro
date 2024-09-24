@@ -52,7 +52,7 @@ const SigBread = () => {
         <div className="mb-4">
             <Breadcrumb>
                 <BreadcrumbList>
-                    {page.length > 0 ? (
+                    {page.length > 0 && (
                         <>
                             <BreadcrumbItem>
                                 <BreadcrumbLink asChild>
@@ -61,10 +61,6 @@ const SigBread = () => {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator>/</BreadcrumbSeparator>
                         </>
-                    ) : (
-                        <BreadcrumbItem>
-                            <BreadcrumbPage>User</BreadcrumbPage>
-                        </BreadcrumbItem>
                     )}
                     {breadData.map((data) => {
                         return (
@@ -83,32 +79,36 @@ const SigBread = () => {
                             </div>
                         );
                     })}
-                    <div className="inline-flex items-center gap-1.5 md:hidden">
-                        <BreadcrumbItem>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center gap-1">
-                                    <BreadcrumbEllipsis className="h-4 w-4" />
-                                    <span className="sr-only">Toggle menu</span>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start">
-                                    {breadData.map((data) => {
-                                        return (
-                                            <DropdownMenuItem
-                                                asChild
-                                                key={data.path}
-                                            >
-                                                <Link href={data.pathUrl}>
-                                                    {data.path}
-                                                </Link>
-                                            </DropdownMenuItem>
-                                        );
-                                    })}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator>/</BreadcrumbSeparator>
-                    </div>
-                    {page.length > 0 ? (
+                    {paths.length > 0 && (
+                        <div className="inline-flex items-center gap-1.5 md:hidden">
+                            <BreadcrumbItem>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger className="flex items-center gap-1">
+                                        <BreadcrumbEllipsis className="h-4 w-4" />
+                                        <span className="sr-only">
+                                            Toggle menu
+                                        </span>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start">
+                                        {breadData.map((data) => {
+                                            return (
+                                                <DropdownMenuItem
+                                                    asChild
+                                                    key={data.path}
+                                                >
+                                                    <Link href={data.pathUrl}>
+                                                        {data.path}
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            );
+                                        })}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator>/</BreadcrumbSeparator>
+                        </div>
+                    )}
+                    {page.length > 0 && (
                         <BreadcrumbItem>
                             <BreadcrumbPage>
                                 {page
@@ -116,8 +116,6 @@ const SigBread = () => {
                                     .replaceAll("-", " ")}
                             </BreadcrumbPage>
                         </BreadcrumbItem>
-                    ) : (
-                        <></>
                     )}
                 </BreadcrumbList>
             </Breadcrumb>

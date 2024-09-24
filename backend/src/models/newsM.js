@@ -1,7 +1,7 @@
 import { query } from "../config/db.js";
 
 class News {
-    /*
+    /**
      * Crea una nueva noticia en la base de datos.
      *
      * @param {object}  data - Un objeto que contiene los datos de la noticia que será insertada.
@@ -21,8 +21,8 @@ class News {
      * @param {object} tags - Un objeto que contiene las etiquetas de la noticia.
      * @return {array}  Un arreglo de campos provistos por la consulta.
      */
-    static async setTags(tags) {
-        const res = await query("call insert_tags($1, $2)", tags);
+    static async setTags(newsId, tags) {
+        const res = await query("call insert_tags($1, $2)", [newsId, tags]);
         return res.rows;
     }
 }

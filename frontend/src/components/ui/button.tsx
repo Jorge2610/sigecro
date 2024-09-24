@@ -5,26 +5,26 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none dark:focus-visible:ring-slate-300",
   {
     variants: {
       variant: {
         default:
-          "bg-sig-blue text-white shadow hover:bg-sig-hblue dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
+          "bg-sig-blue disabled:bg-sig-oblue text-white shadow hover:bg-sig-hblue dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
         destructive:
-          "bg-sig-red text-white shadow-sm hover:bg-sig-hred dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90",
+          "bg-sig-red disabled:bg-sig-ored text-white shadow-sm hover:bg-sig-hred dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90",
         outline:
-          "border border-slate-200 bg-white shadow-sm hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50",
+          "border border-slate-200 bg-white disabled:bg-sig-ogray1 shadow-sm hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50",
         secondary:
-          "bg-sig-golden text-white shadow-sm hover:bg-sig-hgolden dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-800/80",
-        ghost: "text-base text-sig-blue hover:bg-sig-gray3 hover:text-sig-hblue dark:hover:bg-slate-800 dark:hover:text-slate-50",
+          "bg-sig-golden disabled:bg-sig-ogolden text-white shadow-sm hover:bg-sig-hgolden dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-800/80",
+        ghost: "text-base text-sig-blue disabled:bg-sig-ogray1 hover:bg-sig-gray3 hover:text-sig-hblue dark:hover:bg-slate-800 dark:hover:text-slate-50",
         link: "text-white underline-offset-4 hover:underline dark:text-slate-50",
         succes:
-          "bg-sig-green text-white shadow hover:bg-sig-hgreen dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
+          "bg-sig-green disabled:bg-sig-ogreen text-white shadow hover:bg-sig-hgreen dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
         info:
-          "bg-sig-bluesky text-white shadow hover:bg-sig-hbluesky dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
+          "bg-sig-bluesky disabled:bg-sig-obluesky text-white shadow hover:bg-sig-hbluesky dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
         warning: 
-          "bg-sig-yellow text-white shadow hover:bg-sig-hyellow dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
+          "bg-sig-yellow disabled:bg-sig-oyellow text-white shadow hover:bg-sig-hyellow dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
       },
       size: {
         default: "h-9 px-4 py-2",
