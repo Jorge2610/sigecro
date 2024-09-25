@@ -38,9 +38,11 @@ const Navbar = ({
                     </Link>
                 </div>
                 <div className="flex gap-4 justify-end items-center h-[40px]">
-                    <div className="text-lg font-semibold text-white hover:cursor-pointer hover:text-sig-gray3 hidden md:block">
-                        Noticias
-                    </div>
+                    <Link href={"/noticias"}>
+                        <div className="text-lg font-semibold text-white hover:cursor-pointer hover:text-sig-gray3 hidden md:block">
+                            Noticias
+                        </div>
+                    </Link>
                     <div className="text-lg font-semibold text-white hover:cursor-pointer hover:text-sig-gray3 hidden md:block">
                         Cronologías
                     </div>

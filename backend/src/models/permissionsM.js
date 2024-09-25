@@ -2,9 +2,9 @@ import { query } from "../config/db.js";
 
 class Permission {
     /**
-     * Recupera la lista de permisos desde la base de datos.
+     * Retrieves the list of permissions from the database.
      *
-     * @return {object[]} Un arreglo de JSON que representan las categorias.
+     * @return {object[]} An array of JSON objects representing the permissions.
      */
     static async getPermissions() {
         const res = await query(

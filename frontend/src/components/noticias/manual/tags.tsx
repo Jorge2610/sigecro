@@ -88,7 +88,7 @@ const InputTags = ({
      *
      * @return {void}
      */
-    const generateIA = () => {
+    const generateIA = (): void => {
         setTags([]);
         const getTagsIA = [
             "Tecnología",

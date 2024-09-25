@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import api from "@/app/api/apiConfig";
 
-export async function POST(request: NextRequest) {
+const POST = async (request: NextRequest) => {
     try {
         const formData = await request.formData();
         const res = await api.post("/news", formData);
@@ -15,4 +15,22 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         );
     }
-}
+};
+
+const GET = async (request: NextRequest) => {
+    try {
+        const res = await api.get("/news");
+        console.log(res.data);
+        return NextResponse.json({
+            status: res.status,
+            data: res.data,
+        });
+    } catch (error) {
+        return NextResponse.json(
+            { error: "Failed to submit data" },
+            { status: 500 }
+        );
+    }
+};
+
+export { POST, GET };

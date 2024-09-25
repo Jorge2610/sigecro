@@ -1,25 +1,28 @@
 import { query } from "../config/db.js";
 class Category {
-  /**
-   * Recupera una lista de categorias desde la base de datos.
-   *
-   * @return {object[]} Un arreglo de objetos que representan las categorias.
-   */
-  static async getCategories() {
-    const res = await query("SELECT id, name FROM public.categories;", []);
-    return res;
-  }
+    /**
+     * Retrieves a list of categories from the database.
+     *
+     * @return {Promise<object[]>} An array of objects representing the categories.
+     */
+    static async getCategories() {
+        const res = await query("SELECT id, name FROM public.categories;", []);
+        return res;
+    }
 
-  /**
-   * Realiza la insercion de una categoria a la base de datos.
-   *
-   * @param {json} data - Datos de la categoria nombre y descripcion.
-   * @return {object[]} Un arreglo de objetos que representan las categorias.
-   */
-  static async postCategory(data){
-    const res= await query("INSERT INTO categories(name,description) values ($1,$2);",[data.name,data.description]);
-    return res;
-  }
+    /**
+     * Creates a new category in the database.
+     *
+     * @param {object} data - An object containing the category's name and description.
+     * @return {object} The result of the database query.
+     */
+    static async postCategory(data) {
+        const res = await query(
+            "INSERT INTO categories(name,description) values ($1,$2);",
+            [data.name, data.description]
+        );
+        return res;
+    }
 }
 
 export default Category;
