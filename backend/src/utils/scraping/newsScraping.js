@@ -21,6 +21,66 @@ const axiosInstance = axios.create({
     httpsAgent,
 });
 
+const queryOllama = async (prompt) => {
+    const queryPrompt = {
+        model: process.env.MODEL_OLLAMA,
+        prompt: prompt,
+        stream: false,
+    };
+    try {
+        const response = await axios.post(process.env.API_OLLAMA, queryPrompt);
+        return response;
+    } catch (error) {
+        if (error.response) {
+            return error.response;
+        } else {
+            return {
+                status: 500,
+                data: { response: "Error en la solicitud a Ollama" },
+            };
+        }
+    }
+};
+
+const getTagsIA = async (content) => {
+    const prompt =
+        "Genera 5 etiquetas monopalabra en español para el texto que te pase. Tu respuesta solamente debe contener las etiquetas y estas deben estar separadas por una coma." +
+        content;
+    try {
+        const response = await queryOllama(prompt);
+        if (response.status != 200) {
+            return { status: 500, message: "servidor ollama caido" };
+        } else {
+            let tags = response.data.response
+                .split(",")
+                .map((tag) => tag.trim());
+            if (tags[tags.length - 1].endsWith("\n")) {
+                const lastWord = tags.pop();
+                tags.push(lastWord.substring(0, lastWord.length - 2));
+            }
+            return { status: 200, data: tags };
+        }
+    } catch (error) {
+        return { status: 500, message: error };
+    }
+};
+
+const getSummaryIA = async (content) => {
+    const prompt = `Genera un resumen de un texto se te pasara encerrado entre corchetes. El resumen que generes no debe superar los 512 caracteres puede ser de menor longitud pero nunca superar los 512 caracteres. Tu respuesta solo debe contener el resumen pedido. Si te solicitan algo que no sea un resumen, responde: "Lo siento, solo puedo ayudarte a resumir noticias.""[${content}]`;
+    try {
+        const response = await queryOllama(prompt);
+        if (response.status != 200) {
+            return { status: 500, data: "servidor ollama caido" };
+        } else {
+            let summary = response.data.response;
+            if (summary.endsWith("\n"))
+                summary = summary.substring(0, summary.length - 2);
+            return { status: 200, data: summary };
+        }
+    } catch (error) {
+        return { status: 500, message: error };
+    }
+};
 /**
  * Determines the source of a news article based on its URL.
  * Supports checking for known sources and defaults to "Fuente no admitida" if the source is not recognized.
@@ -128,8 +188,11 @@ const proccesURL = async (data, source) => {
  * @returns {Promise<void>} Resolves after the news record is created in the database.
  */
 const createNews = async (newsData, data) => {
-    //const summary = await ollama.summary(getFormatedContent(newsData));
-    const summary = newsData.content[0];
+    const content = getFormatedContent(newsData);
+    const responseSummary = await getSummaryIA(content);
+    let summary;
+    if (responseSummary.status === 500) summary = newsData.content[0];
+    else summary = responseSummary.data;
     const values = [
         newsData.title,
         getFormatedContent(newsData),
@@ -145,8 +208,12 @@ const createNews = async (newsData, data) => {
     try {
         const result = await News.create(values);
         const newsId = result[0].id;
-        //const tags = await ollama.tags(getFormatedContent(newsData));
-        const tags = []; // <-- Aqui van las tags
+        const responseTags = await getTagsIA(content);
+        let tags;
+        if(responseTags.status===500)
+            tags=[];
+        else
+            tags=responseTags.data;
         await News.setTags(newsId, tags);
     } catch (error) {
         console.error("Error al crear la noticia", error);

@@ -13,10 +13,17 @@ const queryOllama = async (prompt) => {
     };
     try {
         const response = await axios.post(process.env.API_OLLAMA, queryPrompt);
-        const summary = response.data.response;
         return response;
     } catch (error) {
-        return error;
+ 
+        if (error.response) {
+            return error.response;
+        } else {
+            return {
+                status: 500,
+                data: { response: "Error en la solicitud a Ollama" }
+            };
+        }
     }
 };
 /**
