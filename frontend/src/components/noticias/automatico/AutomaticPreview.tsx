@@ -21,6 +21,7 @@ import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ButtonLoading from "@/components/ui/button-with-loading";
 
 type AutomaticPreviewProps = {
     newsData: NewsData | undefined;
@@ -143,6 +144,56 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
             });
         }
     };
+
+/**
+ * Genera un resumen del contenido formateado y lo establece en el formulario.
+ *
+ * @returns {Promise<void>} No devuelve ningún valor, pero actualiza el formulario con el resumen generado o lanza un error.
+ */
+    const generateSummary = async (): Promise<void> => {
+        const text = getFormatedContent();
+        await axios
+            .get("/api/news/summary", {
+                params: { text: text },
+            })
+            .then((response) => {
+                form.setValue("summary", response.data, {
+                    shouldValidate: true,
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+                toast({
+                    variant: "destructive",
+                    title: "Error al guardar",
+                    description: "Servidor no encontrado.",
+                });
+            });
+    };
+/**
+ * Genera un las etiquetas del contenido formateado y lo establece en el formulario.
+ *
+ * @returns {Promise<void>} No devuelve ningún valor, pero actualiza el formulario con el resumen generado o lanza un error.
+ */
+    const generateTags = async (): Promise<void> => {
+        const content = getFormatedContent();
+        await axios
+            .get("/api/news/tags", {
+                params: { text: content },
+            })
+            .then((response) => {
+                console.log(response.data);
+                setTags(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+                toast({
+                    variant: "destructive",
+                    title: "Error al guardar",
+                    description: "Servidor no encontrado.",
+                });
+            });
+    };
     return (
         <Form {...form}>
             <form
@@ -202,6 +253,14 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
                     control={form.control}
                     placeholder="Escriba el resumen..."
                 />
+                <div className="flex justify-end">
+                    <ButtonLoading
+                        action={generateSummary}
+                        title="Resuemen con IA"
+                        loading="Generando..."
+                    />
+                </div>
+
                 <InputTagsForm
                     setDuplicatedTags={setDuplicatedTags}
                     control={form.control}
@@ -210,6 +269,17 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
                     tags={tags}
                     setTags={setTags}
                 />
+
+                <div className="w-full flex flex-row justify-between align-middle">
+                    <p className="text-sig-text text-xs">
+                        {tags.length}/5 Etiquetas
+                    </p>
+                    <ButtonLoading
+                        action={generateTags}
+                        title="Etiquetas con IA"
+                        loading="Generando..."
+                    />
+                </div>
                 <div className="flex justify-end gap-4">
                     <Popup
                         title={messages.popupCancel.title}

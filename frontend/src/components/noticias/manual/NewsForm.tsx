@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import React, { useState, useEffect } from "react";
 import { capitalizeWords } from "@/lib/stringsUtil";
 import messages from "../newsMessages.json";
-
+import { useToast } from "../../ui/use-toast";
 import {
     InputForm,
     InputDateForm,
@@ -18,7 +18,8 @@ import { Form } from "@/components/ui/form";
 import { Popup } from "@/components/ui/popup";
 import FormSchema, { Data } from "./formSchema";
 import Preview from "./NewsPreview";
-
+import axios from "axios";
+import ButtonLoading from "@/components/ui/button-with-loading";
 const NewsForm = ({
     preview,
     setPreview,
@@ -30,6 +31,7 @@ const NewsForm = ({
     setRecordType: React.Dispatch<React.SetStateAction<string>>;
     categories: any;
 }) => {
+    const { toast } = useToast();
     const [tags, setTags] = useState<string[]>([]);
     const [data, setData] = useState<Data | null>(null);
     const [imageURL, setImageURL] = useState<null | string>(null);
@@ -111,6 +113,66 @@ const NewsForm = ({
         setImageURL(null);
     };
 
+    const generateSummary = async (): Promise<void> => {
+        const content = form.getValues("content");
+        const valid = await form.trigger("content");
+        if (valid) {
+            await axios
+                .get("/api/news/summary", {
+                    params: { text: content },
+                })
+                .then((response) => {
+                    form.setValue("summary", response.data, {
+                        shouldValidate: true,
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    toast({
+                        variant: "destructive",
+                        title: "Error al guardar",
+                        description: "Servidor no encontrado.",
+                    });
+                });
+        } else {
+            form.setFocus("content");
+            form.setError("summary", {
+                type: "manual",
+                message:
+                    "Es necesario el contenido para generar el resumen con la IA",
+            });
+        }
+    };
+
+    const generateTags = async (): Promise<void> => {
+        const content = form.getValues("content");
+        const valid = await form.trigger("content");
+        if (valid) {
+            await axios
+                .get("/api/news/tags", {
+                    params: { text: content },
+                })
+                .then((response) => {
+                    const tags = response.data;
+                    setTags(tags);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    toast({
+                        variant: "destructive",
+                        title: "Error al guardar",
+                        description: "Servidor no encontrado.",
+                    });
+                });
+        } else {
+            form.setFocus("content");
+            form.setError("tags", {
+                type: "manual",
+                message:
+                    "Es necesario el contenido para generar las etiquetas con la IA",
+            });
+        }
+    };
     return (
         <>
             {!preview ? (
@@ -155,7 +217,16 @@ const NewsForm = ({
                             label={messages.summary.label}
                             control={form.control}
                             placeholder={messages.summary.placeholder}
+                            max={768}
                         />
+
+                        <div className="flex justify-end">
+                            <ButtonLoading
+                                action={generateSummary}
+                                title="Resumen con IA"
+                                loading="Generando..."
+                            />
+                        </div>
 
                         <InputForm
                             name="url"
@@ -188,6 +259,16 @@ const NewsForm = ({
                             tags={tags}
                             setTags={setTags}
                         />
+                        <div className="w-full flex flex-row justify-between align-middle">
+                            <p className="text-sig-text text-xs">
+                                {tags.length}/5 Etiquetas
+                            </p>
+                            <ButtonLoading
+                                action={generateTags}
+                                title="Etiquetas con IA"
+                                loading="Generando..."
+                            />
+                        </div>
 
                         <div className="flex justify-end gap-4">
                             <Popup

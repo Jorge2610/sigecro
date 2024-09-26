@@ -21,9 +21,10 @@
     "placeholder": "Escriba el contenido de la noticia..."
   },
   "summary": {
-    "required": "El resumen es obligatorio",
-    "label": "Resumen *",
-    "placeholder": "Escriba el resumen de la noticia..."
+    "required": "El resumen es obligatoria",
+    "label": "Resumen*",
+    "placeholder": "Escriba el resumen de la noticia...",
+    "max": "El resumen no pude tener mas de 768 caracteres"
   },
   "url": {
     "format": "La URL no es válida",
