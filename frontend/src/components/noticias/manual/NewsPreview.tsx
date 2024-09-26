@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,17 +8,16 @@ import { Data, createFormData } from "./formSchema";
 import { splitIntoParagraphs } from "@/lib/stringsUtil";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 import axios from "axios";
-
-
 
 interface PreviewProps {
     data?: Data | null;
-    action?: () => void;
     imageURL: string | null;
 }
 
-const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
+const Preview: React.FC<PreviewProps> = ({ imageURL, data }) => {
+    const router = useRouter();
     const { toast } = useToast();
     const parapraphs = splitIntoParagraphs(data?.content ?? "");
 
@@ -30,6 +29,7 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
    
    * @return {Promise<void>} Una promesa que se resuelva cuando se complete la operación.
    */
+
     const publicar = async (): Promise<void> => {
         if (data) {
             const formData = createFormData(data);
@@ -53,6 +53,10 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
                 });
             }
         }
+    };
+
+    const comeback = () => {
+        router.push("/administrar-noticias/registro/manual");   
     };
 
     return (
@@ -114,7 +118,7 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data, action }) => {
                 </div>
             )}
             <div className="flex flex-row justify-end gap-4">
-                <Button onClick={action} variant="outline">
+                <Button onClick={comeback} variant="outline">
                     {" "}
                     Regresar{" "}
                 </Button>

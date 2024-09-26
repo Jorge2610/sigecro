@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { setNews, getNewsData, getNewsSources } from "../controllers/newsC.js";
+import {
+    setNews,
+    getNewsData,
+    getNewsSources,
+    basicSearchNews,
+} from "../controllers/newsC.js";
 import { upload } from "../middlewares/multer.js";
 import {
     setURLsBatch,
@@ -12,6 +17,7 @@ const router = Router();
 //GET /api/news
 router.get("/sources", getNewsSources);
 router.get("/scraping/batch", getURLsBatch);
+router.get("/search", basicSearchNews);
 
 //POST /api/news
 router.post("/", upload.single("image"), setNews);

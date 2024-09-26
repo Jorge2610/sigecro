@@ -75,7 +75,7 @@ const InputTags = ({
      *
      * @return {void}
      */
-    const handleClick = () => {
+    const handleClick = (): void => {
         if (tags.length < 5) {
             setIsInputFocused(true);
             inputRef.current?.focus();
@@ -88,7 +88,7 @@ const InputTags = ({
      *
      * @return {void}
      */
-    const generateIA = () => {
+    const generateIA = (): void => {
         setTags([]);
         const getTagsIA = [
             "Tecnología",

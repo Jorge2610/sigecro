@@ -1,23 +1,19 @@
-import CardNews,{CardNewsProps} from './card-news'
+import CardNews from "./card-news";
+import { News } from "../noticias/newsInterfaces";
 
 type ListNewsProps = {
-    news:CardNewsProps[],
-}
-const ListNews = ({news}:ListNewsProps)=>{
-
-      
-    return(<div>
-         {news.map((news,index)=>(
-            <CardNews 
-            key={index}
-            title={news.title} 
-            source={news.source}
-            date={news.date}
-            summary={news.summary}
-            tags={news.tags}
-            />
-         ))}
-    </div>
-    )
-}
+    news: News[];
+};
+const ListNews = ({ news }: ListNewsProps) => {
+    console.log(news);
+    return (
+        <div>
+            {news.map((news, index) => (
+                <div key={index}>
+                    <CardNews data={news} />
+                </div>
+            ))}
+        </div>
+    );
+};
 export default ListNews;

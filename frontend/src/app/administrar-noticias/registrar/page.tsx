@@ -4,7 +4,7 @@ import RecordType from "@/components/noticias/automatico/RecordType";
 import { Separator } from "@/components/ui/separator";
 import AutomaticRecord from "@/components/noticias/automatico/AutomaticRecord";
 import { useState, useEffect } from "react";
-import NewsForm from "@/components/noticias/manual/NewsForm";
+
 import axios from "axios";
 
 const RegistrarNoticia = () => {
@@ -13,17 +13,7 @@ const RegistrarNoticia = () => {
     const [categories, setCategories] = useState<any>([]);
 
     useEffect(() => {
-        /**
-         * Recupera todas las categorias desde la API y las actualiza en el estado del componente.
-         *
-         * @return {Promise<void>}
-         */
-        const getCategories = async (): Promise<void> => {
-            const resp = await axios.get("/api/categories");
-            if (resp.status === 200) {
-                setCategories(resp.data);
-            }
-        };
+        
         getCategories();
     }, []);
 

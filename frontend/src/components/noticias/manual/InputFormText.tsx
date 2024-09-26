@@ -1,5 +1,7 @@
+"use client";
+
 import { es } from "date-fns/locale";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import {
@@ -25,7 +27,8 @@ import { X } from "lucide-react";
 type Props = {
     control: any;
     name: string;
-    label: string;
+    label?: string;
+    className?: string;
     placeholder?: string;
     max?: number;
     array?: { id: string; name: string }[];
@@ -33,16 +36,24 @@ type Props = {
     nameImage?: string | null;
     updateImage?: () => void;
 };
-const InputForm = ({ control, name, label, placeholder, max }: Props) => {
+const InputForm = ({
+    control,
+    name,
+    label,
+    className,
+    placeholder,
+    max,
+}: Props) => {
     return (
         <FormField
             control={control}
             name={name}
             render={({ field }) => (
-                <FormItem>
-                    <FormLabel>{label}</FormLabel>
+                <FormItem className="w-full">
+                    {label && <FormLabel>{label}</FormLabel>}
                     <FormControl>
                         <Input
+                            className={className}
                             maxLength={max}
                             placeholder={placeholder}
                             {...field}
@@ -159,6 +170,10 @@ const InputFileForm = ({
 }: Props) => {
     const inputFileRef = useRef<HTMLInputElement>(null);
     const [fileName, setFileName] = useState<string | null>(nameImage ?? null);
+
+    useEffect(() => {
+        setFileName(nameImage ?? null);
+    }, [nameImage]);
 
     /**
      * Maneja los cambios del archivo seleccionado.

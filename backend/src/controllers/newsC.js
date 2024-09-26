@@ -24,12 +24,12 @@ const axiosInstance = axios.create({
 });
 
 /**
- * Crea una nueva noticia en la base de datos.
+ * Creates a new news article in the database.
  *
- * @param {Object} req - El objeto de solicitud HTTP.
- * @param {Object} res - El objeto de respuesta HTTP.
- * @param {Function} next - La función de middleware siguiente.
- * @return {Promise<void>} Una promesa que resuelve cuando la operación es completada.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @param {Function} next - The next middleware function.
+ * @return {Promise<void>} A promise that resolves when the operation is completed.
  */
 const setNews = async (req, res, next) => {
     try {
@@ -62,10 +62,10 @@ const setNews = async (req, res, next) => {
 };
 
 /**
- * Sube una imagen al sistema de archivos desde una solicitud HTTP.
+ * Uploads an image from an HTTP request to the file system.
  *
- * @param {Object} req - El objeto de solicitud HTTP.
- * @return {string|null} La ruta de la imagen subida o null si no se proporcionó una imagen.
+ * @param {Object} req - The HTTP request object containing the image file.
+ * @return {string|null} The URL of the uploaded image or null if no image was provided.
  */
 const uploadImage = async (req) => {
     if (req.file) {
@@ -81,12 +81,33 @@ const uploadImage = async (req) => {
 };
 
 /**
- * Obtiene la informacion de una noticia a partir de su URL.
+ * Performs a basic search for news based on the provided search query.
  *
- * @param {Object} req - El objeto de solicitud HTTP.
- * @param {Object} res - El objeto de respuesta HTTP.
- * @param {Function} next - La función de middleware siguiente.
- * @return {Promise<JSON>} Una promesa que resuelve cuando la operación es completada.
+ * @param {Object} req - The HTTP request object containing the search query.
+ * @param {Object} res - The HTTP response object.
+ * @param {Function} next - The next middleware function in the stack.
+ * @return {Promise<void>} A promise that resolves when the search operation is completed.
+ */
+const basicSearchNews = async (req, res, next) => {
+    try {
+        const response = await News.searchBasicNews(
+            req.query.search,
+            req.query.limit,
+            req.query.page
+        );
+        res.status(200).json(response);
+    } catch (error) {
+        res.sendStatus(500);
+    }
+};
+
+/**
+ * Retrieves news data from a provided URL and returns it in JSON format.
+ *
+ * @param {Object} req - The HTTP request object containing the URL of the news article.
+ * @param {Object} res - The HTTP response object.
+ * @param {Function} next - The next middleware function in the stack.
+ * @return {Promise<JSON>} A promise that resolves with the scraped news data in JSON format.
  */
 const getNewsData = async (req, res, next) => {
     const source = getSource(req.body.url);
@@ -135,4 +156,4 @@ const getNewsSources = async (req, res) => {
     }
 };
 
-export { getNewsData, setNews, getNewsSources };
+export { getNewsData, setNews, basicSearchNews, getNewsSources };
