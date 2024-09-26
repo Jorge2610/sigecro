@@ -75,7 +75,7 @@ const InputTags = ({
      *
      * @return {void}
      */
-    const handleClick = () => {
+    const handleClick = (): void => {
         if (tags.length < 5) {
             setIsInputFocused(true);
             inputRef.current?.focus();

@@ -14,6 +14,7 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 import { News } from "@/components/noticias/newsInterfaces";
+import ListNews from "@/components/ui/list-news";
 
 const Noticias = () => {
     const [news, setNews] = useState<Array<News | null>>([]);
@@ -70,18 +71,7 @@ const Noticias = () => {
                     / {news[0]?.total_count || 0}
                 </h3>
             )}
-            {news?.map((item) => (
-                <>
-                    <div className="w-full h-[200px] flex flex-wrap flex-col gap-3">
-                        <h2>{item?.title}</h2>
-                        <p>{item?.summary}</p>
-                        <p>Source: {item?.source}</p>
-                        <p>Date: {item?.date}</p>
-                        <p>Tags : {item?.tags}</p>
-                    </div>
-                    <hr />
-                </>
-            ))}
+            <ListNews news={news} />
             {page != 1 && (
                 <Button onClick={() => setPage(page - 1)}>{"<"}</Button>
             )}
