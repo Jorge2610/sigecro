@@ -52,13 +52,21 @@ const PendingUrlsDataTable = ({ data, onDelete }: DataTableProps) => {
             return table.getRow(rowKey).original.id;
         });
         if (selectedRowIds.length > 0) {
-            await onDelete(selectedRowIds);
-            setRowSelection({});
-            toast({
-                title: "Eliminación exitosa",
-                description: "El lote de URLs fue eliminado exitosamente.",
-                variant: "default",
-            });
+            try {
+                await onDelete(selectedRowIds);
+                setRowSelection({});
+                toast({
+                    title: "Eliminación exitosa",
+                    description: "El lote de URLs fue eliminado exitosamente.",
+                    variant: "default",
+                });
+            } catch (error) {
+                toast({
+                    title: "Eliminación fallida",
+                    description: "No se pudo eliminar el lote de URLs.",
+                    variant: "destructive",
+                });
+            }
             setOpen(false);
         }
     };

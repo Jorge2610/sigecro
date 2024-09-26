@@ -11,6 +11,7 @@ type NewsHelperProps = {
 
 const NewsHelper = ({ title, helps }: NewsHelperProps) => {
     const [visible, setVisible] = useState(false);
+    const helpsHeight: string = helps.length * 24 + 33 + "px";
 
     return (
         <div>
@@ -29,19 +30,18 @@ const NewsHelper = ({ title, helps }: NewsHelperProps) => {
                     </span>
                 </Button>
             </div>
-            {visible && (
-                <div>
-                    <ol
-                        className="mb-4 ml-4"
-                        style={{ listStyleType: "decimal" }}
-                    >
-                        {helps.map((help, i) => {
-                            return <li key={i}>{help}</li>;
-                        })}
-                    </ol>
-                </div>
-            )}
-            <Separator className="mb-4" />
+            <Separator />
+            <div
+                className="overflow-hidden ease-in-out duration-300"
+                style={{ maxHeight: visible ? "40dvh" : "0px" }}
+            >
+                <ol className="my-4 ml-8" style={{ listStyleType: "decimal" }}>
+                    {helps.map((help, i) => {
+                        return <li key={i}>{help}</li>;
+                    })}
+                </ol>
+                <Separator />
+            </div>
         </div>
     );
 };

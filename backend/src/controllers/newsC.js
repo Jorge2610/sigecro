@@ -103,4 +103,36 @@ const getNewsData = async (req, res, next) => {
     }
 };
 
-export { getNewsData, setNews };
+/**
+ * Handles the HTTP request to retrieve news sources with their topics from the database.
+ * Sends the list of news sources as a JSON response.
+ *
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} Sends a JSON response with news sources or a 503 status code if an error occurs.
+ */
+const getNewsSources = async (req, res) => {
+    try {
+        const newsSources = await News.getSources();
+        newsSources.map((source) => {
+            source.topics = [];
+        });
+        const newsTopics = await News.getTopics();
+        newsTopics.map((topic) => {
+            let asigned = false;
+            let i = 0;
+            while (!asigned && i < newsSources.length) {
+                if (topic.news_source_id === newsSources[i].id) {
+                    newsSources[i].topics.push(topic);
+                    asigned = true;
+                }
+                i++;
+            }
+        });
+        res.json(newsSources);
+    } catch (error) {
+        res.sendStatus(503);
+    }
+};
+
+export { getNewsData, setNews, getNewsSources };
