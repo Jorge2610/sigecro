@@ -1,7 +1,8 @@
 -- DATA PERMISSION
 INSERT INTO
     public.permissions (name, description)
-VALUES (
+VALUES
+    (
         'Restringir acceso de un usuario al sistema.',
         'Restringir acceso de un usuario al sistema.'
     ),
@@ -111,7 +112,46 @@ VALUES (
     );
 
 -- DATA USERS
-INSERT INTO users (id, name) VALUES (1, 'Admin');
+INSERT INTO
+    users (id, name)
+VALUES
+    (1, 'Admin');
 
 -- DATA CATEGORIES
-INSERT INTO categories (id, name) VALUES (1, 'Noticias');
+INSERT INTO
+    categories (id, name)
+VALUES
+    (1, 'Noticias');
+
+-- DATA NEWS_SOURCES
+INSERT INTO
+    news_sources (id, name)
+VALUES
+    (1, 'Los Tiempos'),
+    (2, 'Opinión'),
+    (3, 'El Deber')
+;
+
+-- DATA NEWS_TOPICS
+INSERT INTO
+    news_topics (id, news_source_id, name)
+VALUES
+    (1, 1, 'Cochabamba'),
+    (2, 1, 'Cultura'),
+    (3, 1, 'Economía'),
+    (4, 1, 'Mundo'),
+    (5, 1, 'País'),
+    (6, 1, 'Seguridad'),
+    (7, 2, 'Cochabamba'),
+    (8, 2, 'Cultura'),
+    (9, 2, 'Mundo'),
+    (10, 2, 'Opinión'),
+    (11, 2, 'País'),
+    (12, 2, 'Policial'),
+    (13, 3, 'Educación y sociedad'),
+    (14, 3, 'Economía'),
+    (15, 3, 'Mundo'),
+    (16, 3, 'Opinión'),
+    (17, 3, 'País'),
+    (18, 3, 'Santa Cruz')
+;

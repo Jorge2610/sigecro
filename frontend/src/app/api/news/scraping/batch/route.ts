@@ -21,7 +21,6 @@ const POST = async (request: NextRequest) => {
 const DELETE = async (request: NextRequest) => {
     try {
         const data = await request.json();
-        console.log(data);
         const res = await api.delete("/news/scraping/batch", {
             data: { ids: data.ids },
         });

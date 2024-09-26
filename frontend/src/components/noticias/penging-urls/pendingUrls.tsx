@@ -20,14 +20,16 @@ const PendingUrls = ({ data }: PendingUrlsProps) => {
      * @returns {Promise<void>} Updates the table data if the deletion is successful.
      */
     const handleDelete = async (selectedRowIds: number[]): Promise<void> => {
-        const result = await axios.delete("/api/news/scraping/batch", {
-            data: { ids: selectedRowIds },
-        });
-        if (result.status === 200) {
+        try {
+            await axios.delete("/api/news/scraping/batch", {
+                data: { ids: selectedRowIds },
+            });
             const updatedData = tableData.filter(
                 (row) => !selectedRowIds.includes(row.id)
             );
             setTableData(updatedData);
+        } catch (error) {
+            throw new Error("No se pudo eliminar las URLs");
         }
     };
 

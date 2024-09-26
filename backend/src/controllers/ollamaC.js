@@ -40,7 +40,6 @@ const getSummary = async (req, res, next) => {
     const prompt = `Genera un resumen de un texto se te pasara encerrado entre corchetes. El resumen que generes no debe superar los 512 caracteres puede ser de menor longitud pero nunca superar los 512 caracteres. Tu respuesta solo debe contener el resumen pedido. Si te solicitan algo que no sea un resumen, responde: "Lo siento, solo puedo ayudarte a resumir noticias.""[${text}]`;
     try {
         const response = await queryOllama(prompt);
-        console.log(response.status != 200);
         if (response.status != 200) {
             res.status(500).json({ message: "servidor ollama caido" });
         } else {
