@@ -33,7 +33,7 @@ const FormSchema = z.object({
             message: messages.image.size,
         })
         .optional(),
-    status: z.enum(["draft", "published", "refused"]).default("draft"),
+    status: z.enum(["draft", "published", "refused"]).default("published"),
     tags: z.array(z.string().trim()).optional(),
     category: z.object({
         id: z.string().trim().min(1).max(10),
@@ -55,12 +55,12 @@ const createFormData = (data: z.infer<typeof FormSchema>): FormData => {
     if (data) {
         formData.append("title", data?.title ?? "");
         formData.append("content", data?.content ?? "");
-        formData.append("date", data?.date?.toISOString() ?? "");
+        formData.append("date", data?.date?.toLocaleString() ?? "");
         formData.append("source", data?.source ?? "");
         formData.append("url", data?.url ?? "");
         formData.append("summary", data?.summary ?? "");
         data?.image && formData.append("image", data?.image, data?.image.name);
-        formData.append("status", data?.status ?? "");
+        formData.append("status", data?.status ?? "published");
         data?.tags && formData.append("tags", JSON.stringify(data?.tags));
         formData.append("category_id", data?.category.id ?? "");
         formData.append("user_id", data?.user_id ?? "");

@@ -49,7 +49,7 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
             })
             .optional(),
         tags: z.array(z.string().trim()).optional(),
-        status: z.enum(["draft", "published", "refused"]).default("draft"),
+        status: z.enum(["draft", "published", "refused"]).default("published"),
     });
 
     useEffect(() => {
@@ -108,12 +108,12 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
         const formData = new FormData();
         formData.append("title", newsData?.title ?? "");
         formData.append("content", getFormatedContent());
-        formData.append("date", newsData?.dateTime.toISOString() ?? "");
+        formData.append("date", newsData?.dateTime.toLocaleString() ?? "");
         formData.append("source", newsData?.source ?? "");
         formData.append("url", newsData?.url ?? "");
         formData.append("summary", data?.summary ?? "");
         data?.image && formData.append("image", data?.image, data?.image.name);
-        formData.append("status", data?.status ?? "");
+        formData.append("status", data?.status ?? "published");
         data?.tags && formData.append("tags", JSON.stringify(data?.tags));
         formData.append("category_id", newsData?.category_id ?? "");
         formData.append("user_id", "1");

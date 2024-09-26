@@ -41,6 +41,7 @@ const Noticias = () => {
                 params: { search: search, page: page, limit: limit },
             });
             setNews(response.data.data);
+            console.log(response.data.data);
         } catch (error) {
             console.error("Error fetching news:", error);
         }

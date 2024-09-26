@@ -7,7 +7,6 @@ type CardNewsProps = {
     data: News;
 };
 const CardNews = ({ data }: CardNewsProps) => {
-    console.log(data);
     return (
         <div className="rounded border-2 border-slate-300 p-4 mb-4">
             <p className="text-2xl font-semibold">{data.title}</p>

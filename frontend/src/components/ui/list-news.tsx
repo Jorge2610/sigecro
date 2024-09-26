@@ -5,7 +5,6 @@ type ListNewsProps = {
     news: News[];
 };
 const ListNews = ({ news }: ListNewsProps) => {
-    console.log(news);
     return (
         <div>
             {news.map((news, index) => (
