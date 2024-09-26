@@ -1,7 +1,7 @@
 "use client";
 
 import { es } from "date-fns/locale";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import {
@@ -170,6 +170,10 @@ const InputFileForm = ({
 }: Props) => {
     const inputFileRef = useRef<HTMLInputElement>(null);
     const [fileName, setFileName] = useState<string | null>(nameImage ?? null);
+
+    useEffect(() => {
+        setFileName(nameImage ?? null);
+    }, [nameImage]);
 
     /**
      * Maneja los cambios del archivo seleccionado.
