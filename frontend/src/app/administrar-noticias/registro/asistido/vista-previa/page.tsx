@@ -18,7 +18,7 @@ const VistaPrevia = () => {
     const router = useRouter();
 
     useEffect(() => {
-        if (newsData === undefined) {
+        if (newsData.title === "") {
             router.push("/administrar-noticias/registro/asistido");
         }
     }, []);
@@ -26,10 +26,13 @@ const VistaPrevia = () => {
     return (
         <div>
             <NewsHelper title="Registro asistido" helps={helps} />
-            {newsData ? (
+            {newsData.title !== "" ? (
                 <AutomaticPreview newsData={newsData} />
             ) : (
-                "Vista previa no disponible, readirecionando pagina por favor espere..."
+                <div className="mt-4">
+                    Vista previa no disponible. Redireccionando la página, por
+                    favor, espere...
+                </div>
             )}
         </div>
     );

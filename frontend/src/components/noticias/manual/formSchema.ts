@@ -1,5 +1,6 @@
 import { z } from "zod";
 import messages from "../newsMessages.json";
+import { sub } from "date-fns";
 
 const ACCEPTED_IMAGE_TYPES = [
     "image/jpeg",
@@ -13,7 +14,7 @@ const FormSchema = z.object({
     content: z.string().trim().min(1, { message: messages.content.required }),
     date: z
         .date({ required_error: messages.date.required })
-        .max(new Date(), { message: messages.date.max }),
+        .max(new Date(Date.now()), { message: messages.date.max }),
     source: z.string().trim().min(1, { message: messages.source.required }),
     url: z
         .union([
@@ -23,7 +24,11 @@ const FormSchema = z.object({
             z.literal(""),
         ])
         .optional(),
-    summary: z.string().trim().min(1, { message: messages.summary.required }).max(768,{message: messages.summary.max}),
+    summary: z
+        .string()
+        .trim()
+        .min(1, { message: messages.summary.required })
+        .max(768, { message: messages.summary.max }),
     image: z
         .instanceof(File)
         .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
@@ -44,8 +49,15 @@ const FormSchema = z.object({
 
 type Data = z.infer<typeof FormSchema>;
 
+const getFormatedDate = (date: Date | undefined): string | undefined => {
+    if (date) {
+        return sub(date, { hours: 4 }).toISOString();
+    }
+    return undefined;
+};
+
 /**
- * Cra un FormData a partir de los datos proporcionados de una noticia.
+ * Crea un FormData a partir de los datos proporcionados de una noticia.
  *
  * @param {z.infer<typeof FormSchema>} data - Los datos que se van a incluir en el FormData.
  * @return {FormData} El FormData creado a partir de los datos.
@@ -55,7 +67,7 @@ const createFormData = (data: z.infer<typeof FormSchema>): FormData => {
     if (data) {
         formData.append("title", data?.title ?? "");
         formData.append("content", data?.content ?? "");
-        formData.append("date", data?.date?.toLocaleDateString() ?? "");
+        formData.append("date", getFormatedDate(data?.date) ?? "");
         formData.append("source", data?.source ?? "");
         formData.append("url", data?.url ?? "");
         formData.append("summary", data?.summary ?? "");

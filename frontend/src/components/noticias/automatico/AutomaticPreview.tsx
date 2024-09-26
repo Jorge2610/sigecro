@@ -22,9 +22,10 @@ import messages from "../newsMessages.json";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ButtonLoading from "@/components/ui/button-with-loading";
+import { sub } from "date-fns";
 
 type AutomaticPreviewProps = {
-    newsData: NewsData | undefined;
+    newsData: NewsData;
 };
 
 const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
@@ -109,7 +110,10 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
         const formData = new FormData();
         formData.append("title", newsData?.title ?? "");
         formData.append("content", getFormatedContent());
-        formData.append("date", newsData?.dateTime.toLocaleString() ?? "");
+        formData.append(
+            "date",
+            sub(newsData.dateTime, { hours: 4 }).toISOString() ?? ""
+        );
         formData.append("source", newsData?.source ?? "");
         formData.append("url", newsData?.url ?? "");
         formData.append("summary", data?.summary ?? "");
@@ -145,11 +149,11 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
         }
     };
 
-/**
- * Genera un resumen del contenido formateado y lo establece en el formulario.
- *
- * @returns {Promise<void>} No devuelve ningún valor, pero actualiza el formulario con el resumen generado o lanza un error.
- */
+    /**
+     * Genera un resumen del contenido formateado y lo establece en el formulario.
+     *
+     * @returns {Promise<void>} No devuelve ningún valor, pero actualiza el formulario con el resumen generado o lanza un error.
+     */
     const generateSummary = async (): Promise<void> => {
         const text = getFormatedContent();
         await axios
@@ -170,11 +174,11 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
                 });
             });
     };
-/**
- * Genera un las etiquetas del contenido formateado y lo establece en el formulario.
- *
- * @returns {Promise<void>} No devuelve ningún valor, pero actualiza el formulario con el resumen generado o lanza un error.
- */
+    /**
+     * Genera un las etiquetas del contenido formateado y lo establece en el formulario.
+     *
+     * @returns {Promise<void>} No devuelve ningún valor, pero actualiza el formulario con el resumen generado o lanza un error.
+     */
     const generateTags = async (): Promise<void> => {
         const content = getFormatedContent();
         await axios
