@@ -6,7 +6,7 @@ type ListNewsProps = {
 };
 const ListNews = ({ news }: ListNewsProps) => {
     return (
-        <div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 rows-auto-fr">
             {news.map((news, index) => (
                 <div key={index}>
                     <CardNews data={news} />

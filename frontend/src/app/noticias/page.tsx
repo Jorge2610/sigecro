@@ -61,7 +61,7 @@ const Noticias = () => {
     };
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
             <Search setSearch={setSearch} placeholder="Buscar noticias..." />
             {search != "" && (
                 <h3 className="font-semibold">
