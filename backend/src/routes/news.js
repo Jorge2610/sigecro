@@ -3,6 +3,7 @@ import {
     setNews,
     getNewsData,
     getNewsSources,
+    setNewsSourcesState,
     basicSearchNews,
 } from "../controllers/newsC.js";
 import { upload } from "../middlewares/multer.js";
@@ -23,6 +24,7 @@ router.get("/search", basicSearchNews);
 router.post("/", upload.single("image"), setNews);
 router.post("/scraping", getNewsData);
 router.post("/scraping/batch", setURLsBatch);
+router.post("/scraping/programed", setNewsSourcesState);
 
 //DELETE /api/news
 router.delete("/scraping/batch", deleteURLs);

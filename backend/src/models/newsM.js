@@ -54,7 +54,7 @@ class News {
     static async getSources() {
         try {
             const result = await query(
-                "SELECT id, name, active FROM news_sources;"
+                "SELECT id, name, active FROM news_sources ORDER BY id ASC;"
             );
             return result.rows;
         } catch (error) {
@@ -80,6 +80,70 @@ class News {
             throw new Error("Data Base connection refused!");
         }
     }
+
+    /**
+     * Updates the active state of a news source in the database.
+     *
+     * @param {number} id - The ID of the news source to update.
+     * @param {boolean} state - The new active state of the news source.
+     * @returns {Promise<number>} Returns 204 if the update is successful.
+     * @throws {Error} Throws an error if the database connection fails.
+     */
+    static async setSourceState(id, state) {
+        try {
+            await query(`UPDATE news_sources SET active = $1 WHERE id = $2;`, [
+                state,
+                id,
+            ]);
+            return 204;
+        } catch (error) {
+            console.error("newsM getTopics ERROR: ", error);
+            throw new Error("Data Base connection refused!");
+        }
+    }
+
+    /**
+     * Updates the active state of multiple news topics in the database.
+     *
+     * @param {Array} values - An array of topic IDs and their corresponding active states.
+     * @returns {Promise<number>} Returns 204 if the update is successful.
+     * @throws {Error} Throws an error if the database connection fails.
+     */
+    static async setTopicsState(values) {
+        const placeholders = getTopicsPlaceholders(values);
+        try {
+            await query(
+                `
+                UPDATE news_topics AS t
+                SET active = data.active::boolean
+                FROM (VALUES ${placeholders}) AS data (id, active )
+                WHERE t.id = data.id::bigint;
+                `,
+                values
+            );
+            return 204;
+        } catch (error) {
+            console.error("newsM setTopicsState ERROR: ", error);
+            throw new Error("Data Base connection refused!");
+        }
+    }
 }
+
+/**
+ * Generates SQL placeholders for updating multiple news topics' states.
+ *
+ * @param {Array} values - An array of topic IDs and their active states.
+ * @returns {string} A string of SQL placeholders for the `VALUES` clause.
+ */
+const getTopicsPlaceholders = (values) => {
+    let placeholders = "";
+    for (let i = 1; i < values.length; i += 2) {
+        placeholders += `($${i}, $${i + 1})`;
+        if (i + 1 !== values.length) {
+            placeholders += ", ";
+        }
+    }
+    return placeholders;
+};
 
 export { News };

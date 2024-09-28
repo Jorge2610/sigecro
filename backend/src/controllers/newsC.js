@@ -156,4 +156,36 @@ const getNewsSources = async (req, res) => {
     }
 };
 
-export { getNewsData, setNews, basicSearchNews, getNewsSources };
+/**
+ * Handles the HTTP request to update the state of a news source and its associated topics.
+ * Sends the appropriate HTTP status response based on the result of the updates.
+ *
+ * @param {Object} req - The Express request object, containing the source and topics data in `req.body.data`.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} Sends a status code based on the success or failure of the operation.
+ */
+const setNewsSourcesState = async (req, res) => {
+    const values = [];
+    req.body.data.topics.map((topic) => {
+        values.push(parseInt(topic.id));
+        values.push(topic.active);
+    });
+    const source = req.body.data.source;
+    try {
+        const result = await News.setSourceState(source.id, source.active);
+        if (values.length > 0) {
+            await News.setTopicsState(values);
+        }
+        res.sendStatus(result);
+    } catch (error) {
+        res.sendStatus(503);
+    }
+};
+
+export {
+    getNewsData,
+    setNews,
+    basicSearchNews,
+    getNewsSources,
+    setNewsSourcesState,
+};

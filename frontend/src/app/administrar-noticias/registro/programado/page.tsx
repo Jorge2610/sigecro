@@ -27,6 +27,7 @@ const Programado = async () => {
                     return (
                         <ProgramedCard
                             key={source.id}
+                            id={source.id}
                             title={source.name}
                             topics={source.topics}
                             active={source.active}
