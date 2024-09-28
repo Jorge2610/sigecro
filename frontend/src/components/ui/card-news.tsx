@@ -8,7 +8,7 @@ type CardNewsProps = {
 };
 const CardNews = ({ data }: CardNewsProps) => {
     return (
-        <div className="rounded border-2 border-slate-300 p-4 mb-4">
+        <div className="rounded-[16px] border border-slate-200 p-6 mb-4 h-full bg-white shadow-lg">
             <p className="text-2xl font-semibold">{data.title}</p>
             <div>
                 <div className="flex flex-wrap gap-2 my-2">

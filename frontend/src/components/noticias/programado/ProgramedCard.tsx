@@ -5,30 +5,103 @@ import { Separator } from "@/components/ui/separator";
 import LabeledCheckbox from "@/components/ui/labeled-checkbox";
 import { Button } from "@/components/ui/button";
 import { PopupState } from "@/components/ui/popup";
+import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ProgramedCardProps {
+    id: number;
     title: string;
     topics: Array<{ id: number; name: string; active: boolean }>;
     active: boolean;
 }
 
 const ProgramedCard = (props: ProgramedCardProps) => {
-    const { title, topics, active } = props;
+    const { title, topics, active, id } = props;
     const [topicsState, setTopicsState] = useState(topics);
     const [activeSource, setActiveSource] = useState(active);
     const [expanded, setExpanded] = useState(false);
     const [programPopup, setProgramPopup] = useState(false);
     const [stopPopup, setStopPopup] = useState(false);
+    const { toast } = useToast();
 
+    /**
+     * Toggles the active state of a specific topic in the topicsState array.
+     *
+     * @param {number} i - The index of the topic to toggle.
+     * @returns {void}
+     */
     const handleCheck = (i: number): void => {
         const newTopicsState = [...topicsState];
         newTopicsState[i].active = !newTopicsState[i].active;
         setTopicsState(newTopicsState);
     };
 
+    /**
+     * Checks if at least one topic in the topicsState array is active.
+     *
+     * @returns {boolean} Returns true if at least one topic is active, otherwise false.
+     */
     const topicChecked = (): boolean => {
         let checked = topicsState.find((topic) => topic.active);
         return checked !== undefined ? true : false;
+    };
+
+    /**
+     * Sends a request to start the scheduled scraping for the selected source and topics.
+     * Displays a toast notification indicating the success or failure of the operation.
+     *
+     * @returns {Promise<void>} Returns a promise that resolves when the scraping program starts.
+     * @throws Will display a toast notification if an error occurs while starting the scraping program.
+     */
+    const handleStart = async (): Promise<void> => {
+        try {
+            await axios.post("/api/news/scraping/programed", {
+                source: { id: id, active: true },
+                topics: topicsState,
+            });
+            setActiveSource(true);
+            toast({
+                title: "Registro programado iniciado",
+                description: `El registro programado de ${title} fue iniciado.`,
+                variant: "default",
+            });
+        } catch (error) {
+            toast({
+                title: "Registro programado detenido",
+                description: `El registro programado de ${title} no pudo ser iniciado.`,
+                variant: "destructive",
+            });
+        }
+        setProgramPopup(false);
+    };
+
+    /**
+     * Sends a request to stop the scheduled scraping for the selected source.
+     * Displays a toast notification indicating the success or failure of the operation.
+     *
+     * @returns {Promise<void>} Returns a promise that resolves when the scraping program stops.
+     * @throws Will display a toast notification if an error occurs while stopping the scraping program.
+     */
+    const handleStop = async (): Promise<void> => {
+        try {
+            await axios.post("/api/news/scraping/programed", {
+                source: { id: id, active: false },
+                topics: [],
+            });
+            setActiveSource(false);
+            toast({
+                title: "Registro programado detenido",
+                description: `El registro programado de ${title} se detuvo.`,
+                variant: "default",
+            });
+        } catch (error) {
+            toast({
+                title: "Registro programado activo",
+                description: `El registro programado de ${title} no pudo ser detenido.`,
+                variant: "destructive",
+            });
+        }
+        setStopPopup(false);
     };
 
     return (
@@ -88,10 +161,7 @@ const ProgramedCard = (props: ProgramedCardProps) => {
                     onClose={() => {
                         setStopPopup(false);
                     }}
-                    onConfirm={() => {
-                        setActiveSource(false);
-                        setStopPopup(false);
-                    }}
+                    onConfirm={() => handleStop()}
                 />
                 <Button
                     disabled={!(topicChecked() && !activeSource)}
@@ -106,10 +176,7 @@ const ProgramedCard = (props: ProgramedCardProps) => {
                     onClose={() => {
                         setProgramPopup(false);
                     }}
-                    onConfirm={() => {
-                        setActiveSource(true);
-                        setProgramPopup(false);
-                    }}
+                    onConfirm={() => handleStart()}
                 />
             </div>
         </div>
