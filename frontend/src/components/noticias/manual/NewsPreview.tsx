@@ -22,14 +22,13 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data }) => {
     const parapraphs = splitIntoParagraphs(data?.content ?? "");
 
     /**
-   * Envia la noticia a revision para ser publicada.
-   *
-   * Esta funcion es responsable de crear un objeto FormData a partir de los datos de la noticia,
-   * enviar el articulo de noticia al servidor, y mostrar un toast basado en la respuesta del servidor.
-   
-   * @return {Promise<void>} Una promesa que se resuelva cuando se complete la operación.
-   */
-
+     * Sends the news article to the server for publication.
+     *
+     * This function is responsible for creating a FormData object from the news article data,
+     * sending the news article to the server, and displaying a toast based on the server's response.
+     *
+     * @return {Promise<void>} A promise that resolves when the operation is complete.
+     */
     const publicar = async (): Promise<void> => {
         if (data) {
             const formData = createFormData(data);
@@ -55,7 +54,12 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data }) => {
         }
     };
 
-    const comeback = () => {
+    /**
+     * Redirects the user to the manual news registration page.
+     *
+     * @return {void} No return value.
+     */
+    const comeback = (): void => {
         router.push("/administrar-noticias/registro/manual");   
     };
 

@@ -1,7 +1,6 @@
 import React, { useState, KeyboardEvent, useRef } from "react";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { capitalizeWords } from "@/lib/stringsUtil";
 
 interface Props {
@@ -21,8 +20,9 @@ const InputTags = ({
     const [isInputFocused, setIsInputFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
+    
     /**
-     * Agrega una etiqueta al array de etiquetas. is la etiqueta no existe.
+     * Adds a new tag to the list of tags if it does not already exist.
      *
      * @return {void}
      */
@@ -40,9 +40,9 @@ const InputTags = ({
     };
 
     /**
-     * Remueve una etiqueta del array de etiquetas.
+     * Removes a tag from the array of tags.
      *
-     * @param {string} tagToRemove -  la etiqueta a ser removida.
+     * @param {string} tagToRemove - the tag to be removed.
      * @return {void}
      */
     const removeTag = (tagToRemove: string): void => {
@@ -50,10 +50,9 @@ const InputTags = ({
     };
 
     /**
+     * Handles keyboard events for the input field, specifically for adding or removing tags.
      *
-     * Maneja eventos de pulsación de teclas para el campo de entrada.
-     *
-     * @param {KeyboardEvent<HTMLInputElement>} e - La entrada de teclado.
+     * @param {KeyboardEvent<HTMLInputElement>} e - The keyboard event triggered by the user's input.
      * @return {void}
      */
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>): void => {
@@ -71,7 +70,8 @@ const InputTags = ({
     };
 
     /**
-     * Maneja los evenots de clic sobre el campo de entrada.
+     * Handles the click event on the input field.
+     * If the number of tags is less than 5, it sets the input focus and triggers the focus on the input field.
      *
      * @return {void}
      */
@@ -80,23 +80,6 @@ const InputTags = ({
             setIsInputFocused(true);
             inputRef.current?.focus();
         }
-    };
-
-    /**
-     * Genera un conjunto de etiquetas mediante la IA
-     *
-     * @return {void}
-     */
-    const generateIA = (): void => {
-        setTags([]);
-        const getTagsIA = [
-            "Tecnología",
-            "Cultura",
-            "Deportes",
-            "Economía",
-            "Salud",
-        ];
-        setTags(getTagsIA);
     };
 
     return (

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 type CardNewsProps = {
     data: News;
 };
+
 const CardNews = ({ data }: CardNewsProps) => {
     return (
         <div className="rounded-[16px] border border-slate-200 p-6 mb-4 h-full bg-white shadow-lg">
