@@ -1,3 +1,11 @@
+import axios from "axios";
+import * as cheerio from "cheerio";
+import { sleep } from "../utils.js";
+import dotenv from "dotenv";
+dotenv.config();
+
+const delay = parseInt(Math.floor(parseInt(process.env.DELAY) / 2));
+
 /**
  * Obtiene los datos de una noticia desde Los tiempos.
  *
@@ -42,4 +50,99 @@ const getContent = ($) => {
     return content;
 };
 
-export { getLosTiemposData };
+const topicsMap = new Map();
+topicsMap.set("Mundo", "5");
+topicsMap.set("País", "3");
+topicsMap.set("Economía", "26149");
+topicsMap.set("Cochabamba", "2");
+topicsMap.set("Seguridad", "32978");
+topicsMap.set("Deportes", "8");
+let topicName = "";
+
+/**
+ * Retrieves URLs from the "Los Tiempos" website based on active topics.
+ *
+ * @param {Array<Object>} topics - Array of topic objects that contain `name` and `active` properties.
+ * @returns {Promise<Array<string>>} Resolves to an array of URLs related to the active topics.
+ * @throws {Error} Throws an error if URL fetching fails.
+ */
+const getLosTiemposUrls = async (topics) => {
+    const urls = [];
+    for (const topic of topics) {
+        topicName = topic.name;
+        if (topic.active) {
+            await getUrls(urls);
+        }
+    }
+    return urls;
+};
+
+/**
+ * Fetches and appends URLs to the provided array by iterating through pages from the "Los Tiempos" website.
+ * Stops fetching when fewer than 15 links are found on a page.
+ *
+ * @param {Array<string>} urls - Array that stores the fetched URLs.
+ * @returns {Promise<void>} Resolves when the URL fetching process completes.
+ * @throws {Error} Throws an error if HTML parsing or URL fetching fails.
+ */
+const getUrls = async (urls) => {
+    let $ = cheerio.load("<div>Empty!</div>");
+    let flag = true;
+    let page = 0;
+    while (flag) {
+        let html = await getHtml(page);
+        $ = cheerio.load(html);
+        $(".panels-flexible-region-inside-last").remove();
+        const tags = $(".views-field-title a");
+        tags.each((i, element) => {
+            const url = $(element).attr("href");
+            urls.push(`https://www.lostiempos.com${url}`);
+        });
+        tags.length >= 15 ? page++ : (flag = false);
+        await sleep(delay);
+    }
+};
+
+/**
+ * Fetches the HTML content of a page from "Los Tiempos" based on the search parameters and page number.
+ *
+ * @param {number} page - The page number to fetch.
+ * @returns {Promise<string>} Resolves to the HTML content of the requested page.
+ * @throws {Error} Throws an error if the HTTP request fails.
+ */
+const getHtml = async (page) => {
+    try {
+        const params = getSearchParams();
+        let url = `https://www.lostiempos.com/hemeroteca-fecha?fecha=${params.month}%2F${params.day}%2F${params.year}&seccion=${params.section}`;
+        if (page > 0) {
+            url += `&page=${page}`;
+        }
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("ERROR on losTiempos.js getHtml\n", error);
+        return "<div></div>";
+    }
+};
+
+/**
+ * Retrieves search parameters for the "Los Tiempos" website based on the previous day's date.
+ * 
+ * @returns {Object} An object containing `day`, `month`, `year`, and `section` for the URL search.
+ */
+const getSearchParams = () => {
+    const yesterday = new Date(Date.now() - 86400000);
+    const day =
+        yesterday.getDate() > 9
+            ? yesterday.getDate()
+            : "0" + yesterday.getDate();
+    const month =
+        yesterday.getMonth() + 1 > 9
+            ? yesterday.getMonth() + 1
+            : "0" + (yesterday.getMonth() + 1);
+    const year = yesterday.getFullYear();
+    const section = topicsMap.get(topicName);
+    return { day, month, year, section };
+};
+
+export { getLosTiemposData, getLosTiemposUrls };

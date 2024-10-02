@@ -115,7 +115,7 @@ VALUES
 INSERT INTO
     users (id, name)
 VALUES
-    (1, 'Admin');
+    (1, 'Sistema');
 
 -- DATA CATEGORIES
 INSERT INTO
@@ -137,18 +137,18 @@ INSERT INTO
     news_topics (id, news_source_id, name)
 VALUES
     (1, 1, 'Cochabamba'),
-    (2, 1, 'Cultura'),
+    (2, 1, 'Deportes'),
     (3, 1, 'Economía'),
     (4, 1, 'Mundo'),
     (5, 1, 'País'),
     (6, 1, 'Seguridad'),
     (7, 2, 'Cochabamba'),
-    (8, 2, 'Cultura'),
+    (8, 2, 'Deportes'),
     (9, 2, 'Mundo'),
     (10, 2, 'Opinión'),
     (11, 2, 'País'),
     (12, 2, 'Policial'),
-    (13, 3, 'Educación y sociedad'),
+    (13, 3, 'Deportes'),
     (14, 3, 'Economía'),
     (15, 3, 'Mundo'),
     (16, 3, 'Opinión'),

@@ -54,7 +54,7 @@ class News {
     static async getSources() {
         try {
             const result = await query(
-                "SELECT id, name, active FROM news_sources ORDER BY id ASC;"
+                "SELECT id, name, active, last_date FROM news_sources ORDER BY id ASC;"
             );
             return result.rows;
         } catch (error) {
@@ -77,6 +77,56 @@ class News {
             return result.rows;
         } catch (error) {
             console.error("newsM getTopics ERROR: ", error);
+            throw new Error("Data Base connection refused!");
+        }
+    }
+
+    /**
+     * Retrieves the topics associated with a specific news source by its ID.
+     *
+     * @param {number} news_id - The ID of the news source.
+     * @returns {Promise<Array<Object>>} Resolves to an array of topics, each containing the topic name and its active state.
+     * @throws {Error} Throws an error if the database connection fails.
+     */
+    static async getTopicsBySource(news_id) {
+        try {
+            const result = await query(
+                "SELECT name, active FROM news_topics WHERE news_source_id = $1;",
+                [news_id]
+            );
+            return result.rows;
+        } catch (error) {
+            console.error("ERROR newsM getTopics\n", error);
+            throw new Error("Data Base connection refused!");
+        }
+    }
+
+    /**
+     * Updates the `last_date` field for multiple news sources in the database.
+     *
+     * @param {Array<Object>} sources - An array of source objects, each containing the `id` and `last_date`.
+     * @returns {Promise<number>} Resolves to 204 if the update is successful.
+     * @throws {Error} Throws an error if the database connection fails.
+     */
+    static async setSourcesLastDate(sources) {
+        try {
+            let values = [];
+            sources.map((source) => {
+                values = [...values, source.id, source.last_date];
+            });
+            const placeholders = getTopicsPlaceholders(values);
+            await query(
+                `
+                UPDATE news_sources AS t
+                SET last_date = data.last_date::date
+                FROM (VALUES ${placeholders}) AS data (id, last_date )
+                WHERE t.id = data.id::bigint;
+                `,
+                values
+            );
+            return 204;
+        } catch (error) {
+            console.error("ERROR newsM setSourcesLastDate\n", error);
             throw new Error("Data Base connection refused!");
         }
     }

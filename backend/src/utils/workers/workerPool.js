@@ -50,6 +50,11 @@ class WorkerPool {
                 const job = worker.currentJob;
                 if (job.taskName === "processURLs") {
                     this.processingURLs = false;
+                } else if (
+                    !this.processingURLs &&
+                    job.taskName === "programmedRecord"
+                ) {
+                    this.run("processURLs");
                 }
                 job.resolve(result);
                 worker.currentJob = null;
@@ -118,6 +123,6 @@ class WorkerPool {
 }
 
 const workerPool = new WorkerPool(3);
-workerPool.run("processURLs");
+workerPool.run("programmedRecord");
 
 export default workerPool;

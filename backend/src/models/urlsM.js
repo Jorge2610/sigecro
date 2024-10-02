@@ -2,10 +2,10 @@ import { query } from "../config/db.js";
 
 class URLs {
     /**
-     * Executes a batch insert of URLs and user IDs into the database.
+     * Executes a batch insert of URLs with user IDs and category IDs into the database.
      *
      * @param {string} valuesPlaceholders - The SQL query placeholders for the batch insert.
-     * @param {Array} values - An array of URL and user ID pairs to be inserted.
+     * @param {Array} values - An array of URL, user ID and category ID to be inserted.
      * @returns {Promise<number>} Resolves to HTTP status code 200 on success, or 503 on failure.
      */
     static async setURLsBatch(valuesPlaceholders, values) {
@@ -17,6 +17,27 @@ class URLs {
             return 200;
         } catch (error) {
             console.error("Error al insertar URLs", error);
+            return 503;
+        }
+    }
+
+    /**
+     * Inserts multiple URLs into the `urls` table.
+     *
+     * @param {Array<string>} values - An array of URLs to insert.
+     * @returns {Promise<number>} Resolves to 200 if the insertion is successful, or 503 if an error occurs.
+     * @throws {Error} Logs an error if the insertion fails.
+     */
+    static async setURLsBatchDefault(values) {
+        try {
+            const valuesPlaceholders = getPlaceHolders(values);
+            await query(
+                `INSERT INTO urls(url) VALUES ${valuesPlaceholders};`,
+                values
+            );
+            return 200;
+        } catch (error) {
+            console.error("ERROR urlsM setURLsBatchDefault\n", error);
             return 503;
         }
     }
@@ -95,5 +116,22 @@ class URLs {
         }
     }
 }
+
+/**
+ * Generates SQL placeholders for batch default inserting.
+ *
+ * @param {Array} values - An array of values to generate placeholders for.
+ * @returns {string} A string of SQL placeholders for the `VALUES` clause.
+ */
+const getPlaceHolders = (values) => {
+    let placeholders = "";
+    for (let i = 1; i <= values.length; i++) {
+        placeholders += `($${i})`;
+        if (i !== values.length) {
+            placeholders += ", ";
+        }
+    }
+    return placeholders;
+};
 
 export default URLs;

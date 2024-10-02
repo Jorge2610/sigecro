@@ -13,6 +13,7 @@ interface Source {
     id: number;
     name: string;
     active: boolean;
+    last_date: Date;
     topics: Array<{ id: number; name: string; active: boolean }>;
 }
 
@@ -30,6 +31,7 @@ const Programado = async () => {
                             id={source.id}
                             title={source.name}
                             topics={source.topics}
+                            last_record={new Date(source.last_date)}
                             active={source.active}
                         />
                     );

@@ -7,16 +7,18 @@ import { Button } from "@/components/ui/button";
 import { PopupState } from "@/components/ui/popup";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
+import { format } from "date-fns";
 
 interface ProgramedCardProps {
     id: number;
     title: string;
     topics: Array<{ id: number; name: string; active: boolean }>;
     active: boolean;
+    last_record: Date;
 }
 
 const ProgramedCard = (props: ProgramedCardProps) => {
-    const { title, topics, active, id } = props;
+    const { title, topics, active, id, last_record } = props;
     const [topicsState, setTopicsState] = useState(topics);
     const [activeSource, setActiveSource] = useState(active);
     const [expanded, setExpanded] = useState(false);
@@ -146,7 +148,19 @@ const ProgramedCard = (props: ProgramedCardProps) => {
                 })}
             </div>
             <Separator />
-            <div className="flex justify-end gap-4 my-4">
+            <div className="flex justify-end items-center gap-4 my-4">
+                <p className="grow flex items-center gap-2">
+                    {last_record.getFullYear() < 2020 ? (
+                        "Sin registros"
+                    ) : (
+                        <>
+                            <span className="material-symbols-outlined text-sig-blue">
+                                event_available
+                            </span>
+                            {format(last_record, "dd-MM-yyyy")}
+                        </>
+                    )}
+                </p>
                 <Button
                     variant="destructive"
                     disabled={!activeSource}

@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
-import { getLosTiemposData } from "./losTiempos.js";
-import { getOpinionData } from "./opinion.js";
+import { getLosTiemposData, getLosTiemposUrls } from "./losTiempos.js";
+import { getOpinionData, getOpinionUrls } from "./opinion.js";
 import { getElDeberData } from "./elDeber.js";
 import axios from "axios";
 import http from "http";
@@ -8,6 +8,7 @@ import https from "https";
 import URLs from "../../models/urlsM.js";
 import { News } from "../../models/newsM.js";
 import dotenv from "dotenv";
+import { sleep } from "../utils.js";
 
 dotenv.config();
 const delay = parseInt(process.env.DELAY);
@@ -125,14 +126,6 @@ const getData = (source, responseData) => {
 };
 
 /**
- * Pauses the execution for a specified amount of time.
- *
- * @param {number} delay - The delay in milliseconds.
- * @returns {Promise<void>} A promise that resolves after the delay has passed.
- */
-const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
-
-/**
  * Processes a queue of URLs by fetching and creating news records from the URLs.
  * If a URL cannot be processed, it retries based on defined rules.
  *
@@ -210,10 +203,8 @@ const createNews = async (newsData, data) => {
         const newsId = result[0].id;
         const responseTags = await getTagsIA(content);
         let tags;
-        if(responseTags.status===500)
-            tags=[];
-        else
-            tags=responseTags.data;
+        if (responseTags.status === 500) tags = [];
+        else tags = responseTags.data;
         await News.setTags(newsId, tags);
     } catch (error) {
         console.error("Error al crear la noticia", error);
@@ -235,4 +226,69 @@ const getFormatedContent = (newsData) => {
     return formatedContent;
 };
 
-export { getData, getSource, processURLs };
+/**
+ * Retrieves URLs from multiple news sources and inserts them into the database.
+ * Updates the last processing date of the sources.
+ *
+ * @returns {Promise<string>} Resolves with a success message once the process is completed.
+ * @throws {Error} Throws an error if any database or URL-fetching operation fails.
+ */
+const getNewsUrls = async () => {
+    const sources = await News.getSources();
+    let urls = [];
+    for (const source of sources) {
+        const sourceUrls = await getSourceUrls(source);
+        urls = [...urls, ...sourceUrls];
+    }
+    if (urls.length > 0) {
+        await URLs.setURLsBatchDefault(urls);
+        await News.setSourcesLastDate(sources);
+    }
+    return "Process done...";
+};
+
+/**
+ * Retrieves URLs from a specific news source if it is active and its last processed date is valid.
+ * Fetches the URLs based on the source name and topics associated with the source.
+ *
+ * @param {Object} source - The news source object containing its details (id, name, last_date, active).
+ * @returns {Promise<Array<string>>} Resolves to an array of URLs fetched from the source.
+ * @throws {Error} Throws an error if the fetching process for a source or its topics fails.
+ */
+const getSourceUrls = async (source) => {
+    let sourceUrls = [];
+    if (source.active && checkLastDate(source)) {
+        source.last_date = new Date();
+        const topics = await News.getTopicsBySource(source.id);
+        switch (source.name) {
+            case "Los Tiempos":
+                sourceUrls = await getLosTiemposUrls(topics);
+                break;
+            case "Opinión":
+                sourceUrls = await getOpinionUrls(topics);
+                break;
+            case "El Deber":
+                sourceUrls = [];
+                break;
+        }
+    }
+    return sourceUrls;
+};
+
+/**
+ * Checks whether the current date is later than the last date a news source was processed.
+ *
+ * @param {Object} source - The news source object with a `last_date` field.
+ * @returns {boolean} Returns true if the current date is after the source's last processed date, false otherwise.
+ */
+const checkLastDate = (source) => {
+    let currentDate = new Date();
+    currentDate = currentDate.toLocaleString().split(",")[0].split("/");
+    currentDate = new Date(
+        `${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`
+    );
+    let lastDate = new Date(source.last_date);
+    return currentDate.getTime() > lastDate.getTime();
+};
+
+export { getData, getSource, processURLs, getNewsUrls };

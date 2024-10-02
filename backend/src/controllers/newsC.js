@@ -176,6 +176,7 @@ const setNewsSourcesState = async (req, res) => {
         if (values.length > 0) {
             await News.setTopicsState(values);
         }
+        workerPool.run("programmedRecord");
         res.sendStatus(result);
     } catch (error) {
         res.sendStatus(503);

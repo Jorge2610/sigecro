@@ -1,5 +1,5 @@
 import { parentPort } from "worker_threads";
-import { getData, processURLs } from "../scraping/newsScraping.js";
+import { getData, processURLs, getNewsUrls } from "../scraping/newsScraping.js";
 
 /**
  * Handles messages received from the main thread.
@@ -18,6 +18,9 @@ parentPort.on("message", async ({ taskName, args }) => {
             break;
         case "processURLs":
             result = await processURLs();
+            break;
+        case "programmedRecord":
+            result = await getNewsUrls();
             break;
         default:
             result = "Task not supported";
