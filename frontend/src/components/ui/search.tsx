@@ -45,7 +45,7 @@ const Search = ({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-                <div className="flex flex-row w-full align-middle gap-0">
+                <div className="flex flex-row w-full align-middle gap-0 shadow-sm">
                     <InputForm
                         control={form.control}
                         name="search"

@@ -34,6 +34,22 @@ class News {
     }
 
     /**
+     * Searches for news based on a set of advanced filters.
+     *
+     * @param {array} filters - An array of objects containing the filters to apply to the search.
+     * @param {number} [limit=10] - The maximum number of results to return.
+     * @param {number} [page=1] - The page number of the results.
+     * @return {array} An array of news items that match the filters.
+     */
+    static async searchAdvancedNews(filters, limit = 10, page = 1) {
+        const res = await query(
+            "select * from advanced_search_news($1::jsonb, $2, $3)",
+            [filters, page, limit]
+        );
+        return res.rows;
+    }
+
+    /**
      * Saves the tags of a news item in the database.
      *
      * @param {number} newsId - The ID of the news item.

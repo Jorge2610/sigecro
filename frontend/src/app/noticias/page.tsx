@@ -14,8 +14,24 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
+import Searching from "@/components/noticias/search/Searching";
+import AdvancedSearch from "@/components/noticias/search/AdvancedSearch";
 import { News } from "@/components/noticias/newsInterfaces";
 import ListNews from "@/components/ui/list-news";
+
+type Operator = "" | "NOT";
+
+interface FilterCondition {
+    [field: string]: {
+        value: string;
+        operator: Operator;
+    };
+}
+
+interface AdvancedFilter {
+    conditions: FilterCondition;
+    logic: string;
+}
 
 const Noticias = () => {
     const router = useRouter();
@@ -32,17 +48,24 @@ const Noticias = () => {
         Number(searchParams.get("limit")) || 10
     );
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [isAdvacedSearch, setIsAdvacedSearch] = useState<boolean>(false);
+    const [advancedSearch, setAdvancedSearch] = useState<AdvancedFilter[]>(
+        () => {
+            const savedFilter = searchParams.get("filter");
+            return savedFilter ? JSON.parse(savedFilter) : [];
+        }
+    );
 
     useEffect(() => {
         getSearch();
-    }, [search, page]);
+    }, [search, advancedSearch, page]);
 
     useEffect(() => {
         const newParams = new URLSearchParams(searchParams);
         newParams.set("search", search);
         newParams.set("page", page.toString());
         newParams.set("limit", limit.toString());
-        router.replace(`?${newParams.toString()}`, { scroll: false });
+        router.replace(`?${newParams.toString()}`, { scroll: true });
     }, [search, page, limit]);
 
     /**
@@ -52,8 +75,17 @@ const Noticias = () => {
      */
     const getSearch = async (): Promise<void> => {
         try {
+            const params = isAdvacedSearch
+                ? {
+                      filters: JSON.stringify(advancedSearch),
+                      search: "",
+                      page,
+                      limit,
+                  }
+                : { search, page, limit };
+            console.log(params);
             const response = await axios.get("/api/news/searching", {
-                params: { search, page, limit },
+                params,
             });
             setNews(response.data.data);
             console.log(response.data.data);
@@ -73,7 +105,22 @@ const Noticias = () => {
      * @return {void} No return value.
      */
     const handleSearch = (newSearch: string): void => {
+        setIsAdvacedSearch(false);
         setSearch(newSearch);
+        setAdvancedSearch([]);
+        setPage(1);
+    };
+
+    /**
+     * Updates the search query with the given advanced filters and resets the page number to 1.
+     *
+     * @param {AdvancedFilter[]} filters - The advanced filters to update the search query with.
+     * @return {void} No return value.
+     */
+    const handleAdvancedSearch = (filters: AdvancedFilter[]): void => {
+        setAdvancedSearch(filters);
+        setIsAdvacedSearch(true);
+        setSearch("");
         setPage(1);
     };
 
@@ -170,7 +217,22 @@ const Noticias = () => {
 
     return (
         <div className="flex flex-col gap-4">
-            <Search setSearch={setSearch} placeholder="Buscar noticias..." />
+            <Searching
+                setIsAdvanced={setIsAdvacedSearch}
+                isAdvanced={isAdvacedSearch}
+            >
+                {isAdvacedSearch ? (
+                    <AdvancedSearch
+                        filters={advancedSearch}
+                        onSearch={handleAdvancedSearch}
+                    />
+                ) : (
+                    <Search
+                        setSearch={handleSearch}
+                        placeholder="Buscar noticias..."
+                    />
+                )}
+            </Searching>
             {search != "" && (
                 <h4 className="font-semibold">
                     Noticias encontradas:{" "}

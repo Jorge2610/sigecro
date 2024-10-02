@@ -119,4 +119,28 @@ describe("GET /news", () => {
         });
         expect(response.statusCode).toBe(200);
     });
+
+    test("should respond with a 200 status code with an advance search", async () => {
+        const filters = [
+            {
+                conditions: {
+                    all_fields: { value: "evo", operator: "" },
+                },
+                logic: "AND",
+            },
+            {
+                conditions: {
+                    title: { value: "bolivia", operator: "NOT" },
+                },
+                logic: "AND",
+            },
+        ];
+
+        const response = await request(app)
+            .get("/api/news/advancedSearch")
+            .send({
+                filters: JSON.stringify(filters),
+            });
+        expect(response.statusCode).toBe(200);
+    });
 });
