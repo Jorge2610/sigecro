@@ -209,6 +209,7 @@ const NewsForm = ({ categories }: Props) => {
                             name="summary"
                             label={messages.summary.label}
                             control={form.control}
+                            rows={5}
                             placeholder={messages.summary.placeholder}
                             max={768}
                         />

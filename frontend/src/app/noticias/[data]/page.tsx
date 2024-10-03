@@ -1,6 +1,5 @@
-import axios from "axios";
 import api from "@/app/api/apiConfig";
-import NewsPreview from "@/components/noticias/manual/NewsPreview"
+import {News} from "@/components/noticias/News"
 const Noticia = async ({ params }: { params: { data: string } }) => {
     let responseNews;
 
@@ -8,13 +7,13 @@ const Noticia = async ({ params }: { params: { data: string } }) => {
     const id = splitedData[splitedData.length - 1];
     try {
         const response = await api.get(`/news/${id}`);
-        responseNews = response.data.data[0];
+        responseNews = response.data.data;
     } catch (error) {
         //console.log(error);
         responseNews = [];
     }
     console.log(responseNews);
-    return responseNews?.length>0 ? <div>holas </div> : <div> no hay </div>;
+    return responseNews?.length>0 ? <News imageURL={null} data={responseNews[0]}></News> : <div> no hay </div>;
 };
 
 export default Noticia;
