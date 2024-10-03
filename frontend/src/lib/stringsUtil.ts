@@ -1,3 +1,5 @@
+import { te } from "date-fns/locale";
+
 /**
  * Capitaliza la primera letra de cada palabra en una cadena dada.
  *
@@ -25,5 +27,13 @@ const splitIntoParagraphs = (text: string): string[] => {
     const paragraphs = text.split(/\n+/);
     return paragraphs.filter((paragraph) => paragraph.trim() !== "");
 };
-
-export { capitalizeWords, splitIntoParagraphs };
+/**
+ * 
+ * @param text 
+ * @returns 
+ */
+const formantNewsTitle = (text: string): string => {
+    text = text.replaceAll(" ", "-").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return text;
+};
+export { capitalizeWords, splitIntoParagraphs, formantNewsTitle};
