@@ -2,6 +2,10 @@ import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+const labels = {
+    item1 : "Búsqueda",
+    item2 : "Búsqueda Avanzada",
+}
 type SearchingProps = {
     setIsAdvanced: React.Dispatch<React.SetStateAction<boolean>>;
     isAdvanced: boolean;
@@ -18,7 +22,7 @@ const Searcing = ({ children, setIsAdvanced, isAdvanced }: SearchingProps) => {
                         isAdvanced ? "bg-sig-gray2 hover:bg-sig-gray3" : "bg-white hover:bg-white text-sig-text"
                     }`}
                 >
-                    Busqueda
+                    {labels.item1}
                 </Button>
                 <Button
                     onClick={() => setIsAdvanced(true)}
@@ -27,7 +31,7 @@ const Searcing = ({ children, setIsAdvanced, isAdvanced }: SearchingProps) => {
                         !isAdvanced ? "bg-sig-gray2 hover:bg-sig-gray3" : "bg-white hover:bg-white text-sig-text"
                     }`}
                 >
-                    Busqueda Avanzada
+                    {labels.item2}
                 </Button>
             </div>
             <div className="p-4">{children}</div>

@@ -68,6 +68,10 @@ const Noticias = () => {
         router.replace(`?${newParams.toString()}`, { scroll: true });
     }, [search, page, limit]);
 
+    useEffect(() => {
+        !isAdvacedSearch && setAdvancedSearch([]);
+    }, [isAdvacedSearch]);
+
     /**
      * Fetches news data from the API based on search query and updates the news state.
      *
@@ -83,12 +87,10 @@ const Noticias = () => {
                       limit,
                   }
                 : { search, page, limit };
-            console.log(params);
             const response = await axios.get("/api/news/searching", {
                 params,
             });
             setNews(response.data.data);
-            console.log(response.data.data);
             setTotalPages(
                 Math.ceil(response.data.data[0]?.total_count / limit) || 1
             );
@@ -233,7 +235,7 @@ const Noticias = () => {
                     />
                 )}
             </Searching>
-            {search != "" && (
+            {(search != ""|| advancedSearch.length > 0 ) && (
                 <h4 className="font-semibold">
                     Noticias encontradas:{" "}
                     {news.length > 0

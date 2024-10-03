@@ -197,7 +197,7 @@ const AdvancedSearch = ({ filters, onSearch }: AdvancedSearchProps) => {
     return (
         <div className="space-y-4">
             <div className={"flex justify-between items-center"}>
-                <p className="font-semibold text-sig-blue">Búsqueda avanzada</p>
+                <p className="font-semibold text-sig-blue">Búsqueda Avanzada</p>
                 <Button
                     variant="ghost"
                     className=" w-10"
