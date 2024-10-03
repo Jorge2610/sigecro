@@ -102,6 +102,28 @@ const basicSearchNews = async (req, res, next) => {
 };
 
 /**
+ * Performs an advanced search for news based on the provided filters.
+ *
+ * @param {Object} req - The HTTP request object containing the filters.
+ * @param {Object} res - The HTTP response object.
+ * @param {Function} next - The next middleware function in the stack.
+ * @return {Promise<void>} A promise that resolves when the search operation is completed.
+ */
+const advancedSearchNews = async (req, res, next) => {
+    console.log(req.query.filters);
+    try {
+        const response = await News.searchAdvancedNews(
+            req.query.filters,
+            req.query.limit,
+            req.query.page
+        );
+        res.status(200).json(response);
+    } catch (error) {
+        res.sendStatus(500);
+    }
+};
+
+/**
  * Retrieves news data from a provided URL and returns it in JSON format.
  *
  * @param {Object} req - The HTTP request object containing the URL of the news article.
@@ -189,4 +211,5 @@ export {
     basicSearchNews,
     getNewsSources,
     setNewsSourcesState,
+    advancedSearchNews,
 };

@@ -177,6 +177,7 @@ const InputFileForm = ({
         setFileName(nameImage ?? null);
     }, [nameImage]);
 
+   
     /**
      * Maneja los cambios del archivo seleccionado.
      *
@@ -197,19 +198,20 @@ const InputFileForm = ({
     };
 
     /**
-     * Simula el clic en el boton de seleccionar archivo.
+     * Simulates a click on the file input button.
      *
-     * @return {void}
+     * @return {void} No return value.
      */
     const handleButtonClick = (): void => {
         inputFileRef.current?.click();
     };
 
     /**
-     * Limpia el archivo seleccionado reseteando el nombre de archivo y llamando el callback de onChange.
+     * Clears the selected file by resetting the file name, 
+     * notifying the onChange callback, and resetting the file input value.
      *
-     * @param {(value: undefined) => void} onChange - Una funcion callback que se llama cuando se limpia el archivo.
-     * @return {void}
+     * @param {(value: undefined) => void} onChange - A callback function to notify when the file is cleared.
+     * @return {void} No return value.
      */
     const handleClearFile = (onChange: (value: undefined) => void): void => {
         setFileName(null);

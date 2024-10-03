@@ -49,6 +49,12 @@ const FormSchema = z.object({
 
 type Data = z.infer<typeof FormSchema>;
 
+/**
+ * Returns a formatted date string by subtracting 4 hours from the given date.
+ *
+ * @param {Date | undefined} date - The date to be formatted.
+ * @return {string | undefined} The formatted date string in ISO format, or undefined if the input date is undefined.
+ */
 const getFormatedDate = (date: Date | undefined): string | undefined => {
     if (date) {
         return sub(date, { hours: 4 }).toISOString();
@@ -56,11 +62,12 @@ const getFormatedDate = (date: Date | undefined): string | undefined => {
     return undefined;
 };
 
+
 /**
- * Crea un FormData a partir de los datos proporcionados de una noticia.
+ * Creates a FormData object from the provided news data.
  *
- * @param {z.infer<typeof FormSchema>} data - Los datos que se van a incluir en el FormData.
- * @return {FormData} El FormData creado a partir de los datos.
+ * @param {z.infer<typeof FormSchema>} data - The news data to be included in the FormData.
+ * @return {FormData} The FormData object created from the news data.
  */
 const createFormData = (data: z.infer<typeof FormSchema>): FormData => {
     const formData = new FormData();

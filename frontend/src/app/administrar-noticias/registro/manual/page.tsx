@@ -3,6 +3,7 @@ import NewsForm from "@/components/noticias/manual/NewsForm";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import NewsHelper from "@/components/noticias/NewsHelper";
+import React from "react";
 
 const helps = [
     "Llena los campos solicitados en el formulario para registrar una noticia.",

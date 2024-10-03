@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect } from "react";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,51 +16,67 @@ const formSchema = z.object({
 const Search = ({
     placeholder,
     setSearch,
+    initialValue = "",
 }: {
     placeholder?: string;
-    setSearch: React.Dispatch<React.SetStateAction<any>>;
+    setSearch: React.Dispatch<React.SetStateAction<string> | any>;
+    initialValue?: string;
 }) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            search: "",
+            search: initialValue,
         },
     });
 
-    /**
-     * Handles the submission of the search form.
-     *
-     * @param {z.infer<typeof formSchema>} data - The validated form data.
-     * @return {void} None
-     */
+    useEffect(() => {
+        form.setValue("search", initialValue);
+    }, [initialValue, form]);
+
     const onSubmit = (data: z.infer<typeof formSchema>): void => {
         setSearch(data.search);
     };
 
+    const clear = () => {
+        form.reset({ search: "" });
+        setSearch("");
+    };
+
     return (
-        <>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="flex flex-row w-full align-middle gap-0">
-                        <InputForm
-                            control={form.control}
-                            name="search"
-                            className="rounded-e-none border-e-0 focus-visible:ring-0  w-full"
-                            placeholder={placeholder}
-                        />
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+                <div className="flex flex-row w-full align-middle gap-0 shadow-sm">
+                    <InputForm
+                        control={form.control}
+                        name="search"
+                        className="rounded-e-none border-e-0 focus-visible:ring-0 w-full"
+                        placeholder={placeholder}
+                    />
+                    {form.watch("search") && (
                         <Button
-                            type="submit"
+                            type="button"
+                            onClick={clear}
+                            variant={"outline"}
                             size={"sm"}
-                            className="h-9 rounded-s-none border-s-0"
+                            className="h-9 rounded-none border-s-0 border-e-0 hover:bg-white hover:text-sig-purple"
                         >
                             <span className="material-symbols-outlined">
-                                search
+                                close
                             </span>
                         </Button>
-                    </div>
-                </form>
-            </Form>
-        </>
+                    )}
+                    <Button
+                        type="submit"
+                        size={"sm"}
+                        className="h-9 rounded-s-none border-s-0"
+                    >
+                        <span className="material-symbols-outlined">
+                            search
+                        </span>
+                    </Button>
+                </div>
+            </form>
+        </Form>
     );
 };
 
