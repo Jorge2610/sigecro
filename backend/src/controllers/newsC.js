@@ -205,6 +205,15 @@ const setNewsSourcesState = async (req, res) => {
     }
 };
 
+const getNewsById = async (req,res)=>{
+    const id =req.params.id;
+    try{
+        const data = await News.getById(id);
+        res.json({data});
+    }catch(error){
+        res.sendStatus(503);
+    }
+}
 export {
     getNewsData,
     setNews,
@@ -212,4 +221,5 @@ export {
     getNewsSources,
     setNewsSourcesState,
     advancedSearchNews,
+    getNewsById,
 };
