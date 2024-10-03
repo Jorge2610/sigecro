@@ -218,6 +218,13 @@ const setNewsSourcesState = async (req, res) => {
     }
 };
 
+/**
+ * Retrieves all the news sources and sends them as a JSON response.
+ *
+ * @param {object} req - The Express request object.
+ * @param {object} res - The Express response object.
+ * @returns {Promise<void>} Sends a JSON response with the news sources.
+ */
 const getAllNewsSources = async (req, res) => {
     try {
         const newsSources = await News.getAllSources();
@@ -227,6 +234,13 @@ const getAllNewsSources = async (req, res) => {
     }
 };
 
+/**
+ * Retrieves the most used tags in the news database and sends them as a JSON response.
+ *
+ * @param {object} req - The Express request object.
+ * @param {object} res - The Express response object.
+ * @returns {Promise<void>} Sends a JSON response with the most used tags.
+ */
 const getMostUsedTags = async (req, res) => {
     try {
         const tags = await News.getMostUsedTags();
@@ -236,6 +250,23 @@ const getMostUsedTags = async (req, res) => {
     }
 };
 
+
+/**
+ * Retrieves a news article by its id and sends it as a JSON response.
+ *
+ * @param {Object} req - The Express request object containing the id of the news article.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} Sends a JSON response with the news article.
+ */
+const getNewsById = async (req,res)=>{
+    const id =req.params.id;
+    try{
+        const data = await News.getById(id);
+        res.json({data});
+    }catch(error){
+        res.sendStatus(503);
+    }
+}
 export {
     getNewsData,
     setNews,
@@ -245,4 +276,5 @@ export {
     advancedSearchNews,
     getAllNewsSources,
     getMostUsedTags,
+    getNewsById,
 };

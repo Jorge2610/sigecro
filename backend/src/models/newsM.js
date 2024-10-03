@@ -16,6 +16,47 @@ class News {
         return res.rows;
     }
 
+    static async getById(id) {
+        const res = await query(
+            `SELECT
+                    n.id,
+                    n.title,
+                    n.content,
+                    n.date,
+                    n.source,
+                    n.url,
+                    n.summary,
+                    n.image_url,
+                    n.status,
+                    n.category_id,
+                    c.name as category_name,
+                    n.user_id,
+                    array_agg(DISTINCT t.name) as tags,
+                    c.name as category
+                FROM
+                    news n
+                    LEFT JOIN news_tag nt ON n.id = nt.news_id
+                    LEFT JOIN tags t ON nt.tag_id = t.id
+                    INNER JOIN categories c ON n.category_id = c.id
+                WHERE
+                    n.id = $1
+                GROUP BY
+                    n.id,
+                    n.title,
+                    n.content,
+                    n.date,
+                    n.source,
+                    n.url,
+                    n.summary,
+                    n.image_url,
+                    n.status,
+                    n.category_id,
+                    n.user_id,
+                    c.name`,
+            [id]
+        );
+        return res.rows;
+    }
     /**
      * Searches for news based on a search term.
      *
