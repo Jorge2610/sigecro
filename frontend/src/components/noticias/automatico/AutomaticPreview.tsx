@@ -202,7 +202,7 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(() => setOpen(true))}
-                className="space-y-4"
+                className="space-y-4 mt-4"
             >
                 <h2 className="text-3xl font-lora font-medium mb-2">
                     {newsData?.title}
@@ -255,6 +255,7 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
                     name="summary"
                     label="Resumen *"
                     control={form.control}
+                    rows={5}
                     placeholder="Escriba el resumen..."
                 />
                 <div className="flex justify-end">
