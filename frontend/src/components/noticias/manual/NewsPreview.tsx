@@ -60,22 +60,26 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data }) => {
      * @return {void} No return value.
      */
     const comeback = (): void => {
-        router.push("/administrar-noticias/registro/manual");   
+        router.push("/administrar-noticias/registro/manual");
     };
 
     return (
         <div className="flex flex-col gap-4">
             <h3>{data?.category?.name}</h3>
             <h2 className="text-3xl font-lora font-medium">{data?.title}</h2>
-            <div className="flex items-center">
-                <span className="material-symbols-outlined text-sig-text mr-2">
-                    newspaper
-                </span>
-                {data?.source}
-                <span className="material-symbols-outlined text-sig-text ml-20 mr-2">
-                    calendar_clock
-                </span>
-                {data?.date && format(data.date, "dd-MM-yyyy HH:mm")}
+            <div className="flex items-center flex-wrap gap-4 md:gap-8">
+                <div className="flex items-center">
+                    <span className="material-symbols-outlined text-sig-text mr-2">
+                        newspaper
+                    </span>
+                    {data?.source}
+                </div>
+                <div className="flex items-center">
+                    <span className="material-symbols-outlined text-sig-text mr-2">
+                        calendar_clock
+                    </span>
+                    {data?.date && format(data.date, "dd-MM-yyyy HH:mm")}
+                </div>
             </div>
             <Summary summary={data?.summary} />
             {imageURL && (

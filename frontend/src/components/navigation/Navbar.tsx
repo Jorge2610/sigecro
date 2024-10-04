@@ -67,7 +67,7 @@ const Navbar = ({
                     menu
                 </span>
                 <div className="text-white font-medium hover:cursor-pointer">
-                    Noticias
+                    <Link href={"/noticias"}>Noticias</Link>
                 </div>
                 <div className="text-white font-medium hover:cursor-pointer">
                     Cronologías

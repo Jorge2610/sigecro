@@ -25,7 +25,12 @@ const SigBread = () => {
     }
 
     let paths: Array<string> = usePathname().split("/");
-    const page: string = paths[paths.length - 1];
+    let page: string = paths[paths.length - 1];
+    if (page.length > 0) {
+        page = page
+            .replace(page[0], page[0].toUpperCase())
+            .replaceAll("-", " ");
+    }
     paths = paths.slice(1, paths.length - 1);
 
     const getURL = (index: number) => {
@@ -110,10 +115,11 @@ const SigBread = () => {
                     )}
                     {page.length > 0 && (
                         <BreadcrumbItem>
-                            <BreadcrumbPage>
-                                {page
-                                    .replace(page[0], page[0].toUpperCase())
-                                    .replaceAll("-", " ")}
+                            <BreadcrumbPage
+                                className="truncate max-w-[150px]"
+                                title={page}
+                            >
+                                {page}
                             </BreadcrumbPage>
                         </BreadcrumbItem>
                     )}

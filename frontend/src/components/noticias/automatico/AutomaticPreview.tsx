@@ -207,20 +207,31 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
                 <h2 className="text-3xl font-lora font-medium mb-2">
                     {newsData?.title}
                 </h2>
-                <a href={newsData?.url} target="_blank" className="underline">
-                    {newsData?.url}
-                </a>
-                <div className="flex items-center">
-                    <span className="material-symbols-outlined text-sig-text mr-2">
-                        newspaper
-                    </span>
-                    {newsData?.source}
-                    <span className="material-symbols-outlined text-sig-text ml-4 mr-2">
-                        calendar_clock
-                    </span>
-                    {newsData !== undefined
-                        ? format(newsData.dateTime, "dd-MM-yyyy HH:mm")
-                        : ""}
+                <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined">link</span>
+                    <a
+                        href={newsData?.url}
+                        target="_blank"
+                        className="underline"
+                    >
+                        {newsData?.url}
+                    </a>
+                </div>
+                <div className="flex items-center flex-wrap gap-4 md:gap-8">
+                    <div className="flex items-center">
+                        <span className="material-symbols-outlined text-sig-text mr-2">
+                            newspaper
+                        </span>
+                        {newsData?.source}
+                    </div>
+                    <div className="flex items-center">
+                        <span className="material-symbols-outlined text-sig-text mr-2">
+                            calendar_clock
+                        </span>
+                        {newsData !== undefined
+                            ? format(newsData.dateTime, "dd-MM-yyyy HH:mm")
+                            : ""}
+                    </div>
                 </div>
                 <InputFileForm
                     name="image"
