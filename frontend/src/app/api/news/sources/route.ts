@@ -3,8 +3,7 @@ import api from "@/app/api/apiConfig";
 
 const GET = async (request: NextRequest) => {
     try {
-        const res = await api.get("/news/all_sources");
-        console.log(res.data)
+        const res = await api.get("/news/all_sources");  
         return NextResponse.json({
             status: res.status,
             data: res.data,

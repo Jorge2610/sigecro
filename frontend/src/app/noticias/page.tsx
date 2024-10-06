@@ -322,6 +322,7 @@ const Noticias = () => {
             <div className="lg:flex lg:flex-col lg:gap-4 lg:w-full">
                 <div className="lg:flex lg:flex-row lg:gap-4">
                     <Filters
+                        isAdvanced={isAdvacedSearch}
                         setIsVisible={setIsFilter}
                         isVisible={isFilter}
                         onFilterSubmit={handleFilter}

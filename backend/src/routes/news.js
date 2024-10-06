@@ -14,7 +14,7 @@ import { upload } from "../middlewares/multer.js";
 import {
     setURLsBatch,
     getURLsBatch,
-    deleteURLs
+    deleteURLs,
 } from "../controllers/urlsC.js";
 
 const router = Router();

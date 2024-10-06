@@ -4,7 +4,6 @@ import api from "@/app/api/apiConfig";
 const GET = async (request: NextRequest) => {
     try {
         const response = await api.get("/categories/filterCategories");
-        console.log(response.data.rows);
         return NextResponse.json(response.data.rows, { status: 200 });
     } catch (error) {
         return NextResponse.json(

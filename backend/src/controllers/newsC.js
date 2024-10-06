@@ -117,7 +117,6 @@ const basicSearchNews = async (req, res, next) => {
  * @return {Promise<void>} A promise that resolves when the search operation is completed.
  */
 const advancedSearchNews = async (req, res, next) => {
-    console.log("backkkkkk " + req.query.filter_tags);
     try {
         const response = await News.searchAdvancedNews(
             req.query.filters,
@@ -219,11 +218,12 @@ const setNewsSourcesState = async (req, res) => {
 };
 
 /**
- * Retrieves all the news sources and sends them as a JSON response.
+ * Handles the HTTP request to retrieve all news sources from the database.
+ * Sends the list of news sources as a JSON response.
  *
- * @param {object} req - The Express request object.
- * @param {object} res - The Express response object.
- * @returns {Promise<void>} Sends a JSON response with the news sources.
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} Sends a JSON response with news sources or a 503 status code if an error occurs.
  */
 const getAllNewsSources = async (req, res) => {
     try {
@@ -250,23 +250,25 @@ const getMostUsedTags = async (req, res) => {
     }
 };
 
-
 /**
- * Retrieves a news article by its id and sends it as a JSON response.
+ * Handles the HTTP request to retrieve a news article by its ID.
+ * Sends the news article as a JSON response with a 200 status code.
+ * If the news article is not found or an error occurs, sends a 503 status code.
  *
- * @param {Object} req - The Express request object containing the id of the news article.
+ * @param {Object} req - The Express request object containing the news article ID.
  * @param {Object} res - The Express response object.
  * @returns {Promise<void>} Sends a JSON response with the news article.
  */
-const getNewsById = async (req,res)=>{
-    const id =req.params.id;
-    try{
+const getNewsById = async (req, res) => {
+    const id = req.params.id;
+    try {
         const data = await News.getById(id);
-        res.json({data});
-    }catch(error){
+        res.json({ data });
+    } catch (error) {
         res.sendStatus(503);
     }
-}
+};
+
 export {
     getNewsData,
     setNews,

@@ -86,6 +86,7 @@ const FormSchema = z.object({
 type FilterFormValues = z.infer<typeof FormSchema>;
 interface FilterProps {
     isVisible: boolean;
+    isAdvanced: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     onFilterSubmit: (
         categories: number[] | null,
@@ -95,7 +96,12 @@ interface FilterProps {
         dateEnd: Date | null
     ) => void;
 }
-const Filters = ({ isVisible, setIsVisible, onFilterSubmit }: FilterProps) => {
+const Filters = ({
+    isVisible,
+    isAdvanced,
+    setIsVisible,
+    onFilterSubmit,
+}: FilterProps) => {
     const [categories, setCategories] = useState<FormattedItem[]>([]);
     const [sources, setSources] = useState<FormattedItem[]>([]);
     const [tags, setTags] = useState<FormattedItem[]>([]);
@@ -190,7 +196,6 @@ const Filters = ({ isVisible, setIsVisible, onFilterSubmit }: FilterProps) => {
     };
 
     const onSubmit = (data: FilterFormValues) => {
-        console.log(data.dateRange.from?.toDateString());
         onFilterSubmit(
             data.categories.length > 0
                 ? data.categories.map((category) => parseInt(category))
@@ -246,7 +251,6 @@ const Filters = ({ isVisible, setIsVisible, onFilterSubmit }: FilterProps) => {
                             form={form}
                         />
                     )}
-                    <Separator />
                     {sources.length > 0 && (
                         <SectionFilter
                             title="Fuentes"
@@ -255,8 +259,8 @@ const Filters = ({ isVisible, setIsVisible, onFilterSubmit }: FilterProps) => {
                             form={form}
                         />
                     )}
-                    <Separator />
-                    {tags.length > 0 && (
+
+                    {!isAdvanced && tags.length > 0 && (
                         <SectionFilter
                             title="Etiquetas populares"
                             items={tags}
@@ -264,7 +268,6 @@ const Filters = ({ isVisible, setIsVisible, onFilterSubmit }: FilterProps) => {
                             form={form}
                         />
                     )}
-                    <Separator />
                     <DateRangeFilter form={form} />
                     <div className="flex flex-wrap justify-end lg:justify-center gap-4">
                         <Button variant="ghost" onClick={clear}>
@@ -300,78 +303,83 @@ const SectionFilter = ({ title, items, name, form }: SectionFilterProps) => {
     }, [maxItems]);
 
     return (
-        <FormField
-            control={form.control}
-            name={name}
-            render={() => (
-                <FormItem>
-                    <div className="w-full truncate" title={title}>
-                        <FormLabel className="text-base font-medium w-full truncate">
-                            {title}
-                        </FormLabel>
-                    </div>
-                    {items.map(
-                        (item, index) =>
-                            index < maxItems && (
-                                <FormField
-                                    key={item.id}
-                                    control={form.control}
-                                    name={name}
-                                    render={({ field }) => (
-                                        <FormItem
-                                            key={item.id}
-                                            className="flex flex-row items-start space-x-3 space-y-0 w-full "
-                                        >
-                                            <FormControl>
-                                                <Checkbox
-                                                    checked={field.value?.includes(
-                                                        item.id
-                                                    )}
-                                                    onCheckedChange={(
-                                                        checked
-                                                    ) => {
-                                                        return checked
-                                                            ? field.onChange([
-                                                                  ...field.value,
-                                                                  item.id,
-                                                              ])
-                                                            : field.onChange(
-                                                                  field.value?.filter(
-                                                                      (
-                                                                          value: string
-                                                                      ) =>
-                                                                          value !==
-                                                                          item.id
-                                                                  )
-                                                              );
-                                                    }}
-                                                />
-                                            </FormControl>
-                                            <FormLabel
-                                                className="text-sm font-normal w-full truncate text-nowrap"
-                                                title={item.label}
-                                            >
-                                                {item.label}
-                                            </FormLabel>
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                    )}
-                    {maxItems < items.length && (
-                        <div className="flex justify-end m-0">
-                            <span
-                                className="hover:text-sig-bluesky"
-                                onClick={() => setMaxItems(maxItems + 5)}
-                            >
-                                Ver más
-                            </span>
+        <>
+            <FormField
+                control={form.control}
+                name={name}
+                render={() => (
+                    <FormItem>
+                        <div className="w-full truncate" title={title}>
+                            <FormLabel className="text-base font-medium w-full truncate">
+                                {title}
+                            </FormLabel>
                         </div>
-                    )}
-                    <FormMessage />
-                </FormItem>
-            )}
-        />
+                        {items.map(
+                            (item, index) =>
+                                index < maxItems && (
+                                    <FormField
+                                        key={item.id}
+                                        control={form.control}
+                                        name={name}
+                                        render={({ field }) => (
+                                            <FormItem
+                                                key={item.id}
+                                                className="flex flex-row items-start space-x-3 space-y-0 w-full "
+                                            >
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value?.includes(
+                                                            item.id
+                                                        )}
+                                                        onCheckedChange={(
+                                                            checked
+                                                        ) => {
+                                                            return checked
+                                                                ? field.onChange(
+                                                                      [
+                                                                          ...field.value,
+                                                                          item.id,
+                                                                      ]
+                                                                  )
+                                                                : field.onChange(
+                                                                      field.value?.filter(
+                                                                          (
+                                                                              value: string
+                                                                          ) =>
+                                                                              value !==
+                                                                              item.id
+                                                                      )
+                                                                  );
+                                                        }}
+                                                    />
+                                                </FormControl>
+                                                <FormLabel
+                                                    className="text-sm font-normal w-full truncate text-nowrap"
+                                                    title={item.label}
+                                                >
+                                                    {item.label}
+                                                </FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                )
+                        )}
+                        {maxItems < items.length && (
+                            <div className="flex justify-end m-0">
+                                <span
+                                    className="hover:text-sig-bluesky"
+                                    onClick={() => setMaxItems(maxItems + 5)}
+                                >
+                                    Ver más
+                                </span>
+                            </div>
+                        )}
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <Separator />
+        </>
     );
 };
 

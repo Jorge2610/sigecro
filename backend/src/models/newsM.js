@@ -16,6 +16,12 @@ class News {
         return res.rows;
     }
 
+    /**
+     * Retrieves a news item by its id.
+     *
+     * @param {number} id - The id of the news item to retrieve.
+     * @return {array} An array of objects representing the news item.
+     */
     static async getById(id) {
         const res = await query(
             `SELECT
@@ -57,13 +63,21 @@ class News {
         );
         return res.rows;
     }
+   
+    
     /**
-     * Searches for news based on a search term.
+     * Performs a basic search for news based on the provided search query.
      *
-     * @param {string} search - The search term to look for.
+     * @param {string} search - The search query.
      * @param {number} [limit=10] - The maximum number of results to return.
      * @param {number} [page=1] - The page number of the results.
-     * @return {array} An array of news items that match the search term.
+     * @param {number} [short_order=0] - The order of the results.
+     * @param {array} [categories=null] - The categories to filter by.
+     * @param {date} [start_date=null] - The start date of the range to filter by.
+     * @param {date} [end_date=null] - The end date of the range to filter by.
+     * @param {array} [sources=null] - The sources to filter by.
+     * @param {array} [filter_tags=null] - The tags to filter by.
+     * @return {array} An array of news items that match the search query.
      */
     static async searchBasicNews(
         search,
@@ -76,7 +90,6 @@ class News {
         sources = null,
         filter_tags = null
     ) {
-        console.log("bk " + start_date);
         try {
             const res = await query(
                 `select * 
@@ -100,12 +113,19 @@ class News {
         }
     }
 
+    
     /**
-     * Searches for news based on a set of advanced filters.
+     * Performs an advanced search for news based on the provided filters.
      *
-     * @param {array} filters - An array of objects containing the filters to apply to the search.
+     * @param {array} filters - An array of filters to apply to the search.
      * @param {number} [limit=10] - The maximum number of results to return.
      * @param {number} [page=1] - The page number of the results.
+     * @param {number} [short_order=0] - The order of the results.
+     * @param {array} [categories=null] - The categories to filter by.
+     * @param {date} [start_date=null] - The start date of the range to filter by.
+     * @param {date} [end_date=null] - The end date of the range to filter by.
+     * @param {array} [sources=null] - The sources to filter by.
+     * @param {array} [filter_tags=null] - The tags to filter by.
      * @return {array} An array of news items that match the filters.
      */
     static async searchAdvancedNews(
@@ -119,17 +139,6 @@ class News {
         sources = null,
         filter_tags = null
     ) {
-        console.log(
-            filters +
-                page +
-                limit +
-                short_order +
-                categories +
-                start_date +
-                end_date +
-                sources +
-                filter_tags
-        );
         try {
             const res = await query(
                 `select * 
@@ -298,6 +307,12 @@ class News {
         }
     }
 
+    /**
+     * Retrieves all the news sources from the database, excluding duplicates.
+     *
+     * @returns {Promise<Object[]>} Resolves to an array of objects containing the source name.
+     * @throws {Error} Throws an error if the database connection fails.
+     */
     static async getAllSources() {
         try {
             const result = await query(
@@ -310,6 +325,12 @@ class News {
         }
     }
 
+    /**
+     * Retrieves the 10 most used tags in the news database, with their count.
+     *
+     * @returns {Promise<Object[]>} Resolves to an array of objects containing the tag id, name, and count.
+     * @throws {Error} Throws an error if the database connection fails.
+     */
     static async getMostUsedTags() {
         try {
             const result = await query(
