@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.basic_search_news(
     page_num integer DEFAULT 1,
     page_size integer DEFAULT 10,
     short_order integer DEFAULT 0,
-    categories varchar(64)[] DEFAULT NULL,
+    categories BIGINT[] DEFAULT NULL,
     start_date timestamp DEFAULT NULL,
     end_date timestamp DEFAULT NULL,
     sources varchar(64)[] DEFAULT NULL,
@@ -38,8 +38,9 @@ BEGIN
     WITH news_with_tags AS (
         SELECT 
             n.id, n.title, n.content, n.date, n.source, n.url, n.summary, n.image_url, n.status,
-            n.category_id, c.name as category_name, n.user_id,
+            n.category_id, c.name as category_name, n.user_id, 
             array_agg(DISTINCT t.name) as tags,
+            array_agg(DISTINCT t.id) as tag_ids,
             c.name as category
         FROM news n
         LEFT JOIN news_tag nt ON n.id = nt.news_id
@@ -53,9 +54,9 @@ BEGIN
         FROM news_with_tags nwt
         WHERE
             (nwt.status = 'published') AND
-            (categories IS NULL OR nwt.category = ANY(categories))AND
-            (start_date IS NULL OR nwt.date >= start_date) AND
-            (end_date IS NULL OR nwt.date <= end_date) AND
+            (categories IS NULL OR nwt.category_id = ANY(categories))AND
+            (start_date IS NULL OR nwt.date > start_date) AND
+            (end_date IS NULL OR nwt.date < end_date) AND
             (sources IS NULL OR nwt.source = ANY(sources)) AND
             (filter_tags IS NULL OR nwt.tags && filter_tags)
     ),
@@ -103,8 +104,8 @@ BEGIN
 END;
 $function$
 
---- Complementary Functions for Advanced Search
 DROP FUNCTION IF EXISTS build_search_query;
+
 CREATE OR REPLACE FUNCTION public.build_search_query(search_query jsonb)
  RETURNS text
  LANGUAGE plpgsql
@@ -157,11 +158,18 @@ BEGIN
 END;
 $function$
 
-
--- Funcion Advanced Search
 DROP FUNCTION IF EXISTS advanced_search_news;
 
-CREATE OR REPLACE FUNCTION public.advanced_search_news(search_query jsonb, page_num integer DEFAULT 1, page_size integer DEFAULT 10, short_order integer DEFAULT 0, categories character varying[] DEFAULT NULL::character varying[], start_date timestamp without time zone DEFAULT NULL::timestamp without time zone, end_date timestamp without time zone DEFAULT NULL::timestamp without time zone, sources character varying[] DEFAULT NULL::character varying[], filter_tags character varying[] DEFAULT NULL::character varying[])
+CREATE OR REPLACE FUNCTION public.advanced_search_news(
+    search_query jsonb,
+    page_num integer DEFAULT 1, 
+    page_size integer DEFAULT 10, 
+    short_order integer DEFAULT 0, 
+    categories character varying[] DEFAULT NULL::character varying[],
+    start_date timestamp without time zone DEFAULT NULL::timestamp without time zone, 
+    end_date timestamp without time zone DEFAULT NULL::timestamp without time zone,
+    sources character varying[] DEFAULT NULL::character varying[],
+    filter_tags character varying[] DEFAULT NULL::character varying[])
  RETURNS TABLE(id bigint, title character varying, content text, date timestamp without time zone, source character varying, url character varying, summary text, image_url character varying, status character varying, category_id bigint, user_id bigint, tags character varying[], total_count bigint)
  LANGUAGE plpgsql
 AS $function$
@@ -172,7 +180,7 @@ DECLARE
     order_clause text;
 BEGIN
     IF categories IS NOT NULL THEN
-        where_clause := where_clause || ' AND c.name = ANY($1) ';
+        where_clause := where_clause || ' AND c.id = ANY($1) ';
     END IF;
     IF start_date IS NOT NULL THEN
         where_clause := where_clause || ' AND n.date >= $2 ';
@@ -202,7 +210,8 @@ BEGIN
         SELECT 
             n.id, n.title, n.content, n.date, n.source, n.url, n.summary, n.image_url, n.status,
             n.category_id, n.user_id, c.name as category,
-            array_agg(DISTINCT t.name) as tags
+            array_agg(DISTINCT t.name) as tags,
+            array_agg(DISTINCT t.id) as tag_ids
         FROM news n
         INNER JOIN categories c ON n.category_id = c.id
         LEFT JOIN news_tag nt ON n.id = nt.news_id
@@ -227,4 +236,3 @@ BEGIN
         search_query, page_size, (page_num - 1) * page_size;
 END;
 $function$
-

@@ -89,11 +89,18 @@ const uploadImage = async (req) => {
  * @return {Promise<void>} A promise that resolves when the search operation is completed.
  */
 const basicSearchNews = async (req, res, next) => {
+    console.log(req.query);
     try {
         const response = await News.searchBasicNews(
             req.query.search,
             req.query.limit,
-            req.query.page
+            req.query.page,
+            req.query.sort_order,
+            req.query.categories,
+            req.query.start_date,
+            req.query.end_date,
+            req.query.sources,
+            req.query.filter_tags
         );
         res.status(200).json(response);
     } catch (error) {
@@ -110,12 +117,18 @@ const basicSearchNews = async (req, res, next) => {
  * @return {Promise<void>} A promise that resolves when the search operation is completed.
  */
 const advancedSearchNews = async (req, res, next) => {
-    console.log(req.query.filters);
+    console.log("backkkkkk " + req.query.filter_tags);
     try {
         const response = await News.searchAdvancedNews(
             req.query.filters,
             req.query.limit,
-            req.query.page
+            req.query.page,
+            req.query.sort_order,
+            req.query.categories,
+            req.query.start_date,
+            req.query.end_date,
+            req.query.sources,
+            req.query.filter_tags
         );
         res.status(200).json(response);
     } catch (error) {
@@ -205,6 +218,24 @@ const setNewsSourcesState = async (req, res) => {
     }
 };
 
+const getAllNewsSources = async (req, res) => {
+    try {
+        const newsSources = await News.getAllSources();
+        res.status(200).json(newsSources);
+    } catch (error) {
+        res.sendStatus(503);
+    }
+};
+
+const getMostUsedTags = async (req, res) => {
+    try {
+        const tags = await News.getMostUsedTags();
+        res.status(200).json(tags);
+    } catch (error) {
+        res.sendStatus(503);
+    }
+};
+
 export {
     getNewsData,
     setNews,
@@ -212,4 +243,6 @@ export {
     getNewsSources,
     setNewsSourcesState,
     advancedSearchNews,
+    getAllNewsSources,
+    getMostUsedTags,
 };

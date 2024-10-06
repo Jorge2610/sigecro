@@ -6,6 +6,8 @@ import {
     setNewsSourcesState,
     basicSearchNews,
     advancedSearchNews,
+    getAllNewsSources,
+    getMostUsedTags
 } from "../controllers/newsC.js";
 import { upload } from "../middlewares/multer.js";
 import {
@@ -20,7 +22,10 @@ const router = Router();
 router.get("/sources", getNewsSources);
 router.get("/scraping/batch", getURLsBatch);
 router.get("/search", basicSearchNews);
-router.get("/advancedSearch", advancedSearchNews);
+router.get("/advancedSearch", advancedSearchNews); 
+router.get("/all_sources", getAllNewsSources);
+router.get("/tags", getMostUsedTags);
+
 
 //POST /api/news
 router.post("/", upload.single("image"), setNews);

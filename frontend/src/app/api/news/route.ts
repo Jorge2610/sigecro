@@ -20,7 +20,6 @@ const POST = async (request: NextRequest) => {
 const GET = async (request: NextRequest) => {
     try {
         const res = await api.get("/news");
-        console.log(res.data);
         return NextResponse.json({
             status: res.status,
             data: res.data,

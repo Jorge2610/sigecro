@@ -3,10 +3,15 @@ import { News } from "../noticias/newsInterfaces";
 
 type ListNewsProps = {
     news: News[];
+    viewList: boolean;
 };
-const ListNews = ({ news }: ListNewsProps) => {
+const ListNews = ({ news, viewList }: ListNewsProps) => {
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 rows-auto-fr">
+        <div
+            className={`grid grid-cols-1 ${
+                !viewList && "xl:grid-cols-2"
+            } gap-6 rows-auto-fr`}
+        >
             {news.map((news, index) => (
                 <div key={index}>
                     <CardNews data={news} />

@@ -17,6 +17,18 @@ const getAllCategories = async (req, res, next) => {
         next(error);
     }
 };
+
+const getCategoriesUsed = async (req, res, next) => {
+    try {
+        const categories = await Category.getCategoriesUsed();
+        console.log(categories);
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        next(error);
+    }
+};
+
 /**
  * Envia los datos de una categoria a la base de datos.
  *
@@ -40,4 +52,4 @@ const addCategory = async (req, res, next) => {
         next(error);
     }
 };
-export { getAllCategories, addCategory };
+export { getAllCategories, getCategoriesUsed, addCategory };

@@ -24,13 +24,39 @@ class News {
      * @param {number} [page=1] - The page number of the results.
      * @return {array} An array of news items that match the search term.
      */
-    static async searchBasicNews(search, limit = 10, page = 1) {
-        const res = await query("select * from basic_search_news($1, $2, $3)", [
-            search,
-            page,
-            limit,
-        ]);
-        return res.rows;
+    static async searchBasicNews(
+        search,
+        limit = 10,
+        page = 1,
+        short_order = 0,
+        categories = null,
+        start_date = null,
+        end_date = null,
+        sources = null,
+        filter_tags = null
+    ) {
+        console.log("bk " + start_date);
+        try {
+            const res = await query(
+                `select * 
+                 from basic_search_news($1::text, $2::integer, $3::integer, $4::integer, $5::bigint[], 
+                 $6::timestamp, $7::timestamp, $8::varchar[], $9::varchar[])`,
+                [
+                    search,
+                    page,
+                    limit,
+                    short_order,
+                    categories === "null" ? null : JSON.parse(categories),
+                    start_date,
+                    end_date,
+                    sources === "null" ? null : JSON.parse(sources),
+                    filter_tags === "null" ? null : JSON.parse(filter_tags),
+                ]
+            );
+            return res.rows;
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     /**
@@ -41,12 +67,49 @@ class News {
      * @param {number} [page=1] - The page number of the results.
      * @return {array} An array of news items that match the filters.
      */
-    static async searchAdvancedNews(filters, limit = 10, page = 1) {
-        const res = await query(
-            "select * from advanced_search_news($1::jsonb, $2, $3)",
-            [filters, page, limit]
+    static async searchAdvancedNews(
+        filters,
+        limit = 10,
+        page = 1,
+        short_order = 0,
+        categories = null,
+        start_date = null,
+        end_date = null,
+        sources = null,
+        filter_tags = null
+    ) {
+        console.log(
+            filters +
+                page +
+                limit +
+                short_order +
+                categories +
+                start_date +
+                end_date +
+                sources +
+                filter_tags
         );
-        return res.rows;
+        try {
+            const res = await query(
+                `select * 
+            from advanced_search_news($1::jsonb, $2, $3, $4, $5,
+             $6::timestamp, $7::timestamp, $8, $9)`,
+                [
+                    filters,
+                    page,
+                    limit,
+                    short_order,
+                    JSON.parse(categories),
+                    start_date,
+                    end_date,
+                    JSON.parse(sources),
+                    JSON.parse(filter_tags),
+                ]
+            );
+            return res.rows;
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     /**
@@ -190,6 +253,36 @@ class News {
             return 204;
         } catch (error) {
             console.error("newsM setTopicsState ERROR: ", error);
+            throw new Error("Data Base connection refused!");
+        }
+    }
+
+    static async getAllSources() {
+        try {
+            const result = await query(
+                "SELECT source FROM news WHERE status like 'published' GROUP BY source ORDER BY source ASC;"
+            );
+            return result.rows;
+        } catch (error) {
+            console.error("newsM getSources ERROR: ", error);
+            throw new Error("Data Base connection refused!");
+        }
+    }
+
+    static async getMostUsedTags() {
+        try {
+            const result = await query(
+                `SELECT t.id, t.name, COUNT(*) as Frecuency
+                FROM tags t
+                JOIN news_tag nt ON t.id = nt.tag_id
+                GROUP BY
+                t.id
+                ORDER BY Frecuency DESC
+            LIMIT 10;`
+            );
+            return result.rows;
+        } catch (error) {
+            console.error("newsM getMostUsedTags ERROR: ", error);
             throw new Error("Data Base connection refused!");
         }
     }
