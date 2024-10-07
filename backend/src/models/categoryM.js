@@ -10,6 +10,19 @@ class Category {
         return res;
     }
 
+    static async getCategoriesUsed() {
+        const res = await query(
+            `SELECT c.id, c.name
+            FROM categories c
+            JOIN news n ON c.id = n.category_id
+            GROUP BY
+            c.name, c.id
+            ORDER BY c.name DESC;`,
+            []
+        );
+        return res;
+    }
+
     /**
      * Creates a new category in the database.
      *

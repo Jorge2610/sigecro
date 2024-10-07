@@ -143,4 +143,10 @@ describe("GET /news", () => {
             });
         expect(response.statusCode).toBe(200);
     });
+
+    test("should respond with a 200 status code get all source news", async () => {
+        const response = await request(app).get("/api/news/all_sources").send();
+        console.log(response.data);
+        expect(response.statusCode).toBe(200);
+    });
 });

@@ -89,11 +89,18 @@ const uploadImage = async (req) => {
  * @return {Promise<void>} A promise that resolves when the search operation is completed.
  */
 const basicSearchNews = async (req, res, next) => {
+    console.log(req.query);
     try {
         const response = await News.searchBasicNews(
             req.query.search,
             req.query.limit,
-            req.query.page
+            req.query.page,
+            req.query.sort_order,
+            req.query.categories,
+            req.query.start_date,
+            req.query.end_date,
+            req.query.sources,
+            req.query.filter_tags
         );
         res.status(200).json(response);
     } catch (error) {
@@ -110,12 +117,17 @@ const basicSearchNews = async (req, res, next) => {
  * @return {Promise<void>} A promise that resolves when the search operation is completed.
  */
 const advancedSearchNews = async (req, res, next) => {
-    console.log(req.query.filters);
     try {
         const response = await News.searchAdvancedNews(
             req.query.filters,
             req.query.limit,
-            req.query.page
+            req.query.page,
+            req.query.sort_order,
+            req.query.categories,
+            req.query.start_date,
+            req.query.end_date,
+            req.query.sources,
+            req.query.filter_tags
         );
         res.status(200).json(response);
     } catch (error) {
@@ -205,15 +217,58 @@ const setNewsSourcesState = async (req, res) => {
     }
 };
 
-const getNewsById = async (req,res)=>{
-    const id =req.params.id;
-    try{
-        const data = await News.getById(id);
-        res.json({data});
-    }catch(error){
+/**
+ * Handles the HTTP request to retrieve all news sources from the database.
+ * Sends the list of news sources as a JSON response.
+ *
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} Sends a JSON response with news sources or a 503 status code if an error occurs.
+ */
+const getAllNewsSources = async (req, res) => {
+    try {
+        const newsSources = await News.getAllSources();
+        res.status(200).json(newsSources);
+    } catch (error) {
         res.sendStatus(503);
     }
-}
+};
+
+/**
+ * Retrieves the most used tags in the news database and sends them as a JSON response.
+ *
+ * @param {object} req - The Express request object.
+ * @param {object} res - The Express response object.
+ * @returns {Promise<void>} Sends a JSON response with the most used tags.
+ */
+const getMostUsedTags = async (req, res) => {
+    try {
+        const tags = await News.getMostUsedTags();
+        res.status(200).json(tags);
+    } catch (error) {
+        res.sendStatus(503);
+    }
+};
+
+/**
+ * Handles the HTTP request to retrieve a news article by its ID.
+ * Sends the news article as a JSON response with a 200 status code.
+ * If the news article is not found or an error occurs, sends a 503 status code.
+ *
+ * @param {Object} req - The Express request object containing the news article ID.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} Sends a JSON response with the news article.
+ */
+const getNewsById = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const data = await News.getById(id);
+        res.json({ data });
+    } catch (error) {
+        res.sendStatus(503);
+    }
+};
+
 export {
     getNewsData,
     setNews,
@@ -221,5 +276,7 @@ export {
     getNewsSources,
     setNewsSourcesState,
     advancedSearchNews,
+    getAllNewsSources,
+    getMostUsedTags,
     getNewsById,
 };

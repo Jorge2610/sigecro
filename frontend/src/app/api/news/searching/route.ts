@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import api from "@/app/api/apiConfig";
 
 const GET = async (request: NextRequest) => {
+    console.log("Holas b" + request.nextUrl.searchParams.get("sort"));
     try {
-        console.log(request);
         const filters = request.nextUrl.searchParams.get("filters");
-        console.log("filters  ; " + filters);
 
         if (
             request.nextUrl.searchParams.get("filters") != null &&
@@ -16,6 +15,14 @@ const GET = async (request: NextRequest) => {
                     filters: request.nextUrl.searchParams.get("filters"),
                     page: request.nextUrl.searchParams.get("page"),
                     limit: request.nextUrl.searchParams.get("limit"),
+                    sort_order: request.nextUrl.searchParams.get("sort"),
+                    categories:
+                        request.nextUrl.searchParams.get("filterCategories"),
+                    start_date:
+                        request.nextUrl.searchParams.get("filterDateStart"),
+                    end_date: request.nextUrl.searchParams.get("filterDateEnd"),
+                    sources: request.nextUrl.searchParams.get("filterSources"),
+                    filter_tags: request.nextUrl.searchParams.get("filterTags"),
                 },
             });
 
@@ -30,9 +37,16 @@ const GET = async (request: NextRequest) => {
                 search: request.nextUrl.searchParams.get("search"),
                 page: request.nextUrl.searchParams.get("page"),
                 limit: request.nextUrl.searchParams.get("limit"),
+                sort_order: request.nextUrl.searchParams.get("sort"),
+                categories:
+                    request.nextUrl.searchParams.get("filterCategories"),
+                start_date: request.nextUrl.searchParams.get("filterDateStart"),
+                end_date: request.nextUrl.searchParams.get("filterDateEnd"),
+                sources: request.nextUrl.searchParams.get("filterSources"),
+                filter_tags: request.nextUrl.searchParams.get("filterTags"),
             },
         });
-        console.log(res.data);
+
         return NextResponse.json({
             status: res.status,
             data: res.data,

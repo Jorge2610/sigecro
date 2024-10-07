@@ -17,6 +17,25 @@ const getAllCategories = async (req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * Recupera las categorias que se estan utilizando en las noticias.
+ *
+ * @param {object} req - La entrada HTTP.
+ * @param {object} res - La respuesta HTTP.
+ * @param {function} next - La función de middleware siguiente.
+ * @return {json} Un JSON con las categorias.
+ */
+const getCategoriesUsed = async (req, res, next) => {
+    try {
+        const categories = await Category.getCategoriesUsed();
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        next(error);
+    }
+};
+
 /**
  * Envia los datos de una categoria a la base de datos.
  *
@@ -40,4 +59,4 @@ const addCategory = async (req, res, next) => {
         next(error);
     }
 };
-export { getAllCategories, addCategory };
+export { getAllCategories, getCategoriesUsed, addCategory };

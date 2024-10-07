@@ -18,6 +18,8 @@ import Searching from "@/components/noticias/search/Searching";
 import AdvancedSearch from "@/components/noticias/search/AdvancedSearch";
 import { News } from "@/components/noticias/newsInterfaces";
 import ListNews from "@/components/ui/list-news";
+import Filters from "@/components/noticias/search/Filters";
+import Sorting from "@/components/noticias/search/Sorting";
 
 type Operator = "" | "NOT";
 
@@ -55,10 +57,30 @@ const Noticias = () => {
             return savedFilter ? JSON.parse(savedFilter) : [];
         }
     );
+    const [isFilter, setIsFilter] = useState<boolean>(false);
+    const [filterCategories, setFilterCategories] = useState<number[] | null>(
+        null
+    );
+    const [sort, setSort] = useState<number>(0);
+    const [filterTags, setFilterTags] = useState<string[] | null>(null);
+    const [filterSources, setFilterSources] = useState<string[] | null>(null);
+    const [filterDateStart, setFilterDateStart] = useState<Date | null>(null);
+    const [filterDateEnd, setFilterDateEnd] = useState<Date | null>(null);
+    const [viewList, setViewList] = useState<boolean>(false);
 
     useEffect(() => {
         getSearch();
-    }, [search, advancedSearch, page]);
+    }, [
+        search,
+        advancedSearch,
+        page,
+        sort,
+        limit,
+        filterTags,
+        filterSources,
+        filterDateStart,
+        filterDateEnd,
+    ]);
 
     useEffect(() => {
         const newParams = new URLSearchParams(searchParams);
@@ -78,6 +100,7 @@ const Noticias = () => {
      * @return {Promise<void>} Resolves when the news data has been fetched and updated.
      */
     const getSearch = async (): Promise<void> => {
+        console.log("hoxd " + sort);
         try {
             const params = isAdvacedSearch
                 ? {
@@ -85,8 +108,32 @@ const Noticias = () => {
                       search: "",
                       page,
                       limit,
+                      sort,
+                      filterCategories: JSON.stringify(filterCategories),
+                      filterDateStart: filterDateStart
+                          ? filterDateStart.toISOString()
+                          : null,
+                      filterDateEnd: filterDateEnd
+                          ? filterDateEnd.toISOString()
+                          : null,
+                      filterSources: JSON.stringify(filterSources),
+                      filterTags: JSON.stringify(filterTags),
                   }
-                : { search, page, limit };
+                : {
+                      search,
+                      page,
+                      limit,
+                      sort,
+                      filterCategories: JSON.stringify(filterCategories),
+                      filterDateStart: filterDateStart
+                          ? filterDateStart.toISOString()
+                          : null,
+                      filterDateEnd: filterDateEnd
+                          ? filterDateEnd.toISOString()
+                          : null,
+                      filterSources: JSON.stringify(filterSources),
+                      filterTags: JSON.stringify(filterTags),
+                  };
             const response = await axios.get("/api/news/searching", {
                 params,
             });
@@ -98,6 +145,35 @@ const Noticias = () => {
             console.error("Error fetching news:", error);
             setTotalPages(1);
         }
+    };
+
+    const changeView = (value: boolean) => {
+        setViewList(value);
+    };
+    const handleFilter = (
+        categories: number[] | null,
+        tags: string[] | null,
+        sources: string[] | null,
+        dateStart: Date | null,
+        dateEnd: Date | null
+    ) => {
+        setFilterCategories(categories);
+        setFilterTags(tags);
+        setFilterSources(sources);
+        setFilterDateStart(dateStart);
+        setFilterDateEnd(dateEnd);
+        setPage(1);
+        setIsFilter(true);
+    };
+
+    const handleSort = (sort: string) => {
+        setSort(() => Number.parseInt(sort));
+        setPage(1);
+    };
+
+    const handleLimit = (limit: string) => {
+        setLimit(() => Number.parseInt(limit));
+        setPage(1);
     };
 
     /**
@@ -235,42 +311,62 @@ const Noticias = () => {
                     />
                 )}
             </Searching>
-            {(search != ""|| advancedSearch.length > 0 ) && (
-                <h4 className="font-semibold">
-                    Noticias encontradas:{" "}
-                    {news.length > 0
-                        ? `${limit * (page - 1) + 1} - 
+            <Sorting
+                isFilters={isFilter}
+                setFilters={setIsFilter}
+                onAmountSubmit={handleLimit}
+                onSortSubmit={handleSort}
+                setViewList={changeView}
+            />
+
+            <div className="lg:flex lg:flex-col lg:gap-4 lg:w-full">
+                <div className="lg:flex lg:flex-row lg:gap-4">
+                    <Filters
+                        isAdvanced={isAdvacedSearch}
+                        setIsVisible={setIsFilter}
+                        isVisible={isFilter}
+                        onFilterSubmit={handleFilter}
+                    />
+                    <div className="flex flex-col gap-4 w-full">
+                        {(search != "" || advancedSearch.length > 0) && (
+                            <h4 className="font-semibold">
+                                Noticias encontradas:{" "}
+                                {news.length > 0
+                                    ? `${limit * (page - 1) + 1} - 
                     ${Math.min(page * limit, news[0]?.total_count || 0)}
                     / ${news[0]?.total_count || 0}`
-                        : "0"}
-                </h4>
-            )}
-            <ListNews news={news} />
-            <Pagination>
-                <PaginationContent>
-                    {page > 1 && (
-                        <PaginationItem>
-                            <PaginationPrevious
-                                onClick={() =>
-                                    handlePageChange(Math.max(1, page - 1))
-                                }
-                            />
-                        </PaginationItem>
-                    )}
-                    {renderPaginationItems()}
-                    {page < totalPages && (
-                        <PaginationItem>
-                            <PaginationNext
-                                onClick={() =>
-                                    handlePageChange(
-                                        Math.min(totalPages, page + 1)
-                                    )
-                                }
-                            />
-                        </PaginationItem>
-                    )}
-                </PaginationContent>
-            </Pagination>
+                                    : "0"}
+                            </h4>
+                        )}
+                        <ListNews news={news} viewList={viewList} />
+                    </div>
+                </div>
+                <Pagination>
+                    <PaginationContent>
+                        {page > 1 && (
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    onClick={() =>
+                                        handlePageChange(Math.max(1, page - 1))
+                                    }
+                                />
+                            </PaginationItem>
+                        )}
+                        {renderPaginationItems()}
+                        {page < totalPages && (
+                            <PaginationItem>
+                                <PaginationNext
+                                    onClick={() =>
+                                        handlePageChange(
+                                            Math.min(totalPages, page + 1)
+                                        )
+                                    }
+                                />
+                            </PaginationItem>
+                        )}
+                    </PaginationContent>
+                </Pagination>
+            </div>
         </div>
     );
 };

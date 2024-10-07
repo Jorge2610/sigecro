@@ -58,36 +58,149 @@ class News {
         return res.rows;
     }
     /**
-     * Searches for news based on a search term.
+     * Retrieves a news item by its id.
      *
-     * @param {string} search - The search term to look for.
-     * @param {number} [limit=10] - The maximum number of results to return.
-     * @param {number} [page=1] - The page number of the results.
-     * @return {array} An array of news items that match the search term.
+     * @param {number} id - The id of the news item to retrieve.
+     * @return {array} An array of objects representing the news item.
      */
-    static async searchBasicNews(search, limit = 10, page = 1) {
-        const res = await query("select * from basic_search_news($1, $2, $3)", [
-            search,
-            page,
-            limit,
-        ]);
-        return res.rows;
-    }
-
-    /**
-     * Searches for news based on a set of advanced filters.
-     *
-     * @param {array} filters - An array of objects containing the filters to apply to the search.
-     * @param {number} [limit=10] - The maximum number of results to return.
-     * @param {number} [page=1] - The page number of the results.
-     * @return {array} An array of news items that match the filters.
-     */
-    static async searchAdvancedNews(filters, limit = 10, page = 1) {
+    static async getById(id) {
         const res = await query(
-            "select * from advanced_search_news($1::jsonb, $2, $3)",
-            [filters, page, limit]
+            `SELECT
+                    n.id,
+                    n.title,
+                    n.content,
+                    n.date,
+                    n.source,
+                    n.url,
+                    n.summary,
+                    n.image_url,
+                    n.status,
+                    n.category_id,
+                    c.name as category_name,
+                    n.user_id,
+                    array_agg(DISTINCT t.name) as tags,
+                    c.name as category
+                FROM
+                    news n
+                    LEFT JOIN news_tag nt ON n.id = nt.news_id
+                    LEFT JOIN tags t ON nt.tag_id = t.id
+                    INNER JOIN categories c ON n.category_id = c.id
+                WHERE
+                    n.id = $1
+                GROUP BY
+                    n.id,
+                    n.title,
+                    n.content,
+                    n.date,
+                    n.source,
+                    n.url,
+                    n.summary,
+                    n.image_url,
+                    n.status,
+                    n.category_id,
+                    n.user_id,
+                    c.name`,
+            [id]
         );
         return res.rows;
+    }
+   
+    
+    /**
+     * Performs a basic search for news based on the provided search query.
+     *
+     * @param {string} search - The search query.
+     * @param {number} [limit=10] - The maximum number of results to return.
+     * @param {number} [page=1] - The page number of the results.
+     * @param {number} [short_order=0] - The order of the results.
+     * @param {array} [categories=null] - The categories to filter by.
+     * @param {date} [start_date=null] - The start date of the range to filter by.
+     * @param {date} [end_date=null] - The end date of the range to filter by.
+     * @param {array} [sources=null] - The sources to filter by.
+     * @param {array} [filter_tags=null] - The tags to filter by.
+     * @return {array} An array of news items that match the search query.
+     */
+    static async searchBasicNews(
+        search,
+        limit = 10,
+        page = 1,
+        short_order = 0,
+        categories = null,
+        start_date = null,
+        end_date = null,
+        sources = null,
+        filter_tags = null
+    ) {
+        try {
+            const res = await query(
+                `select * 
+                 from basic_search_news($1::text, $2::integer, $3::integer, $4::integer, $5::bigint[], 
+                 $6::timestamp, $7::timestamp, $8::varchar[], $9::varchar[])`,
+                [
+                    search,
+                    page,
+                    limit,
+                    short_order,
+                    categories === "null" ? null : JSON.parse(categories),
+                    start_date,
+                    end_date,
+                    sources === "null" ? null : JSON.parse(sources),
+                    filter_tags === "null" ? null : JSON.parse(filter_tags),
+                ]
+            );
+            return res.rows;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    
+    /**
+     * Performs an advanced search for news based on the provided filters.
+     *
+     * @param {array} filters - An array of filters to apply to the search.
+     * @param {number} [limit=10] - The maximum number of results to return.
+     * @param {number} [page=1] - The page number of the results.
+     * @param {number} [short_order=0] - The order of the results.
+     * @param {array} [categories=null] - The categories to filter by.
+     * @param {date} [start_date=null] - The start date of the range to filter by.
+     * @param {date} [end_date=null] - The end date of the range to filter by.
+     * @param {array} [sources=null] - The sources to filter by.
+     * @param {array} [filter_tags=null] - The tags to filter by.
+     * @return {array} An array of news items that match the filters.
+     */
+    static async searchAdvancedNews(
+        filters,
+        limit = 10,
+        page = 1,
+        short_order = 0,
+        categories = null,
+        start_date = null,
+        end_date = null,
+        sources = null,
+        filter_tags = null
+    ) {
+        try {
+            const res = await query(
+                `select * 
+            from advanced_search_news($1::jsonb, $2, $3, $4, $5,
+             $6::timestamp, $7::timestamp, $8, $9)`,
+                [
+                    filters,
+                    page,
+                    limit,
+                    short_order,
+                    JSON.parse(categories),
+                    start_date,
+                    end_date,
+                    JSON.parse(sources),
+                    JSON.parse(filter_tags),
+                ]
+            );
+            return res.rows;
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     /**
@@ -231,6 +344,48 @@ class News {
             return 204;
         } catch (error) {
             console.error("newsM setTopicsState ERROR: ", error);
+            throw new Error("Data Base connection refused!");
+        }
+    }
+
+    /**
+     * Retrieves all the news sources from the database, excluding duplicates.
+     *
+     * @returns {Promise<Object[]>} Resolves to an array of objects containing the source name.
+     * @throws {Error} Throws an error if the database connection fails.
+     */
+    static async getAllSources() {
+        try {
+            const result = await query(
+                "SELECT source FROM news WHERE status like 'published' GROUP BY source ORDER BY source ASC;"
+            );
+            return result.rows;
+        } catch (error) {
+            console.error("newsM getSources ERROR: ", error);
+            throw new Error("Data Base connection refused!");
+        }
+    }
+
+    /**
+     * Retrieves the 10 most used tags in the news database, with their count.
+     *
+     * @returns {Promise<Object[]>} Resolves to an array of objects containing the tag id, name, and count.
+     * @throws {Error} Throws an error if the database connection fails.
+     */
+    static async getMostUsedTags() {
+        try {
+            const result = await query(
+                `SELECT t.id, t.name, COUNT(*) as Frecuency
+                FROM tags t
+                JOIN news_tag nt ON t.id = nt.tag_id
+                GROUP BY
+                t.id
+                ORDER BY Frecuency DESC
+            LIMIT 10;`
+            );
+            return result.rows;
+        } catch (error) {
+            console.error("newsM getMostUsedTags ERROR: ", error);
             throw new Error("Data Base connection refused!");
         }
     }
