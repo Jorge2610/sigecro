@@ -1,8 +1,6 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { sleep } from "../utils.js";
-import dotenv from "dotenv";
-dotenv.config();
 
 const delay = parseInt(Math.floor(parseInt(process.env.DELAY) / 2));
 
@@ -21,10 +19,10 @@ monthsMap.set("noviembre", "11");
 monthsMap.set("diciembre", "12");
 
 /**
- * Obtiene los datos de la noticia desde Opinión.
+ * Extracts data from an opinion article.
  *
- * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
- * @return {JSON} - La información de la noticia.
+ * @param {cheerio.CheerioAPI} $ - The cheerio.CheerioAPI object representing the article's HTML.
+ * @returns {Object} An object containing the extracted data, including title, date/time, and content.
  */
 const getOpinionData = ($) => {
     const title = $("h2.title").text().trim();
@@ -34,10 +32,10 @@ const getOpinionData = ($) => {
 };
 
 /**
- * Obtiene el la fecha de la noticia.
+ * Extracts date and time from a text string in a specific format.
  *
- * @param {string} text - Fecha y hora de la noticia.
- * @return {Date} - La fecha de publicación de la noticia.
+ * @param {string} text - The text string containing the date and time information.
+ * @returns {Date} A Date object representing the extracted date and time.
  */
 const getDateTime = (text) => {
     text = text.split(" ");
@@ -54,10 +52,10 @@ const getDateTime = (text) => {
 };
 
 /**
- * Obtiene el contenido de la noticia.
+ * Extracts the main content from a news article.
  *
- * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
- * @return {Date} - El contenido de la noticia.
+ * @param {cheerio.CheerioAPI} $ - The cheerio.CheerioAPI object representing the article's HTML.
+ * @returns {string[]} An array of strings containing the extracted content paragraphs.
  */
 const getContent = ($) => {
     const content = [];
@@ -86,7 +84,6 @@ topicsMap.set("Policial", "Policiales");
  *
  * @param {Array<Object>} topics - Array of topic objects with `name` and `active` properties.
  * @returns {Promise<Array<string>>} Resolves to an array of URLs related to the active topics.
- * @throws {Error} Throws an error if URL fetching or HTML parsing fails.
  */
 const getOpinionUrls = async (topics) => {
     const activeTopics = getActiveTopics(topics);
@@ -126,11 +123,11 @@ const getUrls = async (activeTopics) => {
     let flag = true;
     let page = 1;
     const selector = getSelector(activeTopics);
-    while (flag) {
+    while (flag && page < 10) {
         let html = await getHtml(page);
         $ = cheerio.load(html);
         let tags = $("article");
-        tags.length >= 20 ? page++ : (flag = false);
+        tags.length > 0 ? page++ : (flag = false);
         tags = tags.find(selector).parent().find("h2 > a");
         tags.each((_, element) => {
             const url = $(element).attr("href");
@@ -163,7 +160,6 @@ const getSelector = (activeTopics) => {
  *
  * @param {number} page - The page number to fetch.
  * @returns {Promise<string>} Resolves to the HTML content of the requested page.
- * @throws {Error} Throws an error if the HTTP request fails.
  */
 const getHtml = async (page) => {
     try {
@@ -175,7 +171,7 @@ const getHtml = async (page) => {
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
-        console.error("ERROR on opinion getHtml\n", error);
+        console.error("ERROR on opinion getHtml");
         return "<div></div>";
     }
 };

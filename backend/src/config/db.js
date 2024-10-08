@@ -1,10 +1,6 @@
-import dotenv from "dotenv";
 import pg from "pg";
 
-dotenv.config();
-
 const { Pool } = pg;
-
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -14,18 +10,25 @@ const pool = new Pool({
 });
 
 /**
- * Executes a SQL query on the database and logs the execution time.
+ * Executes a PostgreSQL query asynchronously and logs its execution time.
  *
- * @param {string} text - The SQL query to be executed.
- * @param {object} params - The parameters for the SQL query.
- * @return {object} The result of the executed query.
+ * @async
+ * @param {string} query - The PostgreSQL query string to be executed.
+ * @param {Array} [params] - An optional array of parameters to be substituted into the query.
+ * @returns {Promise<QueryResult>} A Promise that resolves to a QueryResult object containing the query results.
+ * @throws {Error} Throws an error if there's an issue executing the query, such as a connection error or a syntax error.
  */
-const query = async (text, params) => {
+const query = async (query, params) => {
     const start = Date.now();
-    const res = await pool.query(text, params);
-    const duration = Date.now() - start;
-    console.log("executed query", { text, duration, rows: res.rowCount });
-    return res;
+    try {
+        const res = await pool.query(query, params);
+        const duration = Date.now() - start;
+        console.log("executed query", { query, duration, rows: res.rowCount });
+        return res;
+    } catch (err) {
+        console.error("QUERY/CONN ERROR ON db.query:\n", { query, err });
+        throw err;
+    }
 };
 
-export { query, pool };
+export { query };

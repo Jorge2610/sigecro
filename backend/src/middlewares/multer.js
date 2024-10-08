@@ -3,12 +3,11 @@ import multer from "multer";
 const storage = multer.memoryStorage();
 
 /**
- * File filter function for Multer to check if the uploaded file is an image.
+ * File filter function for multer upload middleware.
  *
- * @param {object} req - The request object.
- * @param {object} file - The file object to be checked.
- * @param {function} cb - The callback function to return the result.
- * @return {void}
+ * @param {Request} req - Express request object.
+ * @param {File} file - File object containing information about the uploaded file.
+ * @param {Callback} cb - Callback function to indicate whether the file is accepted or rejected.
  */
 const filefilter = (req, file, cb) => {
     if (
@@ -23,6 +22,14 @@ const filefilter = (req, file, cb) => {
     }
 };
 
+/**
+ * Creates a multer upload middleware.
+ *
+ * @param {StorageEngine} storage - The storage engine to use for uploading files.
+ * @param {FileLimitsOptions} limits - Optional limits for file size and other parameters.
+ * @param {FileFilterCallback} filefilter - Optional file filter function.
+ * @returns {Multer} A Multer upload middleware function.
+ */
 const upload = multer({
     storage,
     limits: {

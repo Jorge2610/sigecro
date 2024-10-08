@@ -87,6 +87,14 @@ class WorkerPool {
      */
     run = async (taskName, ...args) => {
         return new Promise((resolve, reject) => {
+            const validTasks = [
+                "urlScraping",
+                "processURLs",
+                "programmedRecord",
+            ];
+            if (!validTasks.includes(taskName)) {
+                return reject(new Error(`Invalid task: ${taskName}`));
+            }
             this.#queue.push({ taskName, args, resolve, reject });
             this.#processQueue();
         });

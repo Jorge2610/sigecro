@@ -1,40 +1,30 @@
 import { Router } from "express";
 import {
-    setNews,
-    getNewsData,
+    createNews,
     getNewsSources,
-    setNewsSourcesState,
     basicSearchNews,
     advancedSearchNews,
     getAllNewsSources,
     getMostUsedTags,
-    getNewsById
+    getNewsById,
 } from "../controllers/newsC.js";
 import { upload } from "../middlewares/multer.js";
-import {
-    setURLsBatch,
-    getURLsBatch,
-    deleteURLs
-} from "../controllers/urlsC.js";
+import scrapingRoutes from "./scraping.js";
 
 const router = Router();
 
 //GET /api/news
 router.get("/sources", getNewsSources);
-router.get("/scraping/batch", getURLsBatch);
 router.get("/search", basicSearchNews);
-router.get("/advancedSearch", advancedSearchNews); 
+router.get("/advancedSearch", advancedSearchNews);
 router.get("/all_sources", getAllNewsSources);
 router.get("/tags", getMostUsedTags);
-router.get('/:id', getNewsById);
+router.get("/:id", getNewsById);
 
 //POST /api/news
-router.post("/", upload.single("image"), setNews);
-router.post("/scraping", getNewsData);
-router.post("/scraping/batch", setURLsBatch);
-router.post("/scraping/programed", setNewsSourcesState);
+router.post("/", upload.single("image"), createNews);
 
-//DELETE /api/news
-router.delete("/scraping/batch", deleteURLs);
+// Otras rutas
+router.use("/scraping", scrapingRoutes);
 
 export default router;
