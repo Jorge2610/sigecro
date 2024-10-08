@@ -1,12 +1,7 @@
 import app from "./app.js";
-import dotenv from "dotenv";
-import schedule from "node-schedule";
-import workerPool from "./utils/workers/WorkerPool.js";
-dotenv.config();
+import startScheduledJobs from "./utils/scheduler.js";
 
-schedule.scheduleJob("0 1 * * *", () => {
-    workerPool.run("programmedRecord");
-});
+startScheduledJobs();
 
 const PORT = process.env.API_PORT;
 app.listen(PORT, () => {

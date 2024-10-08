@@ -13,10 +13,10 @@ monthsMap.set("noviembre", "11");
 monthsMap.set("diciembre", "12");
 
 /**
- * Obtiene los datos de la noticia desde El Deber.
+ * Extracts data from an El Deber news article.
  *
- * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
- * @return {JSON} - La información de la noticia.
+ * @param {cheerio.Cheerio} $ - The cheerio.Cheerio object representing the article's HTML.
+ * @returns {Object} An object containing the extracted data, including title, date/time, and content.
  */
 const getElDeberData = ($) => {
     const title = $("h1").text().trim();
@@ -26,30 +26,26 @@ const getElDeberData = ($) => {
 };
 
 /**
- * Obtiene el la fecha de la noticia.
+ * Extracts date and time from a text string in a specific format.
  *
- * @param {string} text - Fecha y hora de la noticia.
- * @return {Date} - La fecha de publicación de la noticia.
+ * @param {string} text - The text string containing the date and time information.
+ * @returns {Date} A Date object representing the extracted date and time.
  */
 const getDateTime = (text) => {
     text = text.split(" ");
-    const day = text[0].length > 1 ? text[0].length : "0" + text[0].length;
+    const day = text[0].length > 1 ? text[0] : "0" + text[0];
     const month = monthsMap.get(text[2]);
     const year = text[4][0] + text[4][1] + text[4][2] + text[4][3];
-    const hours =
-        text[5].length === 5 ? text[5][0] + text[5][1] : "0" + text[5][0];
-    const minutes =
-        text[5].length === 5
-            ? text[5][3] + text[5][4]
-            : text[5][2] + text[5][3];
+    const hours = text[5].split(":")[0].padStart(2, "0");
+    const minutes = text[5].split(":")[1].padStart(2, "0");
     return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
 };
 
 /**
- * Obtiene el contenido de la noticia.
+ * Extracts the main content from an El Deber news article's HTML.
  *
- * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
- * @return {Date} - El contenido de la noticia.
+ * @param {cheerio.Cheerio} $ - The cheerio.Cheerio object representing the article's HTML.
+ * @returns {string[]} An array of strings containing the extracted content paragraphs.
  */
 const getContent = ($) => {
     const content = [];

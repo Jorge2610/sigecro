@@ -1,16 +1,14 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { sleep } from "../utils.js";
-import dotenv from "dotenv";
-dotenv.config();
 
 const delay = parseInt(Math.floor(parseInt(process.env.DELAY) / 2));
 
 /**
- * Obtiene los datos de una noticia desde Los tiempos.
+ * Extracts data from a Los Tiempos news article.
  *
- * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
- * @return {JSON} - La información de la noticia.
+ * @param {cheerio.Cheerio} $ - The cheerio.Cheerio object representing the article's HTML.
+ * @returns {Object} An object containing the extracted data, including title, date/time, and content.
  */
 const getLosTiemposData = ($) => {
     const title = $("h1").text().trim();
@@ -20,10 +18,10 @@ const getLosTiemposData = ($) => {
 };
 
 /**
- * Obtiene el la fecha de la noticia.
+ * Extracts date and time from a text string in a specific format.
  *
- * @param {string} text - Fecha y hora de la noticia.
- * @return {Date} - La fecha de publicación de la noticia.
+ * @param {string} text - The text string containing the date and time information.
+ * @returns {Date} A Date object representing the extracted date and time.
  */
 const getDateTime = (text) => {
     const day = text[13] + text[14];
@@ -36,16 +34,18 @@ const getDateTime = (text) => {
 };
 
 /**
- * Obtiene el contenido de la noticia.
+ * Extracts the main content from a news article.
  *
- * @param {cheerio.CheerioAPI} $ - Objeto cheerio.
- * @return {Date} - El contenido de la noticia.
+ * @param {cheerio.Cheerio} $ - The cheerio.Cheerio object representing the article's HTML.
+ * @returns {string[]} An array of strings containing the extracted content paragraphs.
  */
 const getContent = ($) => {
     const content = [];
     $(".field-items p").each((i, element) => {
         const text = $(element).text().trim();
-        text.includes("Te podría interesar") ? "" : content.push(text);
+        if (!text.includes("Te podría interesar")) {
+            content.push(text);
+        }
     });
     return content;
 };
@@ -64,7 +64,6 @@ let topicName = "";
  *
  * @param {Array<Object>} topics - Array of topic objects that contain `name` and `active` properties.
  * @returns {Promise<Array<string>>} Resolves to an array of URLs related to the active topics.
- * @throws {Error} Throws an error if URL fetching fails.
  */
 const getLosTiemposUrls = async (topics) => {
     const urls = [];
@@ -79,17 +78,16 @@ const getLosTiemposUrls = async (topics) => {
 
 /**
  * Fetches and appends URLs to the provided array by iterating through pages from the "Los Tiempos" website.
- * Stops fetching when fewer than 15 links are found on a page.
+ * Stops fetching when there are no more links on a page.
  *
  * @param {Array<string>} urls - Array that stores the fetched URLs.
  * @returns {Promise<void>} Resolves when the URL fetching process completes.
- * @throws {Error} Throws an error if HTML parsing or URL fetching fails.
  */
 const getUrls = async (urls) => {
     let $ = cheerio.load("<div>Empty!</div>");
     let flag = true;
     let page = 0;
-    while (flag) {
+    while (flag && page < 10) {
         let html = await getHtml(page);
         $ = cheerio.load(html);
         $(".panels-flexible-region-inside-last").remove();
@@ -98,7 +96,7 @@ const getUrls = async (urls) => {
             const url = $(element).attr("href");
             urls.push(`https://www.lostiempos.com${url}`);
         });
-        tags.length >= 15 ? page++ : (flag = false);
+        tags.length > 0 ? page++ : (flag = false);
         await sleep(delay);
     }
 };
@@ -108,7 +106,6 @@ const getUrls = async (urls) => {
  *
  * @param {number} page - The page number to fetch.
  * @returns {Promise<string>} Resolves to the HTML content of the requested page.
- * @throws {Error} Throws an error if the HTTP request fails.
  */
 const getHtml = async (page) => {
     try {
@@ -120,14 +117,14 @@ const getHtml = async (page) => {
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
-        console.error("ERROR on losTiempos.js getHtml\n", error);
+        console.error("ERROR ON losTiempos.getHtml");
         return "<div></div>";
     }
 };
 
 /**
  * Retrieves search parameters for the "Los Tiempos" website based on the previous day's date.
- * 
+ *
  * @returns {Object} An object containing `day`, `month`, `year`, and `section` for the URL search.
  */
 const getSearchParams = () => {

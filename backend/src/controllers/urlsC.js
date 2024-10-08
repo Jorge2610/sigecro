@@ -1,20 +1,77 @@
 import URLs from "../models/urlsM.js";
-import workerPool from "../utils/workers/WorkerPool.js";
+import workerPool from "../utils/workers/workerPool.js";
 
 /**
- * Processes a batch of URLs from the request body, prepares them for insertion into the database,
- * and executes a batch insert operation.
+ * Adds a batch of URLs to the database for processing.
  *
- * @param {Object} req - The HTTP request object.
- * @param {Object} res - The HTTP response object.
- * @returns {Promise<void>} Sends an HTTP status code in the response after attempting to insert the URLs.
+ * @async
+ * @param {Request} req - Express request object containing a newline-separated list of URLs in req.body.urls.
+ * @param {Response} res - Express response object.
+ *
+ * **Note:** This function expects the URLs to be provided as a newline-separated string in req.body.urls.
  */
 const setURLsBatch = async (req, res) => {
     if (req.body.urls === "") {
-        res.sendStatus(503);
+        res.sendStatus(500);
         return;
     }
     const urls = req.body.urls.split("\n");
+    const valuesPlaceholders = getPlaceHolders(urls);
+    const values = urls.flat();
+    try {
+        await URLs.setURLsBatch(valuesPlaceholders, values);
+        if (!workerPool.processingURLs) {
+            workerPool.run("processURLs");
+        }
+        res.sendStatus(201);
+    } catch (error) {
+        console.error("ERROR ON urls.setURLsBatch");
+        res.sendStatus(503);
+    }
+};
+
+/**
+ * Retrieves a batch of URLs from the database.
+ *
+ * @async
+ * @param {Request} req - Express request object.
+ * @param {Response} res - Express response object.
+ */
+const getURLsBatch = async (req, res) => {
+    try {
+        const result = await URLs.getURLs();
+        res.json(result);
+    } catch (error) {
+        console.error("ERROR ON urls.getURLsBatch");
+        res.sendStatus(503);
+    }
+};
+
+/**
+ * Deletes a batch of URLs from the database.
+ *
+ * @async
+ * @param {Request} req - Express request object containing an array of URL IDs in req.body.ids.
+ * @param {Response} res - Express response object.
+ */
+const deleteURLs = async (req, res) => {
+    try {
+        const ids = req.body.ids;
+        await URLs.deleteURLs(ids);
+        res.sendStatus(204);
+    } catch (error) {
+        console.error("ERROR ON urls.deleteURLs");
+        res.sendStatus(503);
+    }
+};
+
+/**
+ * Generates placeholder strings for a batch of URLs.
+ *
+ * @param {string[]} urls - An array of URLs.
+ * @returns {string} A string containing placeholders for the URLs, user ID, and category ID.
+ */
+const getPlaceHolders = (urls) => {
     let valuesPlaceholders = "";
     for (let i = 0; i < urls.length; i++) {
         urls[i] = [urls[i], req.body.user_id, req.body.category_id];
@@ -23,49 +80,7 @@ const setURLsBatch = async (req, res) => {
             valuesPlaceholders += ", ";
         }
     }
-    const values = urls.flat();
-    const result = await URLs.setURLsBatch(valuesPlaceholders, values);
-    if (result === 200 && !workerPool.processingURLs) {
-        workerPool.run("processURLs");
-    }
-    res.sendStatus(result);
-};
-
-/**
- * Handles the HTTP request to retrieve all URLs from the database.
- * Sends the retrieved URLs as a JSON response.
- *
- * @param {Object} req - The Express request object.
- * @param {Object} res - The Express response object.
- * @returns {Promise<void>} Sends a JSON response with the URLs and a 200 status code,
- * or a 503 status code if an error occurs.
- */
-const getURLsBatch = async (req, res) => {
-    try {
-        const result = await URLs.getURLs();
-        res.status(200).json(result);
-    } catch (error) {
-        res.sendStatus(503);
-    }
-};
-
-/**
- * Handles the HTTP request to delete multiple URLs based on their IDs.
- * Sends a 204 status code if the deletion is successful, or a 503 status code if an error occurs.
- *
- * @param {Object} req - The Express request object, containing the `ids` array in the body.
- * @param {Object} res - The Express response object.
- * @returns {Promise<void>} Sends a 204 status code if the URLs are successfully deleted,
- * or a 503 status code if an error occurs.
- */
-const deleteURLs = async (req, res) => {
-    try {
-        const ids = req.body.ids;
-        await URLs.deleteURLs(ids);
-        res.sendStatus(204);
-    } catch (error) {
-        res.sendStatus(503);
-    }
+    return valuesPlaceholders;
 };
 
 export { setURLsBatch, getURLsBatch, deleteURLs };

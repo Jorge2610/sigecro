@@ -2,86 +2,15 @@ import * as cheerio from "cheerio";
 import { getLosTiemposData, getLosTiemposUrls } from "./losTiempos.js";
 import { getOpinionData, getOpinionUrls } from "./opinion.js";
 import { getElDeberData } from "./elDeber.js";
-import axios from "axios";
-import http from "http";
-import https from "https";
 import URLs from "../../models/urlsM.js";
 import { News } from "../../models/newsM.js";
-import dotenv from "dotenv";
 import { sleep } from "../utils.js";
+import axiosInstance from "../../config/axiosInstance.js";
+import { Ollama } from "../../models/ollamaM.js";
 
-dotenv.config();
 const delay = parseInt(process.env.DELAY);
 const retry = parseInt(Math.floor(delay / 2));
 
-const httpAgent = new http.Agent({ keepAlive: false });
-const httpsAgent = new https.Agent({ keepAlive: false });
-
-const axiosInstance = axios.create({
-    httpAgent,
-    httpsAgent,
-});
-
-const queryOllama = async (prompt) => {
-    const queryPrompt = {
-        model: process.env.MODEL_OLLAMA,
-        prompt: prompt,
-        stream: false,
-    };
-    try {
-        const response = await axios.post(process.env.API_OLLAMA, queryPrompt);
-        return response;
-    } catch (error) {
-        if (error.response) {
-            return error.response;
-        } else {
-            return {
-                status: 500,
-                data: { response: "Error en la solicitud a Ollama" },
-            };
-        }
-    }
-};
-
-const getTagsIA = async (content) => {
-    const prompt =
-        "Genera 5 etiquetas monopalabra en español para el texto que te pase. Tu respuesta solamente debe contener las etiquetas y estas deben estar separadas por una coma." +
-        content;
-    try {
-        const response = await queryOllama(prompt);
-        if (response.status != 200) {
-            return { status: 500, message: "servidor ollama caido" };
-        } else {
-            let tags = response.data.response
-                .split(",")
-                .map((tag) => tag.trim());
-            if (tags[tags.length - 1].endsWith("\n")) {
-                const lastWord = tags.pop();
-                tags.push(lastWord.substring(0, lastWord.length - 2));
-            }
-            return { status: 200, data: tags };
-        }
-    } catch (error) {
-        return { status: 500, message: error };
-    }
-};
-
-const getSummaryIA = async (content) => {
-    const prompt = `Genera un resumen de un texto se te pasara encerrado entre corchetes. El resumen que generes no debe superar los 512 caracteres puede ser de menor longitud pero nunca superar los 512 caracteres. Tu respuesta solo debe contener el resumen pedido. Si te solicitan algo que no sea un resumen, responde: "Lo siento, solo puedo ayudarte a resumir noticias.""[${content}]`;
-    try {
-        const response = await queryOllama(prompt);
-        if (response.status != 200) {
-            return { status: 500, data: "servidor ollama caido" };
-        } else {
-            let summary = response.data.response;
-            if (summary.endsWith("\n"))
-                summary = summary.substring(0, summary.length - 2);
-            return { status: 200, data: summary };
-        }
-    } catch (error) {
-        return { status: 500, message: error };
-    }
-};
 /**
  * Determines the source of a news article based on its URL.
  * Supports checking for known sources and defaults to "Fuente no admitida" if the source is not recognized.
@@ -134,17 +63,22 @@ const getData = (source, responseData) => {
 const processURLs = async () => {
     let firstURL = [];
     do {
-        firstURL = await URLs.getFirstURL();
-        if (firstURL.length > 0) {
-            const data = firstURL[0];
-            const source = getSource(data.url);
-            if (source !== "Fuente no admitida") {
-                let processedURL = false;
-                while (data.trys < 3 && !processedURL) {
-                    processedURL = await proccesURL(data, source);
+        try {
+            firstURL = await URLs.getFirstURL();
+            if (firstURL.length > 0) {
+                const data = firstURL[0];
+                const source = getSource(data.url);
+                if (source !== "Fuente no admitida") {
+                    let processedURL = false;
+                    while (data.trys < 3 && !processedURL) {
+                        processedURL = await proccesURL(data, source);
+                    }
                 }
+                await URLs.deleteURL([data.id]);
             }
-            await URLs.deleteURL([data.id]);
+        } catch (error) {
+            console.error("ERROR ON newsScraping.processURLs");
+            firstURL = [];
         }
     } while (firstURL.length > 0);
     return "Proccess done...";
@@ -156,7 +90,7 @@ const processURLs = async () => {
  *
  * @param {Object} data - The data object representing a URL and its associated information.
  * @param {string} source - The source of the URL (used to determine how to process it).
- * @returns {Promise<void>} Resolves when the URL is processed or retried.
+ * @returns {Promise<boolean>} Resolves true when the URL is processed or false otherwise.
  */
 const proccesURL = async (data, source) => {
     try {
@@ -182,34 +116,66 @@ const proccesURL = async (data, source) => {
  */
 const createNews = async (newsData, data) => {
     const content = getFormatedContent(newsData);
-    const responseSummary = await getSummaryIA(content);
-    let summary;
-    if (responseSummary.status === 500) summary = newsData.content[0];
-    else summary = responseSummary.data;
-    const values = [
-        newsData.title,
-        getFormatedContent(newsData),
-        newsData.dateTime,
-        newsData.source,
-        data.url,
-        summary,
-        null,
-        "published",
-        data.category_id,
-        data.user_id,
-    ];
     try {
+        const summary = await getIaSummary(content);
+        const values = [
+            newsData.title,
+            getFormatedContent(newsData),
+            newsData.dateTime,
+            newsData.source,
+            data.url,
+            summary === "" ? newsData.content[0] : summary,
+            null,
+            "published",
+            data.category_id,
+            data.user_id,
+        ];
         const result = await News.create(values);
-        const newsId = result[0].id;
-        const responseTags = await getTagsIA(content);
-        let tags;
-        if (responseTags.status === 500) tags = [];
-        else tags = responseTags.data;
-        await News.setTags(newsId, tags);
+        const tags = await getIaTags(content);
+        if (tags.length > 0) {
+            const newsId = result[0].id;
+            await News.setTags(newsId, tags);
+        }
     } catch (error) {
-        console.error("Error al crear la noticia", error);
-        return new Error(error);
+        console.error("ERROR ON newsScraping.createNews:\n", error);
+        throw new Error(error);
     }
+};
+
+/**
+ * Generates a summary using an AI model.
+ *
+ * @async
+ * @param {string} content - The content to summarize.
+ * @returns {Promise<string>} A Promise that resolves to the generated summary or an empty string if an error occurs.
+ */
+const getIaSummary = async (content) => {
+    let summary;
+    try {
+        summary = await Ollama.generateSummary(content);
+    } catch (error) {
+        console.error("ERROR ON newsScraping.getIaSummary");
+        summary = "";
+    }
+    return summary;
+};
+
+/**
+ * Generates tags for a given content using an AI model.
+ *
+ * @async
+ * @param {string} content - The content for which to generate tags.
+ * @returns {Promise<string[]>} A Promise that resolves to an array of tags or an empty array if an error occurs.
+ */
+const getIaTags = async (content) => {
+    let tags;
+    try {
+        tags = await Ollama.generateTags(content);
+    } catch (error) {
+        console.error("ERROR ON newsScraping.getIaTags");
+        tags = [];
+    }
+    return tags;
 };
 
 /**
@@ -219,11 +185,7 @@ const createNews = async (newsData, data) => {
  * @returns {string} The formatted content as a string.
  */
 const getFormatedContent = (newsData) => {
-    let formatedContent = "";
-    newsData.content.map((paragraph) => {
-        formatedContent += paragraph + "\n\n";
-    });
-    return formatedContent;
+    return newsData.content.join("\n\n");
 };
 
 /**
@@ -234,6 +196,7 @@ const getFormatedContent = (newsData) => {
  * @throws {Error} Throws an error if any database or URL-fetching operation fails.
  */
 const getNewsUrls = async () => {
+    console.log("getNewsUrls");
     const sources = await News.getSources();
     let urls = [];
     for (const source of sources) {
@@ -241,8 +204,12 @@ const getNewsUrls = async () => {
         urls = [...urls, ...sourceUrls];
     }
     if (urls.length > 0) {
-        await URLs.setURLsBatchDefault(urls);
-        await News.setSourcesLastDate(sources);
+        try {
+            await URLs.setURLsBatchDefault(urls);
+            await News.setSourcesLastDate(sources);
+        } catch (error) {
+            console.error("ERROR ON newsScraping.getNewsUrls");
+        }
     }
     return "Process done...";
 };
@@ -253,13 +220,13 @@ const getNewsUrls = async () => {
  *
  * @param {Object} source - The news source object containing its details (id, name, last_date, active).
  * @returns {Promise<Array<string>>} Resolves to an array of URLs fetched from the source.
- * @throws {Error} Throws an error if the fetching process for a source or its topics fails.
  */
 const getSourceUrls = async (source) => {
     let sourceUrls = [];
     if (source.active && checkLastDate(source)) {
         source.last_date = new Date();
         const topics = await News.getTopicsBySource(source.id);
+        console.log("getSourceUrls, topics:", topics);
         switch (source.name) {
             case "Los Tiempos":
                 sourceUrls = await getLosTiemposUrls(topics);

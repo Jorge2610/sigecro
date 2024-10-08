@@ -1,6 +1,12 @@
 import { parentPort } from "worker_threads";
 import { getData, processURLs, getNewsUrls } from "../scraping/newsScraping.js";
 
+const tasks = {
+    urlScraping: getData,
+    processURLs: processURLs,
+    programmedRecord: getNewsUrls,
+};
+
 /**
  * Handles messages received from the main thread.
  * The message should contain a task name and the corresponding arguments.
@@ -12,18 +18,11 @@ import { getData, processURLs, getNewsUrls } from "../scraping/newsScraping.js";
  */
 parentPort.on("message", async ({ taskName, args }) => {
     let result;
-    switch (taskName) {
-        case "urlScraping":
-            result = getData(...args);
-            break;
-        case "processURLs":
-            result = await processURLs();
-            break;
-        case "programmedRecord":
-            result = await getNewsUrls();
-            break;
-        default:
-            result = "Task not supported";
+    try {
+        const taskFn = tasks[taskName];
+        result = await taskFn(...args);
+    } catch (error) {
+        result = `Error processing task ${taskName}: ${error.message}`;
     }
     parentPort.postMessage(result);
 });

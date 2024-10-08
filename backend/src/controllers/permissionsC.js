@@ -1,15 +1,11 @@
 import { Permission } from "../models/permissionsM.js";
 
-
 /**
- * Handles the HTTP request to retrieve all permissions from the database.
- * Sends the retrieved permissions as a JSON response with a 200 status code.
- * If an error occurs, sends a 503 status code.
+ * Retrieves a list of all permissions.
  *
- * @param {Object} req - The Express request object.
- * @param {Object} res - The Express response object.
- * @returns {Promise<void>} Sends a JSON response with the permissions and a 200 status code,
- * or a 503 status code if an error occurs.
+ * @async
+ * @param {Request} req - Express request object.
+ * @param {Response} res - Express response object.
  */
 const getAllPermissions = async (req, res) => {
     try {
@@ -19,6 +15,7 @@ const getAllPermissions = async (req, res) => {
         });
         res.json(permissions);
     } catch (error) {
+        console.error("ERROR ON permissions.getAllPermissions");
         res.sendStatus(503);
     }
 };

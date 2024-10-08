@@ -1,62 +1,52 @@
 import Category from "../models/categoryM.js";
 
 /**
- * Recupera todas las categorias y las devuelve en la respuesta.
- *
- * @param {object} req - La entrada HTTP.
- * @param {object} res - La respuesta HTTP.
- * @param {function} next - La función de middleware siguiente.
- * @return {json} Un JSON con las categorias.
+ * Retrieves all categories from the database.
+ * @async
+ * @param {Request} req - Express request object.
+ * @param {Response} res - Express response object.
  */
-const getAllCategories = async (req, res, next) => {
+const getAllCategories = async (req, res) => {
     try {
         const categories = await Category.getCategories();
-        res.status(200).json(categories);
+        res.json(categories);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        next(error);
+        console.error("ERROR ON category.getAllCategories");
+        res.sendStatus(500);
     }
 };
 
 /**
- * Recupera las categorias que se estan utilizando en las noticias.
+ * Retrieves a list of categories used in news articles.
  *
- * @param {object} req - La entrada HTTP.
- * @param {object} res - La respuesta HTTP.
- * @param {function} next - La función de middleware siguiente.
- * @return {json} Un JSON con las categorias.
+ * @async
+ * @param {Request} req - Express request object.
+ * @param {Response} res - Express response object.
  */
-const getCategoriesUsed = async (req, res, next) => {
+const getCategoriesUsed = async (req, res) => {
     try {
         const categories = await Category.getCategoriesUsed();
-        res.status(200).json(categories);
+        res.json(categories);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        next(error);
+        console.error("ERROR ON category.getCategoriesUsed");
+        res.sendStatus(500);
     }
 };
 
 /**
- * Envia los datos de una categoria a la base de datos.
+ * Adds a new category to the database.
  *
- * @param {object} req - La entrada HTTP.
- * @param {object} res - La respuesta HTTP.
- * @param {function} next - La función de middleware siguiente.
- * @return {json} Un JSON con las categorias.
+ * @async
+ * @param {Request} req - Express request object containing the category data in req.body.data.
+ * @param {Response} res - Express response object.
  */
-const addCategory = async (req, res, next) => {
+const addCategory = async (req, res) => {
     try {
-        const category = await Category.postCategory(req.body.data);
-        res.sendStatus(200);
+        await Category.postCategory(req.body.data);
+        res.sendStatus(201);
     } catch (error) {
-        if (error.code == "ECONNREFUSED")
-            res.status(503).json({ message: error.message });
-        else {
-            if (error.code == 23505) {
-                res.status(409).json({ message: error.message });
-            } else res.status(500).json({ message: error.message });
-        }
-        next(error);
+        console.error("ERROR ON category.getAllCategories");
+        res.sedStatus(500);
     }
 };
 export { getAllCategories, getCategoriesUsed, addCategory };

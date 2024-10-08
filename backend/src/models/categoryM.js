@@ -1,9 +1,10 @@
 import { query } from "../config/db.js";
+
 class Category {
     /**
-     * Retrieves a list of categories from the database.
+     * Retrieves a list of all categories from the database.
      *
-     * @return {Promise<object[]>} An array of objects representing the categories.
+     * @returns {Promise<QueryResult>} A Promise that resolves to a QueryResult object containing the list of categories.
      */
     static async getCategories() {
         const res = await query("SELECT id, name FROM public.categories;", []);
@@ -26,8 +27,8 @@ class Category {
     /**
      * Creates a new category in the database.
      *
-     * @param {object} data - An object containing the category's name and description.
-     * @return {object} The result of the database query.
+     * @param {object} data - An object containing the category data (name, description).
+     * @returns {Promise<QueryResult>} A Promise that resolves to a QueryResult object containing the newly created category.
      */
     static async postCategory(data) {
         const res = await query(
