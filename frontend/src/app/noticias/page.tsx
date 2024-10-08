@@ -100,7 +100,6 @@ const Noticias = () => {
      * @return {Promise<void>} Resolves when the news data has been fetched and updated.
      */
     const getSearch = async (): Promise<void> => {
-        console.log("hoxd " + sort);
         try {
             const params = isAdvacedSearch
                 ? {
@@ -312,6 +311,7 @@ const Noticias = () => {
                 )}
             </Searching>
             <Sorting
+                viewList={viewList}
                 isFilters={isFilter}
                 setFilters={setIsFilter}
                 onAmountSubmit={handleLimit}

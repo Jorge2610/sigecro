@@ -27,6 +27,7 @@ const labelAmount = {
 };
 
 interface SortingProps {
+    viewList: boolean;
     isFilters: boolean;
     setFilters: React.Dispatch<React.SetStateAction<boolean>>;
     onSortSubmit: (value: string) => void;
@@ -34,6 +35,7 @@ interface SortingProps {
     setViewList: (value: boolean) => void;
 }
 const Sorting = ({
+    viewList,
     onSortSubmit,
     onAmountSubmit,
     isFilters,
@@ -115,10 +117,20 @@ const Sorting = ({
                 </SelectGroup>
             </div>
             <div className="hidden lg:block">
-                <Button variant={"ghost"} onClick={() => setViewList(true)}>
+                <Button
+                    variant={"ghost"}
+                    disabled={viewList}
+                    className="disabled:text-sig-gray3"
+                    onClick={() => setViewList(true)}
+                >
                     <span className="material-symbols-outlined">view_list</span>
                 </Button>
-                <Button variant={"ghost"} onClick={() => setViewList(false)}>
+                <Button
+                    variant={"ghost"}
+                    disabled={!viewList}
+                    className="disabled:text-sig-gray3"
+                    onClick={() => setViewList(false)}
+                >
                     <span className="material-symbols-outlined">grid_view</span>
                 </Button>
             </div>

@@ -126,6 +126,10 @@ const Filters = ({
         );
     }, []);
 
+    useEffect(() => {
+        clear();
+    }, [isAdvanced]);
+
     const formatData = <T extends unknown>(
         data: T[] | undefined,
         formatFn: (item: T) => FormattedItem
