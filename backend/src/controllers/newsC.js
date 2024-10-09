@@ -33,7 +33,7 @@ const createNews = async (req, res) => {
             const tags = JSON.parse(req.body.tags);
             await News.setTags(response[0].id, tags);
         }
-        res.sedStatus(201);
+        res.sendStatus(201);
     } catch (error) {
         console.error("ERROR ON news.createNews");
         res.sendStatus(500);
@@ -97,7 +97,7 @@ const basicSearchNews = async (req, res) => {
  */
 const advancedSearchNews = async (req, res) => {
     const params = {
-        search: req.query.search,
+        filters: req.query.filters,
         limit: req.query.limit,
         page: req.query.page,
         sort_order: req.query.sort_order,
