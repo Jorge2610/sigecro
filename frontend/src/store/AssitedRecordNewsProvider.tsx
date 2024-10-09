@@ -1,15 +1,16 @@
 "use client";
 
 import { createContext, SetStateAction, useState } from "react";
-import { NewsData } from "../newsInterfaces";
+import { NewsData } from "../types/newsType";
+import { CategoryType } from "@/types/categoryType";
 
 type AutomaticProviderProps = {
     children: React.ReactNode;
-    categories: any;
+    categories?: CategoryType[];
 };
 
 type AutomaticContextData = {
-    categories: any;
+    categories?: CategoryType[];
     newsData: NewsData;
     setNewsData: React.Dispatch<SetStateAction<NewsData>>;
 };
@@ -24,7 +25,7 @@ const emptyNewsData = {
 };
 
 const AutomaticContext = createContext<AutomaticContextData>({
-    categories: null,
+    categories: undefined,
     newsData: emptyNewsData,
     setNewsData: useState<NewsData>,
 });

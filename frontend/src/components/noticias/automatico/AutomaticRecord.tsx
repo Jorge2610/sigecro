@@ -1,96 +1,39 @@
 "use client";
 
-import { InputSelectForm } from "../manual/InputFormText";
-import { useRouter } from "next/navigation";
-import axios from "axios";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
+import { useState, useContext } from "react";
+import { useForm } from "react-hook-form";
+import {
+    formAsssistedReister,
+    assistedRegisterFormSchema,
+} from "@/types/registerType";
+
+import { InputSelectForm, InputForm } from "@/components/ui/inputsForm";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { useState, useContext } from "react";
-import messages from "../newsMessages.json";
-import { useToast } from "@/components/ui/use-toast";
-import { AutomaticContext } from "./AutomaticProvider";
-import { NewsData } from "../newsInterfaces";
+import { Form } from "@/components/ui/form";
+import { AutomaticContext } from "../../../store/AssitedRecordNewsProvider";
+import { useExtractNews } from "@/hooks/useExtractNews";
 
 const RegistroAutomatico = () => {
-    const router = useRouter();
-    const context = useContext(AutomaticContext);
-    const categories = context?.categories;
-    const setNewsData = context?.setNewsData;
-    const { toast } = useToast();
+    const { categories, setNewsData } = useContext(AutomaticContext);
     const [extracting, setExtracting] = useState(false);
 
-    const formSchema = z.object({
-        url: z.string().regex(new RegExp(/https?:\/{2}(\w+\.)+\w+\/\w*/), {
-            message: "La URL ingresada no es válida",
-        }),
-        category_id: z.object({
-            id: z.string().min(1).max(10),
-            name: z.string(),
-        }),
-    });
-
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<formAsssistedReister>({
+        resolver: zodResolver(assistedRegisterFormSchema),
         defaultValues: {
             url: "",
-            category_id: categories[0],
+            category_id: categories && categories[0],
         },
     });
 
-    /**
-     * Envia la URL de la noticia para la obtención de sus datos y si los datos se obtienen correctamente redirecciona la pagina.
-     *
-     * @param {z.infer<typeof FormSchema>} values - Los datos de el formulario.
-     */
-    const onSubmit = async (
-        values: z.infer<typeof formSchema>
-    ): Promise<void> => {
-        setExtracting(true);
-        await axios
-            .post("/api/news/scraping", {
-                url: values.url,
-            })
-            .then((response) => {
-                const newsData: NewsData = {
-                    url: response.data.url,
-                    title: response.data.title,
-                    dateTime: new Date(response.data.dateTime),
-                    source: response.data.source,
-                    content: response.data.content,
-                    category_id: form.getValues().category_id.id,
-                };
-                setNewsData ? setNewsData(newsData) : "";
-                router.push(
-                    "/administrar-noticias/registro/asistido/vista-previa"
-                );
-            })
-            .catch((error) => {
-                toast({
-                    title: messages.toast.errorTitle,
-                    description: JSON.stringify(error.message),
-                    variant: "destructive",
-                });
-            });
-        setExtracting(false);
-    };
+    const handleExtracNews = useExtractNews(form, setExtracting, setNewsData);
 
     return (
         <div>
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={form.handleSubmit(handleExtracNews)}
                     className="space-y-4"
                 >
                     <InputSelectForm
@@ -100,22 +43,12 @@ const RegistroAutomatico = () => {
                         placeholder="Seleccione una categoría"
                         array={categories}
                     />
-                    <FormField
-                        control={form.control}
+                    <InputForm
                         name="url"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>URL *</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="url"
-                                        placeholder="https://www.ejemplo.com"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                        label="URL *"
+                        control={form.control}
+                        placeholder="https://www.ejemplo.com"
+                        type="url"
                     />
                     <div className="flex justify-end gap-4">
                         <Button asChild variant={"outline"}>

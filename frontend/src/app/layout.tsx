@@ -5,17 +5,14 @@ import Navigation from "@/components/navigation/Navigation";
 import Footer from "@/components/navigation/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import SigBread from "@/components/navigation/SigBread";
+import layoutProps from "@/types/layaoutType";
 
 export const metadata: Metadata = {
     title: "SIGECRO",
     description: "Sistema Gestor de Cronologías",
 };
 
-const RootLayout = ({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) => {
+const RootLayout = ({ children }: layoutProps) => {
     return (
         <html lang="es">
             <head>

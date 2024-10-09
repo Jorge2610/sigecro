@@ -33,6 +33,11 @@ const SigBread = () => {
     }
     paths = paths.slice(1, paths.length - 1);
 
+    /**
+     * Returns a URL constructed from the paths array up to the given index.
+     * @param index The index up to which to construct the URL.
+     * @returns The constructed URL.
+     */
     const getURL = (index: number) => {
         let url = "";
         for (let i = 0; i <= index; i++) {
@@ -41,6 +46,13 @@ const SigBread = () => {
         return url;
     };
 
+    /**
+     * Returns a path string constructed from the paths array at the given index, with...
+     * - all dashes replaced with spaces
+     * - the first letter capitalized
+     * @param index The index at which to construct the path.
+     * @returns The constructed path.
+     */
     const getPath = (index: number) => {
         let path: string = paths[index].replaceAll("-", " ");
         path = path.replace(path[0], path[0].toUpperCase());

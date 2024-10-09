@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { InputForm } from "../noticias/manual/InputFormText";
+import { InputForm } from "./inputsForm";
 import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({

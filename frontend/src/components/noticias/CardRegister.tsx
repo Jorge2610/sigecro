@@ -1,25 +1,17 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { cardProps } from "@/types/registerType";
+import { H2 } from "../ui/headings";
 
-type props = {
-    icon: string;
-    title: string;
-    description: string;
-    href: string;
-    buttonText: string;
-    secondHref: string;
-    secondButtonText: string;
-};
-
-const CardRegistro = ({
+const CardRegister = ({
     icon,
     title,
     description,
     href,
     buttonText,
-    secondHref,
-    secondButtonText,
-}: props) => {
+    secondHref = "",
+    secondButtonText = "",
+}: cardProps) => {
     return (
         <div className="bg-white p-4 flex flex-col gap-4 rounded border border-slate-200">
             <div className="flex items-center gap-4">
@@ -29,18 +21,14 @@ const CardRegistro = ({
                 >
                     {icon}
                 </span>
-                <h2 className="text-2xl md:text-3xl font-lora text-sig-text">
-                    {title}
-                </h2>
+                <H2 className=" text-sig-text">{title}</H2>
             </div>
             <p className="grow whitespace-pre-wrap">{description}</p>
             <div className="flex justify-end gap-4">
-                {secondHref !== "" ? (
+                {secondHref && (
                     <Button asChild variant={"outline"}>
                         <Link href={secondHref}>{secondButtonText}</Link>
                     </Button>
-                ) : (
-                    <></>
                 )}
                 <Button asChild>
                     <Link href={href}>{buttonText}</Link>
@@ -50,4 +38,4 @@ const CardRegistro = ({
     );
 };
 
-export default CardRegistro;
+export default CardRegister;

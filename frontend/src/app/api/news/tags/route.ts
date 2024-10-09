@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import api from "../../apiConfig";
+import api from "../../../../services/apiConfig";
 
 const GET = async (request: NextRequest): Promise<NextResponse> => {
     const { searchParams } = new URL(request.url);

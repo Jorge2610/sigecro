@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import api from "@/app/api/apiConfig";
+import api from "@/services/apiConfig";
 
 const GET = async (request: NextRequest) => {
     console.log("Holas b" + request.nextUrl.searchParams.get("sort"));

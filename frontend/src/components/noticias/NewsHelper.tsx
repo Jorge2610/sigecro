@@ -3,25 +3,23 @@
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { H3 } from "@/components/ui/headings";
 
-type NewsHelperProps = {
+interface NewsHelperProps {
     title: string;
     helps: Array<string>;
-};
+}
 
 const NewsHelper = ({ title, helps }: NewsHelperProps) => {
-    const [visible, setVisible] = useState(false);
-    const helpsHeight: string = helps.length * 24 + 33 + "px";
+    const [visible, setVisible] = useState<boolean>(false);
 
     return (
         <div>
             <div className="flex items-center gap-4 mb-4">
-                <h1 className="text-3xl md:text-4xl font-lora font-semibold">
-                    {title}
-                </h1>
+                <H3 className="font-semibold text-2xl">{title}</H3>
                 <Button
                     variant={"ghost"}
-                    onClick={() => setVisible(!visible)}
+                    onClick={() => setVisible((visible) => !visible)}
                     title="Ayuda"
                     className="px-2"
                 >

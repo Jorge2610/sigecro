@@ -1,4 +1,4 @@
-import api from "@/app/api/apiConfig";
+import api from "@/services/apiConfig";
 import {News} from "@/components/noticias/News"
 const Noticia = async ({ params }: { params: { data: string } }) => {
     let responseNews;

@@ -12,7 +12,7 @@ import {
     InputSelectForm,
     InputFileForm,
     InputTagsForm,
-} from "./InputFormText";
+} from "../../ui/inputsForm";
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";

@@ -3,7 +3,7 @@
 import AutomaticPreview from "@/components/noticias/automatico/AutomaticPreview";
 import NewsHelper from "@/components/noticias/NewsHelper";
 import { useContext, useEffect } from "react";
-import { AutomaticContext } from "@/components/noticias/automatico/AutomaticProvider";
+import { AutomaticContext } from "@/store/AssitedRecordNewsProvider";
 import { useRouter } from "next/navigation";
 
 const helps = [
@@ -13,20 +13,19 @@ const helps = [
 ];
 
 const VistaPrevia = () => {
-    const context = useContext(AutomaticContext);
-    const newsData = context?.newsData;
+    const { newsData } = useContext(AutomaticContext) || {};
     const router = useRouter();
 
     useEffect(() => {
-        if (newsData.title === "") {
+        if (!newsData.title) {
             router.push("/administrar-noticias/registro/asistido");
         }
-    }, []);
+    }, [newsData, router]);
 
     return (
         <div>
             <NewsHelper title="Registro asistido" helps={helps} />
-            {newsData.title !== "" ? (
+            {newsData.title ? (
                 <AutomaticPreview newsData={newsData} />
             ) : (
                 <div className="mt-4">

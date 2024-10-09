@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import api from "@/app/api/apiConfig";
+import api from "@/services/apiConfig";
 
 const POST = async (request: NextRequest) => {
     try {

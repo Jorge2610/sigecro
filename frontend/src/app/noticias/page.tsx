@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/pagination";
 import Searching from "@/components/noticias/search/Searching";
 import AdvancedSearch from "@/components/noticias/search/AdvancedSearch";
-import { News } from "@/components/noticias/newsInterfaces";
+import { News } from "@/types/newsType";
 import ListNews from "@/components/ui/list-news";
 import Filters from "@/components/noticias/search/Filters";
 import Sorting from "@/components/noticias/search/Sorting";

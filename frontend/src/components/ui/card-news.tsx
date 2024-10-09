@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { News } from "../noticias/newsInterfaces";
+import { News } from "../../types/newsType";
 
 import { Badge } from "@/components/ui/badge";
 import { formantNewsTitle} from "@/lib/stringsUtil";

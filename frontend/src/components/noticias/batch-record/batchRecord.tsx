@@ -11,7 +11,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { InputSelectForm } from "../manual/InputFormText";
+import { InputSelectForm } from "../../ui/inputsForm";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

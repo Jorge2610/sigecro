@@ -1,20 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { NewsData } from "../newsInterfaces";
+import { NewsData } from "../../../types/newsType";
 import { z } from "zod";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ACCEPTED_IMAGE_TYPES } from "../newsInterfaces";
+import { ACCEPTED_IMAGE_TYPES } from "../../../types/newsType";
 import { Popup, PopupState } from "../../ui/popup";
 import {
     InputTextAreaForm,
     InputFileForm,
     InputTagsForm,
-} from "../manual/InputFormText";
+} from "../../ui/inputsForm";
 import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -23,12 +24,13 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ButtonLoading from "@/components/ui/button-with-loading";
 import { sub } from "date-fns";
+import { H1 } from "@/components/ui/headings";
 
-type AutomaticPreviewProps = {
+type PreviewProps = {
     newsData: NewsData;
 };
 
-const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
+const Preview = ({ newsData }: PreviewProps) => {
     const router = useRouter();
     const [imageURL, setImageURL] = useState<string>("");
     const imageRef = useRef<HTMLImageElement>(null);
@@ -36,6 +38,7 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
     const [open, setOpen] = useState(false);
     const [duplicatedTags, setDuplicatedTags] = useState<boolean>(false);
     const [tags, setTags] = useState<string[]>([]);
+
     const formSchema = z.object({
         summary: z
             .string()
@@ -204,9 +207,7 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
                 onSubmit={form.handleSubmit(() => setOpen(true))}
                 className="space-y-4 mt-4"
             >
-                <h2 className="text-3xl font-lora font-medium mb-2">
-                    {newsData?.title}
-                </h2>
+                <H1>{newsData?.title}</H1>
                 <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined">link</span>
                     <a
@@ -320,4 +321,4 @@ const AutomaticPreview = ({ newsData }: AutomaticPreviewProps) => {
     );
 };
 
-export default AutomaticPreview;
+export default Preview;

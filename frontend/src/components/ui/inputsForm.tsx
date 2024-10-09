@@ -20,9 +20,10 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import InputTags from "./tags";
+import InputTags from "../noticias/manual/tags";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { CategoryType } from "@/types/categoryType";
 
 type Props = {
     control: any;
@@ -31,10 +32,11 @@ type Props = {
     className?: string;
     placeholder?: string;
     max?: number;
-    array?: { id: string; name: string }[];
+    array?: CategoryType[];
     rows?: number;
     nameImage?: string | null;
     updateImage?: () => void;
+    type?: string;
 };
 const InputForm = ({
     control,
@@ -43,6 +45,7 @@ const InputForm = ({
     className,
     placeholder,
     max,
+    type,
 }: Props) => {
     return (
         <FormField
@@ -56,6 +59,7 @@ const InputForm = ({
                             className={className}
                             maxLength={max}
                             placeholder={placeholder}
+                            type={type}
                             {...field}
                         />
                     </FormControl>
@@ -177,7 +181,6 @@ const InputFileForm = ({
         setFileName(nameImage ?? null);
     }, [nameImage]);
 
-   
     /**
      * Maneja los cambios del archivo seleccionado.
      *
@@ -207,7 +210,7 @@ const InputFileForm = ({
     };
 
     /**
-     * Clears the selected file by resetting the file name, 
+     * Clears the selected file by resetting the file name,
      * notifying the onChange callback, and resetting the file input value.
      *
      * @param {(value: undefined) => void} onChange - A callback function to notify when the file is cleared.
