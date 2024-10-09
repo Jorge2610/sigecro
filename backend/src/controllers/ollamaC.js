@@ -10,7 +10,7 @@ import { Ollama } from "../models/ollamaM.js";
 const getSummary = async (req, res) => {
     try {
         const text = req.query.text;
-        const summary = Ollama.generateSummary(text);
+        const summary = await Ollama.generateSummary(text);
         res.json(summary);
     } catch (error) {
         console.error("ERROR ON ollama.getSummary");
@@ -28,7 +28,7 @@ const getSummary = async (req, res) => {
 const getTags = async (req, res) => {
     try {
         const text = req.query.text;
-        const tags = Ollama.generateTags(text);
+        const tags = await Ollama.generateTags(text);
         res.json(tags);
     } catch (error) {
         console.error("ERROR ON ollama.getTags");

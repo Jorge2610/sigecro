@@ -8,8 +8,7 @@ const GET = async (request: NextRequest): Promise<NextResponse> => {
         const response = await api.get("/ollama/summary",{
             params:{text:texto}
         });
-        console.log(response.data.summary);
-        return NextResponse.json(response.data.summary, { status: 200 });
+        return NextResponse.json(response.data, { status: 200 });
     } catch (error) {
         return NextResponse.json(
             { error: "Falied response data" },
