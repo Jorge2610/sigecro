@@ -19,11 +19,11 @@ const pool = new Pool({
  * @throws {Error} Throws an error if there's an issue executing the query, such as a connection error or a syntax error.
  */
 const query = async (query, params) => {
-    const start = Date.now();
+    //const start = Date.now();
     try {
         const res = await pool.query(query, params);
-        const duration = Date.now() - start;
-        console.log("executed query", { query, duration, rows: res.rowCount });
+        //const duration = Date.now() - start;
+        //console.log("executed query", { query, duration, rows: res.rowCount });
         return res;
     } catch (err) {
         console.error("QUERY/CONN ERROR ON db.query:\n", { query, err });

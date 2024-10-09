@@ -196,7 +196,6 @@ const getFormatedContent = (newsData) => {
  * @throws {Error} Throws an error if any database or URL-fetching operation fails.
  */
 const getNewsUrls = async () => {
-    console.log("getNewsUrls");
     const sources = await News.getSources();
     let urls = [];
     for (const source of sources) {
@@ -226,7 +225,6 @@ const getSourceUrls = async (source) => {
     if (source.active && checkLastDate(source)) {
         source.last_date = new Date();
         const topics = await News.getTopicsBySource(source.id);
-        console.log("getSourceUrls, topics:", topics);
         switch (source.name) {
             case "Los Tiempos":
                 sourceUrls = await getLosTiemposUrls(topics);

@@ -102,7 +102,7 @@ BEGIN
     LIMIT page_size
     OFFSET (page_num - 1) * page_size;
 END;
-$function$
+$function$;
 
 DROP FUNCTION IF EXISTS build_search_query;
 
@@ -156,7 +156,7 @@ BEGIN
 
     RETURN COALESCE('(' || result || ')', '1=1');
 END;
-$function$
+$function$;
 
 DROP FUNCTION IF EXISTS advanced_search_news;
 
@@ -235,4 +235,4 @@ BEGIN
         categories, start_date, end_date, sources, filter_tags, 
         search_query, page_size, (page_num - 1) * page_size;
 END;
-$function$
+$function$;
