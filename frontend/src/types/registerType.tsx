@@ -20,7 +20,7 @@ const assistedRegisterFormSchema = z.object({
     }),
 });
 
-type formAsssistedReister = z.infer<typeof assistedRegisterFormSchema>;
+type formAsssistedRegister = z.infer<typeof assistedRegisterFormSchema>;
 
-export type { cardProps, formAsssistedReister };
+export type { cardProps, formAsssistedRegister };
 export { assistedRegisterFormSchema };

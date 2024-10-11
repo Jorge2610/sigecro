@@ -22,7 +22,7 @@ import { useToast } from "@/components/ui/use-toast";
 import messages from "../newsMessages.json";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import ButtonLoading from "@/components/ui/button-with-loading";
+import { ButtonLoading } from "@/components/ui/button-with-loading";
 import { sub } from "date-fns";
 import { H1 } from "@/components/ui/headings";
 
@@ -172,8 +172,7 @@ const Preview = ({ newsData }: PreviewProps) => {
                 console.log(error);
                 toast({
                     variant: "destructive",
-                    title: "Error al guardar",
-                    description: "Servidor no encontrado.",
+                    title: "Error al generar el resumen",
                 });
             });
     };
@@ -196,8 +195,7 @@ const Preview = ({ newsData }: PreviewProps) => {
                 console.log(error);
                 toast({
                     variant: "destructive",
-                    title: "Error al guardar",
-                    description: "Servidor no encontrado.",
+                    title: "Error al generar las etiquetas",
                 });
             });
     };
@@ -273,8 +271,8 @@ const Preview = ({ newsData }: PreviewProps) => {
                 <div className="flex justify-end">
                     <ButtonLoading
                         action={generateSummary}
-                        title="Resuemen con IA"
-                        loading="Generando..."
+                        title="Resumen con IA"
+                        titleOnLoading="Generando..."
                     />
                 </div>
 
@@ -294,7 +292,7 @@ const Preview = ({ newsData }: PreviewProps) => {
                     <ButtonLoading
                         action={generateTags}
                         title="Etiquetas con IA"
-                        loading="Generando..."
+                        titleOnLoading="Generando..."
                     />
                 </div>
                 <div className="flex justify-end gap-4">

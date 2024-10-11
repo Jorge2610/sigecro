@@ -4,7 +4,7 @@ import api from "@/services/apiConfig";
 const POST = async (request: NextRequest) => {
     try {
         const data = await request.json();
-        const res = await api.post("/news/scraping/programed", {
+        const res = await api.post("/news/scraping/programmed", {
             data: data,
         });
         return NextResponse.json({ status: res.status });

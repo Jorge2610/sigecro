@@ -218,7 +218,7 @@ const NewsForm = ({ categories }: Props) => {
                             <ButtonLoading
                                 action={generateSummary}
                                 title="Resumen con IA"
-                                loading="Generando..."
+                                onLoadingTitle="Generando..."
                             />
                         </div>
 
@@ -260,7 +260,7 @@ const NewsForm = ({ categories }: Props) => {
                             <ButtonLoading
                                 action={generateTags}
                                 title="Etiquetas con IA"
-                                loading="Generando..."
+                                onLoadingTitle="Generando..."
                             />
                         </div>
 
