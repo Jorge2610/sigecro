@@ -1,8 +1,7 @@
 "use client";
 
 import { es } from "date-fns/locale";
-import React, { useEffect, useRef, useState } from "react";
-
+import { Control, FieldPath, FieldValues } from "react-hook-form";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import {
     FormControl,
@@ -24,21 +23,35 @@ import InputTags from "../noticias/manual/tags";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { CategoryType } from "@/types/categoryType";
+import { useFileInput } from "@/hooks/useFileInput";
 
-type Props = {
-    control: any;
-    name: string;
+type InputProps<T extends FieldValues> = {
+    control: Control<T>;
+    name: FieldPath<T>;
     label?: string;
     className?: string;
     placeholder?: string;
     max?: number;
-    array?: CategoryType[];
     rows?: number;
-    nameImage?: string | null;
-    updateImage?: () => void;
-    type?: string;
+    type?: "text" | "number" | "email" | "password";
 };
-const InputForm = ({
+
+interface InpuntSelectFormProps<T extends FieldValues> extends InputProps<T> {
+    array?: CategoryType[];
+}
+
+interface InputFileFormProps<T extends FieldValues> extends InputProps<T> {
+    nameImage?: string;
+    updateImage:() => void;
+}
+
+interface InputTagsFormProps<T extends FieldValues> extends InputProps<T> {
+    tags: string[];
+    setTags: (value: string[]) => void;
+    setDuplicatedTags: (value: boolean) => void;
+}
+
+const InputForm = <T extends FieldValues>({
     control,
     name,
     label,
@@ -46,7 +59,7 @@ const InputForm = ({
     placeholder,
     max,
     type,
-}: Props) => {
+}: InputProps<T>) => {
     return (
         <FormField
             control={control}
@@ -70,14 +83,19 @@ const InputForm = ({
     );
 };
 
-const InputDateForm = ({ control, name, label, placeholder }: Props) => {
+const InputDateForm = <T extends FieldValues>({
+    control,
+    name,
+    label,
+    placeholder,
+}: InputProps<T>) => {
     return (
         <FormField
             control={control}
             name={name}
             render={({ field }) => (
                 <FormItem className="flex flex-col">
-                    <FormLabel htmlFor="datetime">{label}</FormLabel>
+                    {label && <FormLabel htmlFor="datetime">{label}</FormLabel>}
                     <FormControl>
                         <DateTimePicker
                             displayFormat={{ hour24: "dd-MM-yyyy HH:mm" }}
@@ -96,14 +114,14 @@ const InputDateForm = ({ control, name, label, placeholder }: Props) => {
     );
 };
 
-const InputTextAreaForm = ({
+const InputTextAreaForm = <T extends FieldValues>({
     control,
     name,
     label,
     placeholder,
     rows = 3,
     max,
-}: Props) => {
+}: InputProps<T>) => {
     return (
         <FormField
             control={control}
@@ -127,7 +145,12 @@ const InputTextAreaForm = ({
     );
 };
 
-const InputSelectForm = ({ control, name, label, array }: Props) => {
+const InputSelectForm = <T extends FieldValues>({
+    control,
+    name,
+    label,
+    array,
+}: InpuntSelectFormProps<T>) => {
     return (
         <FormField
             control={control}
@@ -167,71 +190,27 @@ const InputSelectForm = ({ control, name, label, array }: Props) => {
     );
 };
 
-const InputFileForm = ({
+const InputFileForm = <T extends FieldValues>({
     control,
     name,
     label,
     nameImage,
     updateImage,
-}: Props) => {
-    const inputFileRef = useRef<HTMLInputElement>(null);
-    const [fileName, setFileName] = useState<string | null>(nameImage ?? null);
-
-    useEffect(() => {
-        setFileName(nameImage ?? null);
-    }, [nameImage]);
-
-    /**
-     * Maneja los cambios del archivo seleccionado.
-     *
-     * @param {React.ChangeEvent<HTMLInputElement>} e - El evento disparado por el cambio de archivo.
-     * @param {(value: File | undefined) => void} onChange - Un callback que se llama cuando se cambia el archivo.
-     * @return {void}
-     */
-    const handleFileChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        onChange: (value: File | undefined) => void
-    ): void => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setFileName(file.name);
-            onChange(file);
-        }
-        updateImage !== undefined ? updateImage() : "";
-    };
-
-    /**
-     * Simulates a click on the file input button.
-     *
-     * @return {void} No return value.
-     */
-    const handleButtonClick = (): void => {
-        inputFileRef.current?.click();
-    };
-
-    /**
-     * Clears the selected file by resetting the file name,
-     * notifying the onChange callback, and resetting the file input value.
-     *
-     * @param {(value: undefined) => void} onChange - A callback function to notify when the file is cleared.
-     * @return {void} No return value.
-     */
-    const handleClearFile = (onChange: (value: undefined) => void): void => {
-        setFileName(null);
-        onChange(undefined);
-        if (inputFileRef.current) {
-            inputFileRef.current.value = "";
-        }
-        updateImage !== undefined ? updateImage() : "";
-    };
-
+}: InputFileFormProps<T>) => {
+    const {
+        handleFileChange,
+        fileName,
+        inputFileRef,
+        handleButtonClick,
+        handleClearFile,
+    } = useFileInput({nameImage, updateImage});
     return (
         <FormField
             control={control}
             name={name}
             render={({ field: { value, onChange, ...fieldProps } }) => (
                 <FormItem>
-                    <FormLabel>{label}</FormLabel>
+                    {label && <FormLabel>{label}</FormLabel>}
                     <FormControl>
                         <div className="flex flex-nowrap w-full gap-4 justify-between">
                             <Button
@@ -276,22 +255,15 @@ const InputFileForm = ({
         />
     );
 };
-interface Tags {
-    control: any;
-    name: string;
-    label: string;
-    tags: string[];
-    setDuplicatedTags: React.Dispatch<React.SetStateAction<boolean>>;
-    setTags: React.Dispatch<React.SetStateAction<string[]>>;
-}
-const InputTagsForm = ({
+
+const InputTagsForm = <T extends FieldValues>({
     control,
     name,
     label,
     tags,
     setTags,
     setDuplicatedTags,
-}: Tags) => {
+}: InputTagsFormProps<T>) => {
     return (
         <FormField
             control={control}

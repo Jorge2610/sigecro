@@ -6,21 +6,20 @@ import { InputSelectForm, InputForm } from "@/components/ui/inputsForm";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { AutomaticContext } from "../../../store/AssitedRecordNewsProvider";
-import { useExtractNews } from "@/hooks/useExtractNews";
+import { useScrapingNews } from "@/hooks/useScrapingNews";
 import { ButtonSubmitLoading } from "@/components/ui/button-with-loading";
+import { useLoadignState } from "@/hooks/useLoadingState";
 
-const RegistroAutomatico = () => {
-    const { categories, setNewsData } = useContext(AutomaticContext);
-    const { form, handleExtractNews, loading } = useExtractNews(
-        categories,
-        setNewsData
-    );
+const AssistedRecord = () => {
+    const { categories } = useContext(AutomaticContext);
+    const { form, handleScrapingNews } = useScrapingNews();
+    const { loading, handleLoagindState } = useLoadignState(handleScrapingNews);
 
     return (
         <Form {...form}>
             <form
                 className="space-y-4"
-                onSubmit={form.handleSubmit(handleExtractNews)}
+                onSubmit={form.handleSubmit(handleLoagindState)}
             >
                 <InputSelectForm
                     name="category_id"
@@ -49,4 +48,4 @@ const RegistroAutomatico = () => {
     );
 };
 
-export default RegistroAutomatico;
+export default AssistedRecord;

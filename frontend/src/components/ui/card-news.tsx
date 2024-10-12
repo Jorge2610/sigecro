@@ -2,14 +2,13 @@ import { format } from "date-fns";
 import { News } from "../../types/newsType";
 
 import { Badge } from "@/components/ui/badge";
-import { formantNewsTitle} from "@/lib/stringsUtil";
+import { formantNewsTitle } from "@/lib/stringsUtil";
 
 type CardNewsProps = {
     data: News;
 };
 
 const CardNews = ({ data }: CardNewsProps) => {
-    
     const urlNews = `/noticias/${formantNewsTitle(data.title)}_${data.id}`;
     return (
         <div className="rounded-[16px] border border-slate-200 p-6 mb-4 h-full bg-white shadow-lg">
@@ -25,17 +24,17 @@ const CardNews = ({ data }: CardNewsProps) => {
                                 library_books
                             </span>
                         </div>
-                        
-                        {
-                        data.url === "" ? (
+
+                        {data.url === "" ? (
                             <p>{data.source}</p>
                         ) : (
-                            <a href={data.url} className="underline underline-offset-1 hover:text-sky-600">
-                            {data.source}
+                            <a
+                                href={data.url}
+                                className="underline underline-offset-1 hover:text-sky-600"
+                            >
+                                {data.source}
                             </a>
-                        )
-                        }
-                        
+                        )}
                     </div>
                     <div className="flex space-x-2">
                         <span className="material-symbols-outlined select-none">

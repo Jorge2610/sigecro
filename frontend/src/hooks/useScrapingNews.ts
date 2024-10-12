@@ -1,21 +1,18 @@
 import { postScraping } from "@/lib/api/scraping";
-import { NewsData } from "@/types/newsType";
+import { useContext } from "react";
+import { AutomaticContext } from "@/store/AssitedRecordNewsProvider";
+import { AssistedRecordNews } from "@/types/newsType";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { SetStateAction, Dispatch, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
     formAsssistedRegister,
     assistedRegisterFormSchema,
 } from "@/types/registerType";
-import { CategoryType } from "@/types/categoryType";
 
-const useExtractNews = (
-    categories: CategoryType[] | undefined,
-    setNewsData: Dispatch<SetStateAction<NewsData>>
-) => {
-    const [loading, setLoading] = useState(false);
+const useScrapingNews = () => {
+    const { categories, setNewsData } = useContext(AutomaticContext);
     const router = useRouter();
     const { toast } = useToast();
     const form = useForm<formAsssistedRegister>({
@@ -29,8 +26,7 @@ const useExtractNews = (
     /**
      * Extracts news data from a given URL and redirects to the preview page if successful.
      */
-    const handleExtractNews = async () => {
-        setLoading(true);
+    const handleScrapingNews = async () => {
         try {
             const response = await postScraping(form.getValues().url);
             updateNewsData(response);
@@ -41,14 +37,13 @@ const useExtractNews = (
                 variant: "destructive",
             });
         }
-        setLoading(false);
     };
 
     const updateNewsData = (response: any): void => {
-        const newsData: NewsData = {
+        const newsData: AssistedRecordNews = {
             url: response.url,
             title: response.title,
-            dateTime: new Date(response.dateTime),
+            date: new Date(response.dateTime),
             source: response.source,
             content: response.content,
             category_id: form.getValues().category_id.id,
@@ -57,7 +52,7 @@ const useExtractNews = (
         router.push("/administrar-noticias/registro/asistido/vista-previa");
     };
 
-    return { form, handleExtractNews, loading };
+    return { form, handleScrapingNews };
 };
 
-export { useExtractNews };
+export { useScrapingNews };

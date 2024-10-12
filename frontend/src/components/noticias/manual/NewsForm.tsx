@@ -19,7 +19,7 @@ import { Form } from "@/components/ui/form";
 import { Popup } from "@/components/ui/popup";
 import FormSchema, { Data } from "./formSchema";
 import axios from "axios";
-import ButtonLoading from "@/components/ui/button-with-loading";
+import { ButtonLoading } from "@/components/ui/button-with-loading";
 import { NewsManualContext } from "./ManualNewsProvider";
 import { useRouter } from "next/navigation";
 
@@ -69,7 +69,6 @@ const NewsForm = ({ categories }: Props) => {
         newsData && setTags(newsData.tags ?? []);
     }, []);
 
-    
     /**
      * Handles the submission of the form by updating the component state with the sent data.
      *
@@ -205,30 +204,30 @@ const NewsForm = ({ categories }: Props) => {
                         placeholder={messages.content.placeholder}
                     />
 
-                        <InputTextAreaForm
-                            name="summary"
-                            label={messages.summary.label}
-                            control={form.control}
-                            rows={5}
-                            placeholder={messages.summary.placeholder}
-                            max={768}
-                        />
+                    <InputTextAreaForm
+                        name="summary"
+                        label={messages.summary.label}
+                        control={form.control}
+                        rows={5}
+                        placeholder={messages.summary.placeholder}
+                        max={768}
+                    />
 
-                        <div className="flex justify-end">
-                            <ButtonLoading
-                                action={generateSummary}
-                                title="Resumen con IA"
-                                onLoadingTitle="Generando..."
-                            />
-                        </div>
-
-                        <InputForm
-                            name="url"
-                            label={messages.url.label}
-                            control={form.control}
-                            placeholder={messages.url.placeholder}
-                            max={300}
+                    <div className="flex justify-end">
+                        <ButtonLoading
+                            action={generateSummary}
+                            title="Resumen con IA"
+                            titleOnLoading="Generando..."
                         />
+                    </div>
+
+                    <InputForm
+                        name="url"
+                        label={messages.url.label}
+                        control={form.control}
+                        placeholder={messages.url.placeholder}
+                        max={300}
+                    />
 
                     <InputSelectForm
                         name="category"
@@ -245,24 +244,24 @@ const NewsForm = ({ categories }: Props) => {
                         nameImage={form.getValues().image?.name ?? null}
                     />
 
-                        <InputTagsForm
-                            setDuplicatedTags={setDuplicatedTags}
-                            control={form.control}
-                            name="tags"
-                            label={messages.tags.label}
-                            tags={tags}
-                            setTags={setTags}
+                    <InputTagsForm
+                        setDuplicatedTags={setDuplicatedTags}
+                        control={form.control}
+                        name="tags"
+                        label={messages.tags.label}
+                        tags={tags}
+                        setTags={setTags}
+                    />
+                    <div className="w-full flex flex-row justify-between align-middle">
+                        <p className="text-sig-text text-xs">
+                            {tags.length}/5 Etiquetas
+                        </p>
+                        <ButtonLoading
+                            action={generateTags}
+                            title="Etiquetas con IA"
+                            titleOnLoading="Generando..."
                         />
-                        <div className="w-full flex flex-row justify-between align-middle">
-                            <p className="text-sig-text text-xs">
-                                {tags.length}/5 Etiquetas
-                            </p>
-                            <ButtonLoading
-                                action={generateTags}
-                                title="Etiquetas con IA"
-                                onLoadingTitle="Generando..."
-                            />
-                        </div>
+                    </div>
 
                     <div className="flex justify-end gap-4">
                         <Popup

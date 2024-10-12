@@ -1,33 +1,26 @@
-interface NewsData {
-    url: string;
-    title: string;
-    dateTime: Date;
-    source: string;
-    content: Array<string>;
-    category_id: string;
-}
-
 interface News {
     id: number;
     title: string;
-    content: string;
-    date: string;
+    content: Array<string>;
+    date: Date;
     source: string;
     url: string;
     summary: string;
     image_url: string;
     status: string;
-    category_id: number;
+    category_id: string;
     category_name: string;
     user_id: number;
     tags: Array<string>;
     total_count: number;
 }
 
-interface Category {
-    id: number | null;
-    name: string;
-}
+type AssistedRecordNews = Pick<
+    News,
+    "url" | "title" | "date" | "source" | "content" | "category_id"
+>;
+
+type FormNews = Omit<News, "id" | "category_name" | "total_count">;
 
 const ACCEPTED_IMAGE_TYPES = [
     "image/jpeg",
@@ -36,6 +29,6 @@ const ACCEPTED_IMAGE_TYPES = [
     "image/webp",
 ];
 
-export type { NewsData, News, Category };
+export type { AssistedRecordNews, News, FormNews };
 
 export { ACCEPTED_IMAGE_TYPES };

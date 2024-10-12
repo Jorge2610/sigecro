@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, SetStateAction, useState } from "react";
-import { NewsData } from "../types/newsType";
+import { AssistedRecordNews } from "../types/newsType";
 import { CategoryType } from "@/types/categoryType";
 
 type AutomaticProviderProps = {
@@ -11,8 +11,8 @@ type AutomaticProviderProps = {
 
 type AutomaticContextData = {
     categories?: CategoryType[];
-    newsData: NewsData;
-    setNewsData: React.Dispatch<SetStateAction<NewsData>>;
+    newsData: AssistedRecordNews;
+    setNewsData: React.Dispatch<SetStateAction<AssistedRecordNews>>;
 };
 
 const emptyNewsData = {
@@ -27,14 +27,14 @@ const emptyNewsData = {
 const AutomaticContext = createContext<AutomaticContextData>({
     categories: undefined,
     newsData: emptyNewsData,
-    setNewsData: useState<NewsData>,
+    setNewsData: useState<AssistedRecordNews>,
 });
 
 const AutomaticProvider = ({
     children,
     categories,
 }: AutomaticProviderProps) => {
-    const [newsData, setNewsData] = useState<NewsData>(emptyNewsData);
+    const [newsData, setNewsData] = useState<AssistedRecordNews>(emptyNewsData);
     return (
         <AutomaticContext.Provider
             value={{ categories: categories, newsData: newsData, setNewsData }}

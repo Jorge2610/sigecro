@@ -1,10 +1,12 @@
 "use client";
 
-import AutomaticPreview from "@/components/noticias/automatico/AutomaticPreview";
 import NewsHelper from "@/components/noticias/NewsHelper";
-import { useContext, useEffect } from "react";
+import { useContext, useState } from "react";
 import { AutomaticContext } from "@/store/AssitedRecordNewsProvider";
-import { useRouter } from "next/navigation";
+import { PageNotFound } from "@/components/ui/error-page";
+import NewsView from "@/components/ui/news-view";
+import AssistedForm from "@/components/noticias/automatico/AssistedForm";
+import { Separator } from "@/components/ui/separator";
 
 const helps = [
     "Revisa la información extraida.",
@@ -13,27 +15,30 @@ const helps = [
 ];
 
 const VistaPrevia = () => {
-    const { newsData } = useContext(AutomaticContext) || {};
-    const router = useRouter();
+    const { newsData } = useContext(AutomaticContext);
+    const [imageUrl, setImageUrl] = useState<string>("");
 
-    useEffect(() => {
-        if (!newsData.title) {
-            router.push("/administrar-noticias/registro/asistido");
-        }
-    }, [newsData, router]);
+    const handleImageUrl = (imageUrl: string): void => {
+        setImageUrl((_) => imageUrl);
+    };
 
-    return (
-        <div>
+
+    return newsData.title ? (
+        <>
             <NewsHelper title="Registro asistido" helps={helps} />
-            {newsData.title ? (
-                <AutomaticPreview newsData={newsData} />
-            ) : (
-                <div className="mt-4">
-                    Vista previa no disponible. Redireccionando la página, por
-                    favor, espere...
-                </div>
-            )}
-        </div>
+            <NewsView
+                title={newsData.title}
+                url={newsData.url}
+                content={newsData.content}
+                dateTime={newsData.date}
+                source={newsData.source}
+                imageUrl={imageUrl}
+            />
+            <Separator />
+            <AssistedForm newsData={newsData} setImageUrl={handleImageUrl} />
+        </>
+    ) : (
+        <PageNotFound />
     );
 };
 
