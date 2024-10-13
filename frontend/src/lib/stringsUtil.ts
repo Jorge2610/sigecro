@@ -28,12 +28,29 @@ const splitIntoParagraphs = (text: string): string[] => {
     return paragraphs.filter((paragraph) => paragraph.trim() !== "");
 };
 /**
- * 
- * @param text 
- * @returns 
+ *
+ * @param text
+ * @returns
  */
 const formantNewsTitle = (text: string): string => {
-    text = text.replaceAll(" ", "-").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    text = text
+        .replaceAll(" ", "-")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
     return text;
 };
-export { capitalizeWords, splitIntoParagraphs, formantNewsTitle};
+
+const getFormatedContent = (content: string[]): string => {
+    let formatedContent: string = "";
+    content.map((paragraph) => {
+        formatedContent += paragraph + "\n";
+    });
+    return formatedContent;
+};
+
+export {
+    capitalizeWords,
+    splitIntoParagraphs,
+    formantNewsTitle,
+    getFormatedContent,
+};

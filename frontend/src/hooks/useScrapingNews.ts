@@ -1,6 +1,6 @@
 import { postScraping } from "@/lib/api/scraping";
 import { useContext } from "react";
-import { AutomaticContext } from "@/store/AssitedRecordNewsProvider";
+import { AssistedRecordContext } from "@/store/AssitedRecordProvider";
 import { AssistedRecordNews } from "@/types/newsType";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
@@ -12,7 +12,7 @@ import {
 } from "@/types/registerType";
 
 const useScrapingNews = () => {
-    const { categories, setNewsData } = useContext(AutomaticContext);
+    const { categories, setNewsData } = useContext(AssistedRecordContext);
     const router = useRouter();
     const { toast } = useToast();
     const form = useForm<formAsssistedRegister>({

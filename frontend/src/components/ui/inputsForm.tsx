@@ -25,7 +25,7 @@ import { X } from "lucide-react";
 import { CategoryType } from "@/types/categoryType";
 import { useFileInput } from "@/hooks/useFileInput";
 
-type InputProps<T extends FieldValues> = {
+interface InputProps<T extends FieldValues> {
     control: Control<T>;
     name: FieldPath<T>;
     label?: string;
@@ -33,8 +33,8 @@ type InputProps<T extends FieldValues> = {
     placeholder?: string;
     max?: number;
     rows?: number;
-    type?: "text" | "number" | "email" | "password";
-};
+    type?: "text" | "number" | "email" | "password" | "url";
+}
 
 interface InpuntSelectFormProps<T extends FieldValues> extends InputProps<T> {
     array?: CategoryType[];
@@ -42,7 +42,7 @@ interface InpuntSelectFormProps<T extends FieldValues> extends InputProps<T> {
 
 interface InputFileFormProps<T extends FieldValues> extends InputProps<T> {
     nameImage?: string;
-    updateImage:() => void;
+    updateImage: () => void;
 }
 
 interface InputTagsFormProps<T extends FieldValues> extends InputProps<T> {
@@ -203,7 +203,7 @@ const InputFileForm = <T extends FieldValues>({
         inputFileRef,
         handleButtonClick,
         handleClearFile,
-    } = useFileInput({nameImage, updateImage});
+    } = useFileInput({ nameImage, updateImage });
     return (
         <FormField
             control={control}

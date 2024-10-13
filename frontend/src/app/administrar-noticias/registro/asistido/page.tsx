@@ -1,6 +1,6 @@
 "use client";
 
-import AutomaticRecord from "@/components/noticias/automatico/AutomaticRecord";
+import AssistedRecord from "@/components/noticias/assisted/AssistedRecord";
 import NewsHelper from "@/components/noticias/NewsHelper";
 import { Head } from "@/components/ui/headings";
 
@@ -9,16 +9,16 @@ const helps = [
     'Haz clic en "Extraer". El sistema intentará extraer la información relevante automáticamente.',
 ];
 
-const Asistido = () => {
+const AssistedPage = () => {
     return (
         <div className="flex justify-center">
             <div className="flex flex-col gap-4 w-full max-w-[1024px]">
                 <Head>Formulario</Head>
                 <NewsHelper title="Registro asistido" helps={helps} />
-                <AutomaticRecord />
+                <AssistedRecord />
             </div>
         </div>
     );
 };
 
-export default Asistido;
+export default AssistedPage;

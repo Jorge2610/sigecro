@@ -23,17 +23,16 @@ const useNews = (newsData: AssistedRecordNews) => {
         },
     });
 
-    const handleSubmit = async (): Promise<void> => {
+    const onSubmit = async (): Promise<void> => {
         try {
             const formData = getFormData(form.getValues());
             await createNews(formData);
-            //router.push("/administrar-noticias");
+            router.push("/administrar-noticias");
             toast({
                 title: toastMessages.successTitle,
                 description: toastMessages.successDesc,
             });
         } catch (error) {
-            console.log(error);
             toast({
                 title: toastMessages.errorTitle,
                 description: toastMessages.errorDesc,
@@ -66,7 +65,7 @@ const useNews = (newsData: AssistedRecordNews) => {
         return formatedContent;
     };
 
-    return { form, handleSubmit };
+    return { form, onSubmit };
 };
 
 export { useNews };

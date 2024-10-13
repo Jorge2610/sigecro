@@ -4,12 +4,12 @@ import { createContext, SetStateAction, useState } from "react";
 import { AssistedRecordNews } from "../types/newsType";
 import { CategoryType } from "@/types/categoryType";
 
-type AutomaticProviderProps = {
+type AssistedRecordProviderProps = {
     children: React.ReactNode;
     categories?: CategoryType[];
 };
 
-type AutomaticContextData = {
+type AssistedRecordContextData = {
     categories?: CategoryType[];
     newsData: AssistedRecordNews;
     setNewsData: React.Dispatch<SetStateAction<AssistedRecordNews>>;
@@ -18,30 +18,30 @@ type AutomaticContextData = {
 const emptyNewsData = {
     category_id: "",
     content: [],
-    dateTime: new Date(Date.now()),
+    date: new Date(Date.now()),
     source: "",
     title: "",
     url: "",
 };
 
-const AutomaticContext = createContext<AutomaticContextData>({
+const AssistedRecordContext = createContext<AssistedRecordContextData>({
     categories: undefined,
     newsData: emptyNewsData,
     setNewsData: useState<AssistedRecordNews>,
 });
 
-const AutomaticProvider = ({
+const AssistedRecordProvider = ({
     children,
     categories,
-}: AutomaticProviderProps) => {
+}: AssistedRecordProviderProps) => {
     const [newsData, setNewsData] = useState<AssistedRecordNews>(emptyNewsData);
     return (
-        <AutomaticContext.Provider
+        <AssistedRecordContext.Provider
             value={{ categories: categories, newsData: newsData, setNewsData }}
         >
             {children}
-        </AutomaticContext.Provider>
+        </AssistedRecordContext.Provider>
     );
 };
 
-export { AutomaticContext, AutomaticProvider };
+export { AssistedRecordContext, AssistedRecordProvider };

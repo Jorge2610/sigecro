@@ -1,24 +1,23 @@
-import { AutomaticProvider } from "@/store/AssitedRecordNewsProvider";
+import { AssistedRecordProvider } from "@/store/AssitedRecordProvider";
 import layoutProps from "@/types/layaoutType";
 import { getCategories } from "@/lib/api/categories";
-import { redirect } from "next/navigation";
+import { ServerErrorPage } from "@/components/ui/error-page";
 
-const LayoutRegistroAsistido = async ({ children }: layoutProps) => {
+const AssistedRecordLayout = async ({ children }: layoutProps) => {
     try {
         const categories = await getCategories();
         return (
             <div className="flex justify-center">
                 <div className="flex flex-col gap-4 w-full max-w-[1024px]">
-                    <AutomaticProvider categories={categories}>
+                    <AssistedRecordProvider categories={categories}>
                         {children}
-                    </AutomaticProvider>
+                    </AssistedRecordProvider>
                 </div>
             </div>
         );
     } catch (error) {
-        console.error(error);
-        redirect("/");
+        return <ServerErrorPage />;
     }
 };
 
-export default LayoutRegistroAsistido;
+export default AssistedRecordLayout;

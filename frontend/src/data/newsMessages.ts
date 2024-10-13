@@ -1,8 +1,10 @@
 const toastMessages = {
     errorTitle: "Error al guardar datos",
-    errorDesc: "Ocurrió un problema en el servidor. Por favor, intenta nuevamente más tarde.",
+    errorDesc:
+        "Ocurrió un problema en el servidor. Por favor, intenta nuevamente más tarde.",
     successTitle: "Datos guardados exitosamente",
-    successDesc: "Los datos fueron enviados y guardados correctamente en el servidor."
+    successDesc:
+        "Los datos fueron enviados y guardados correctamente en el servidor.",
 };
 
 const title = {
@@ -11,4 +13,14 @@ const title = {
     placeholder: "Escriba el título de la noticia... ",
 };
 
-export { toastMessages, title };
+const popupCancel = {
+    title: "Cancelar registro",
+    description: "Todos los cambios no guardados se perderán.",
+};
+const popupPublic = {
+    title: "Publicar noticia",
+    description:
+        "¿Deseas enviar la noticia para revisión antes de su publicación?",
+};
+
+export { toastMessages, title, popupCancel, popupPublic };

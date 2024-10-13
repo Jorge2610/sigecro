@@ -5,13 +5,13 @@ import { useContext } from "react";
 import { InputSelectForm, InputForm } from "@/components/ui/inputsForm";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { AutomaticContext } from "../../../store/AssitedRecordNewsProvider";
+import { AssistedRecordContext } from "../../../store/AssitedRecordProvider";
 import { useScrapingNews } from "@/hooks/useScrapingNews";
 import { ButtonSubmitLoading } from "@/components/ui/button-with-loading";
 import { useLoadignState } from "@/hooks/useLoadingState";
 
 const AssistedRecord = () => {
-    const { categories } = useContext(AutomaticContext);
+    const { categories } = useContext(AssistedRecordContext);
     const { form, handleScrapingNews } = useScrapingNews();
     const { loading, handleLoagindState } = useLoadignState(handleScrapingNews);
 

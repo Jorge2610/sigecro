@@ -2,10 +2,10 @@
 
 import NewsHelper from "@/components/noticias/NewsHelper";
 import { useContext, useState } from "react";
-import { AutomaticContext } from "@/store/AssitedRecordNewsProvider";
+import { AssistedRecordContext } from "@/store/AssitedRecordProvider";
 import { PageNotFound } from "@/components/ui/error-page";
 import NewsView from "@/components/ui/news-view";
-import AssistedForm from "@/components/noticias/automatico/AssistedForm";
+import AssistedRecordForm from "@/components/noticias/assisted/AssistedRecordForm";
 import { Separator } from "@/components/ui/separator";
 
 const helps = [
@@ -15,13 +15,12 @@ const helps = [
 ];
 
 const VistaPrevia = () => {
-    const { newsData } = useContext(AutomaticContext);
+    const { newsData } = useContext(AssistedRecordContext);
     const [imageUrl, setImageUrl] = useState<string>("");
 
     const handleImageUrl = (imageUrl: string): void => {
         setImageUrl((_) => imageUrl);
     };
-
 
     return newsData.title ? (
         <>
@@ -35,7 +34,10 @@ const VistaPrevia = () => {
                 imageUrl={imageUrl}
             />
             <Separator />
-            <AssistedForm newsData={newsData} setImageUrl={handleImageUrl} />
+            <AssistedRecordForm
+                newsData={newsData}
+                setImageUrl={handleImageUrl}
+            />
         </>
     ) : (
         <PageNotFound />
