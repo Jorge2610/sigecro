@@ -14,7 +14,7 @@ const helps = [
     'Haz clic en "Publicar" para finalizar.',
 ];
 
-const VistaPrevia = () => {
+const AssistedPreviewPage = () => {
     const { newsData } = useContext(AssistedRecordContext);
     const [imageUrl, setImageUrl] = useState<string>("");
 
@@ -44,4 +44,4 @@ const VistaPrevia = () => {
     );
 };
 
-export default VistaPrevia;
+export default AssistedPreviewPage;

@@ -17,6 +17,7 @@ const popupCancel = {
     title: "Cancelar registro",
     description: "Todos los cambios no guardados se perderán.",
 };
+
 const popupPublic = {
     title: "Publicar noticia",
     description:

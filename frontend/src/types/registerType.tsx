@@ -12,7 +12,7 @@ interface cardProps {
     secondButtonText?: string;
 }
 
-const assistedRegisterFormSchema = z.object({
+const assistedRegisterUrlSchema = z.object({
     url: z.string().regex(new RegExp(/https?:\/{2}(\w+\.)+\w+\/\w*/), {
         message: "La URL ingresada no es válida",
     }),
@@ -37,46 +37,24 @@ const assistedRecordSchema = z.object({
     status: z.enum(["draft", "published", "refused"]).default("published"),
 });
 
-const automaticRecordSchema = z.object({
-    title: z.string().trim().min(1, { message: messages.title.required }),
-    content: z.string().trim().min(1, { message: messages.content.required }),
-    date: z
-        .date({ required_error: messages.date.required })
-        .max(new Date(Date.now()), { message: messages.date.max }),
-    source: z.string().trim().min(1, { message: messages.source.required }),
-    url: z
-        .union([
-            z.string().regex(new RegExp(/https?:\/{2}(\w+\.)+\w+\/\w*/), {
-                message: messages.url.format,
-            }),
-            z.literal(""),
-        ])
-        .optional(),
-    summary: z
+const batchRegisterSchema = z.object({
+    urls: z
         .string()
-        .trim()
-        .min(1, { message: messages.summary.required })
-        .max(768, { message: messages.summary.max }),
-    image: z
-        .instanceof(File)
-        .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
-            message: messages.image.format,
-        })
-        .refine((file) => file.size <= 2097152, {
-            message: messages.image.size,
-        })
-        .optional(),
-    status: z.enum(["draft", "published", "refused"]).default("published"),
-    tags: z.array(z.string().trim()).optional(),
-    category: z.object({
-        id: z.string().trim().min(1).max(10),
+        .min(15, { message: "EL lote de URLs ingresado no es válido." }),
+    category_id: z.object({
+        id: z.string().min(1).max(10),
         name: z.string(),
     }),
-    user_id: z.string().trim().min(1).max(10),
 });
 
-type formAsssistedRegister = z.infer<typeof assistedRegisterFormSchema>;
+type formAsssistedRegisterUrl = z.infer<typeof assistedRegisterUrlSchema>;
 type formAsssistedRecord = z.infer<typeof assistedRecordSchema>;
+type formBatchRegister = z.infer<typeof batchRegisterSchema>;
 
-export type { cardProps, formAsssistedRegister, formAsssistedRecord };
-export { assistedRegisterFormSchema, assistedRecordSchema };
+export type {
+    cardProps,
+    formAsssistedRegisterUrl,
+    formAsssistedRecord,
+    formBatchRegister,
+};
+export { assistedRegisterUrlSchema, assistedRecordSchema, batchRegisterSchema };

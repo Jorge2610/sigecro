@@ -7,16 +7,16 @@ import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
-    formAsssistedRegister,
-    assistedRegisterFormSchema,
+    formAsssistedRegisterUrl,
+    assistedRegisterUrlSchema,
 } from "@/types/registerType";
 
 const useScrapingNews = () => {
     const { categories, setNewsData } = useContext(AssistedRecordContext);
     const router = useRouter();
     const { toast } = useToast();
-    const form = useForm<formAsssistedRegister>({
-        resolver: zodResolver(assistedRegisterFormSchema),
+    const form = useForm<formAsssistedRegisterUrl>({
+        resolver: zodResolver(assistedRegisterUrlSchema),
         defaultValues: {
             url: "",
             category_id: categories && categories[0],

@@ -1,21 +1,22 @@
 import { Button } from "../ui/button";
 import { Popup, PopupState } from "../ui/popup";
 import { popupCancel, popupPublic } from "@/data/newsMessages";
-import { usePopup } from "@/hooks/news/usePopup";
 
 interface NewsPopupsProps {
     open: boolean;
-    submitData: () => Promise<void>;
+    handleSubmit: () => Promise<void>;
     setOpen: (state: boolean) => void;
+    secondaryHref: string;
 }
 
-const NewsPopups = ({ open, submitData, setOpen }: NewsPopupsProps) => {
+const NewsPopups = ({ ...props }: NewsPopupsProps) => {
+    const { open, handleSubmit, setOpen, secondaryHref } = props;
     return (
         <div className="flex justify-end gap-4">
             <Popup
                 title={popupCancel.title}
                 description={popupCancel.description}
-                href="/administrar-noticias/registro/asistido"
+                href={secondaryHref}
             >
                 <Button variant="outline">Cancelar</Button>
             </Popup>
@@ -27,7 +28,7 @@ const NewsPopups = ({ open, submitData, setOpen }: NewsPopupsProps) => {
                 onClose={() => {
                     setOpen(false);
                 }}
-                onConfirm={submitData}
+                onConfirm={handleSubmit}
             />
         </div>
     );

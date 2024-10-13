@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import api from "../../../../services/apiConfig";
 
-const GET = async (request: NextRequest): Promise<NextResponse> => {
-    const { searchParams } = new URL(request.url);
-    const texto = searchParams.get('text');
+const POST = async (request: NextRequest): Promise<NextResponse> => {
+    const data = await request.json();
     try {
-        const response = await api.get("/ollama/tags",{
-            params:{text:texto}
+        const response = await api.post("/ollama/tags", {
+            content: data.content,
         });
         return NextResponse.json(response.data, { status: 200 });
     } catch (error) {
@@ -16,4 +15,4 @@ const GET = async (request: NextRequest): Promise<NextResponse> => {
         );
     }
 };
-export  {GET};
+export { POST };

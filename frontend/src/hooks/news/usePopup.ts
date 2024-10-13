@@ -1,18 +1,18 @@
 import { useState } from "react";
 
-const usePopup = (onSubmit: () => Promise<void>) => {
+const usePopup = (submitData: () => Promise<void>) => {
     const [open, setOpen] = useState(false);
 
-    const submitData = async (): Promise<void> => {
+    const onSubmit = async (): Promise<void> => {
         setOpen(false);
-        await onSubmit();
+        await submitData();
     };
 
     const handleOpen = (state: boolean) => {
         setOpen((_) => state);
     };
 
-    return { open, handleOpen, submitData };
+    return { open, handleOpen, onSubmit };
 };
 
 export { usePopup };

@@ -23,7 +23,7 @@ const useNews = (newsData: AssistedRecordNews) => {
         },
     });
 
-    const onSubmit = async (): Promise<void> => {
+    const submitData = async (): Promise<void> => {
         try {
             const formData = getFormData(form.getValues());
             await createNews(formData);
@@ -65,7 +65,7 @@ const useNews = (newsData: AssistedRecordNews) => {
         return formatedContent;
     };
 
-    return { form, onSubmit };
+    return { form, submitData };
 };
 
 export { useNews };

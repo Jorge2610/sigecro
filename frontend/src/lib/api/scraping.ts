@@ -7,4 +7,16 @@ const postScraping = async (url: string) => {
     return response.data;
 };
 
-export { postScraping };
+const createBatchUrl = async (
+    urls: string,
+    user_id: number,
+    category_id: string
+) => {
+    await axios.post("/api/news/scraping/batch", {
+        urls: urls,
+        user_id: user_id,
+        category_id: category_id,
+    });
+};
+
+export { postScraping, createBatchUrl };

@@ -22,8 +22,8 @@ interface AssistedFormProps {
 
 const AssistedRecordForm = ({ ...props }: AssistedFormProps) => {
     const { newsData, setImageUrl } = props;
-    const { form, onSubmit } = useNews(newsData);
-    const { open, handleOpen, submitData } = usePopup(onSubmit);
+    const { form, submitData } = useNews(newsData);
+    const { open, handleOpen, onSubmit } = usePopup(submitData);
     const { tags, handleTags, handleDuplicatedTags } = useTags(form);
     const { handleUpdateUrl } = useImageUrl(setImageUrl, () => {
         return form.getValues().image;
@@ -69,7 +69,8 @@ const AssistedRecordForm = ({ ...props }: AssistedFormProps) => {
                 <NewsPopups
                     open={open}
                     setOpen={handleOpen}
-                    submitData={submitData}
+                    handleSubmit={onSubmit}
+                    secondaryHref="/administrar-noticias/registro/asistido"
                 />
             </form>
         </Form>

@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { CategoryType } from "@/types/categoryType";
 import { useFileInput } from "@/hooks/useFileInput";
+import { wrap } from "module";
 
 interface InputProps<T extends FieldValues> {
     control: Control<T>;
@@ -34,6 +35,7 @@ interface InputProps<T extends FieldValues> {
     max?: number;
     rows?: number;
     type?: "text" | "number" | "email" | "password" | "url";
+    wrap?: string;
 }
 
 interface InpuntSelectFormProps<T extends FieldValues> extends InputProps<T> {
@@ -121,6 +123,7 @@ const InputTextAreaForm = <T extends FieldValues>({
     placeholder,
     rows = 3,
     max,
+    wrap,
 }: InputProps<T>) => {
     return (
         <FormField
@@ -136,6 +139,7 @@ const InputTextAreaForm = <T extends FieldValues>({
                             rows={rows}
                             {...field}
                             maxLength={max}
+                            wrap={wrap}
                         />
                     </FormControl>
                     <FormMessage />
