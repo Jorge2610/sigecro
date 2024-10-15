@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const postScraping = async (url: string) => {
+const getNewsByScraping = async (url: string) => {
     const response = await axios.post("/api/news/scraping", {
         url: url,
     });
@@ -19,4 +19,4 @@ const createBatchUrl = async (
     });
 };
 
-export { postScraping, createBatchUrl };
+export { getNewsByScraping, createBatchUrl };

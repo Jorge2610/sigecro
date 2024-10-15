@@ -1,10 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import React, { useState, useEffect, useContext } from "react";
-import { capitalizeWords } from "@/lib/stringsUtil";
-import messages from "../newsMessages.json";
-import { useToast } from "../../ui/use-toast";
+"use client";
+
+import React, { useEffect } from "react";
+import { splitIntoParagraphs } from "@/lib/stringsUtil";
 import {
     InputForm,
     InputDateForm,
@@ -13,159 +10,41 @@ import {
     InputFileForm,
     InputTagsForm,
 } from "../../ui/inputsForm";
-
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Popup } from "@/components/ui/popup";
-import FormSchema, { Data } from "./formSchema";
-import axios from "axios";
-import { ButtonLoading } from "@/components/ui/button-with-loading";
-import { NewsManualContext } from "./ManualNewsProvider";
-import { useRouter } from "next/navigation";
+import { useManualNewsContext } from "@/store/ManualNewsProvider";
+import { useManualRegister } from "@/hooks/news/useManualRegister";
+import SummaryButtons from "../SummaryButtons";
+import TagButton from "../TagButton";
+import { useTags } from "@/hooks/news/useTags";
+import { CategoryType } from "@/types/categoryType";
+import {
+    title,
+    source,
+    date,
+    content,
+    summary,
+    url,
+    image,
+    tag,
+    category,
+    popupCancel,
+} from "@/data/newsMessages";
 
 interface Props {
-    categories: any;
+    categories: CategoryType[];
 }
 const NewsForm = ({ categories }: Props) => {
-    const { toast } = useToast();
-    const router = useRouter();
-    const [tags, setTags] = useState<string[]>([]);
-    const [duplicatedTags, setDuplicatedTags] = useState<boolean>(false);
-
-    const context = useContext(NewsManualContext);
-    const newsData = context?.newsData;
-    const setNewsData = context?.setNewsData;
-    const setImageURL = context?.setImageURL;
-
-    useEffect(() => {
-        form.setValue("tags", tags);
-        duplicatedTags
-            ? form.setError("tags", {
-                  type: "manual",
-                  message: messages.tags.unique,
-              })
-            : form.clearErrors("tags");
-    }, [tags, duplicatedTags]);
-
-    const form = useForm<Data>({
-        resolver: zodResolver(FormSchema),
-        defaultValues: {
-            title: "",
-            content: "",
-            date: undefined,
-            source: "",
-            url: "",
-            summary: "",
-            image: undefined,
-            status: "published",
-            tags: [],
-            category: categories[0],
-            user_id: "1",
-        },
-    });
+    const { newsData } = useManualNewsContext();
+    const { form, onSubmit, cleanForm } = useManualRegister(categories);
+    const { tags, handleTags, handleDuplicatedTags } = useTags(form, "tags");
 
     useEffect(() => {
         newsData && form.reset(newsData);
-        newsData && setTags(newsData.tags ?? []);
+        newsData && handleTags(newsData.tags ?? []);
     }, []);
 
-    /**
-     * Handles the submission of the form by updating the component state with the sent data.
-     *
-     * @param {Data} data - The data sent by the form.
-     * @return {void}
-     */
-    const onSubmit = (data: Data): void => {
-        data.source = capitalizeWords(data.source);
-        setImageURL &&
-            setImageURL(data.image ? URL.createObjectURL(data.image) : null);
-        setNewsData && setNewsData(data);
-        router.push("/administrar-noticias/registro/manual/vista-previa");
-    };
-
-    /**
-     * Resets the form to its initial state, clearing all fields and resetting the news data and image URL.
-     *
-     * @return {void}
-     */
-    const cleanForm = (): void => {
-        form.reset({
-            title: "",
-            content: "",
-            date: undefined,
-            source: "",
-            url: "",
-            summary: "",
-            image: undefined,
-            status: "published",
-            tags: [],
-            category: categories[0],
-            user_id: "1",
-        });
-        setNewsData && setNewsData(null);
-        setImageURL && setImageURL(null);
-    };
-
-    const generateSummary = async (): Promise<void> => {
-        const content = form.getValues("content");
-        const valid = await form.trigger("content");
-        if (valid) {
-            await axios
-                .get("/api/news/summary", {
-                    params: { text: content },
-                })
-                .then((response) => {
-                    form.setValue("summary", response.data, {
-                        shouldValidate: true,
-                    });
-                })
-                .catch((error) => {
-                    console.log(error);
-                    toast({
-                        variant: "destructive",
-                        title: "Error al guardar",
-                        description: "Servidor no encontrado.",
-                    });
-                });
-        } else {
-            form.setFocus("content");
-            form.setError("summary", {
-                type: "manual",
-                message:
-                    "Es necesario el contenido para generar el resumen con la IA",
-            });
-        }
-    };
-
-    const generateTags = async (): Promise<void> => {
-        const content = form.getValues("content");
-        const valid = await form.trigger("content");
-        if (valid) {
-            await axios
-                .get("/api/news/tags", {
-                    params: { text: content },
-                })
-                .then((response) => {
-                    const tags = response.data;
-                    setTags(tags);
-                })
-                .catch((error) => {
-                    console.log(error);
-                    toast({
-                        variant: "destructive",
-                        title: "Error al guardar",
-                        description: "Servidor no encontrado.",
-                    });
-                });
-        } else {
-            form.setFocus("content");
-            form.setError("tags", {
-                type: "manual",
-                message:
-                    "Es necesario el contenido para generar las etiquetas con la IA",
-            });
-        }
-    };
     return (
         <>
             <Form {...form}>
@@ -175,108 +54,101 @@ const NewsForm = ({ categories }: Props) => {
                 >
                     <InputForm
                         name="title"
-                        label={messages.title.label}
+                        label={title.label}
                         control={form.control}
-                        placeholder={messages.title.placeholder}
+                        placeholder={title.placeholder}
                         max={255}
                     />
-
                     <InputForm
                         name="source"
-                        label={messages.source.label}
+                        label={source.label}
                         control={form.control}
-                        placeholder={messages.source.placeholder}
+                        placeholder={source.placeholder}
                         max={64}
                     />
-
                     <InputDateForm
                         name="date"
-                        label={messages.date.label}
+                        label={date.label}
                         control={form.control}
-                        placeholder={messages.date.placeholder}
+                        placeholder={date.placeholder}
                     />
-
                     <InputTextAreaForm
                         name="content"
-                        label={messages.content.label}
+                        label={content.label}
                         control={form.control}
                         rows={10}
-                        placeholder={messages.content.placeholder}
+                        placeholder={content.placeholder}
                     />
-
                     <InputTextAreaForm
                         name="summary"
-                        label={messages.summary.label}
+                        label={summary.label}
                         control={form.control}
                         rows={5}
-                        placeholder={messages.summary.placeholder}
+                        placeholder={summary.placeholder}
                         max={768}
                     />
-
-                    <div className="flex justify-end">
-                        <ButtonLoading
-                            action={generateSummary}
-                            title="Resumen con IA"
-                            titleOnLoading="Generando..."
-                        />
-                    </div>
-
+                    <SummaryButtons
+                        content={splitIntoParagraphs(form.getValues().content)}
+                        control={form.control}
+                        name={"summary"}
+                    />
                     <InputForm
                         name="url"
-                        label={messages.url.label}
+                        label={url.label}
                         control={form.control}
-                        placeholder={messages.url.placeholder}
+                        placeholder={url.placeholder}
                         max={300}
                     />
-
                     <InputSelectForm
-                        name="category"
-                        label={messages.category.label}
+                        name="category_id"
+                        label={category.label}
                         control={form.control}
-                        placeholder={messages.category.placeholder}
+                        placeholder={category.placeholder}
                         array={categories}
                     />
-
                     <InputFileForm
                         name="image"
-                        label={messages.image.label}
+                        label={image.label}
                         control={form.control}
-                        nameImage={form.getValues().image?.name ?? null}
+                        nameImage={form.getValues().image?.name}
                     />
-
                     <InputTagsForm
-                        setDuplicatedTags={setDuplicatedTags}
+                        setDuplicatedTags={handleDuplicatedTags}
                         control={form.control}
                         name="tags"
-                        label={messages.tags.label}
+                        label={tag.label}
                         tags={tags}
-                        setTags={setTags}
+                        setTags={handleTags}
                     />
-                    <div className="w-full flex flex-row justify-between align-middle">
-                        <p className="text-sig-text text-xs">
-                            {tags.length}/5 Etiquetas
-                        </p>
-                        <ButtonLoading
-                            action={generateTags}
-                            title="Etiquetas con IA"
-                            titleOnLoading="Generando..."
-                        />
-                    </div>
-
-                    <div className="flex justify-end gap-4">
-                        <Popup
-                            title={messages.popupCancel.title}
-                            description={messages.popupCancel.description}
-                            action={cleanForm}
-                            href="/administrar-noticias"
-                        >
-                            <Button variant="outline">Cancelar</Button>
-                        </Popup>
-                        <Button type="submit"> Previsualizar </Button>
-                    </div>
+                    <TagButton
+                        content={form.getValues().content}
+                        setTags={handleTags}
+                        tagsCount={tags.length}
+                    />
+                    <FormButtons cleanForm={cleanForm} />
                 </form>
             </Form>
         </>
+    );
+};
+
+interface FormButtonsProps {
+    cleanForm: () => void;
+}
+
+const FormButtons = ({ cleanForm }: FormButtonsProps) => {
+    return (
+        <div className="flex justify-end gap-4">
+            <Popup
+                title={popupCancel.title}
+                description={popupCancel.description}
+                action={cleanForm}
+                href="/administrar-noticias"
+            >
+                <Button variant="outline">Cancelar</Button>
+            </Popup>
+            <Button type="submit"> Previsualizar </Button>
+        </div>
     );
 };
 

@@ -24,7 +24,7 @@ const AssistedRecordForm = ({ ...props }: AssistedFormProps) => {
     const { newsData, setImageUrl } = props;
     const { form, submitData } = useNews(newsData);
     const { open, handleOpen, onSubmit } = usePopup(submitData);
-    const { tags, handleTags, handleDuplicatedTags } = useTags(form);
+    const { tags, handleTags, handleDuplicatedTags } = useTags(form, "tags");
     const { handleUpdateUrl } = useImageUrl(setImageUrl, () => {
         return form.getValues().image;
     });
@@ -52,6 +52,7 @@ const AssistedRecordForm = ({ ...props }: AssistedFormProps) => {
                 <SummaryButtons
                     control={form.control}
                     content={newsData.content}
+                    name="summary"
                 />
                 <InputTagsForm
                     setDuplicatedTags={handleDuplicatedTags}

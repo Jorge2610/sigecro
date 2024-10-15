@@ -1,10 +1,10 @@
-import CardRegister from "@/components/noticias/CardRegister";
+import RegisterCard from "@/components/noticias/RegisterCard";
 import registerCardData from "@/data/registerCards";
 
-const ListCardRegister = () => {
+const RegisterCardList = () => {
     return registerCardData.map((type, i) => {
         return (
-            <CardRegister
+            <RegisterCard
                 key={i}
                 icon={type.icon}
                 title={type.title}
@@ -18,4 +18,4 @@ const ListCardRegister = () => {
     });
 };
 
-export default ListCardRegister;
+export default RegisterCardList;

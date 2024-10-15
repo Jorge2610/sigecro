@@ -1,5 +1,3 @@
-import { te } from "date-fns/locale";
-
 /**
  * Capitaliza la primera letra de cada palabra en una cadena dada.
  *

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseFileInputProps {
-    nameImage?: string,
-    updateImage: () => void
+    nameImage?: string;
+    updateImage?: () => void;
 }
 
-const useFileInput = ({ nameImage, updateImage }: UseFileInputProps)=> {
+const useFileInput = ({ nameImage, updateImage }: UseFileInputProps) => {
     const inputFileRef = useRef<HTMLInputElement>(null);
     const [fileName, setFileName] = useState<string | undefined>(nameImage);
 
@@ -23,7 +23,7 @@ const useFileInput = ({ nameImage, updateImage }: UseFileInputProps)=> {
                 setFileName(file.name);
                 onChange(file);
             }
-            updateImage();
+            updateImage?.();
         },
         [updateImage]
     );

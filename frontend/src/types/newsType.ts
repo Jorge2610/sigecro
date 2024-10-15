@@ -22,13 +22,4 @@ type AssistedRecordNews = Pick<
 
 type FormNews = Omit<News, "id" | "category_name" | "total_count">;
 
-const ACCEPTED_IMAGE_TYPES = [
-    "image/jpeg",
-    "image/png",
-    "image/jpeg",
-    "image/webp",
-];
-
 export type { AssistedRecordNews, News, FormNews };
-
-export { ACCEPTED_IMAGE_TYPES };

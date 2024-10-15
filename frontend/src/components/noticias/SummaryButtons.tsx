@@ -1,21 +1,30 @@
-import { Control, useController } from "react-hook-form";
+import {
+    Control,
+    FieldPath,
+    FieldValues,
+    useController,
+} from "react-hook-form";
 import { ButtonLoading } from "../ui/button-with-loading";
 import { generateSummary } from "@/lib/api/IA";
 import { useToast } from "@/components/ui/use-toast";
-import { formAsssistedRecord } from "@/types/registerType";
 import { Button } from "../ui/button";
 import { getFormatedContent } from "@/lib/stringsUtil";
 
-interface SummaryButtonsProps {
-    control: Control<formAsssistedRecord>;
+interface SummaryButtonsProps<T extends FieldValues> {
+    control: Control<T>;
+    name: FieldPath<T>;
     content: string[];
 }
 
 const MESSAGE_ERROR = "Error al generar el resumen";
 
-const SummaryButtons = ({ content, control }: SummaryButtonsProps) => {
+const SummaryButtons = <T extends FieldValues>({
+    content,
+    name,
+    control,
+}: SummaryButtonsProps<T>) => {
     const { toast } = useToast();
-    const { field } = useController({ name: "summary", control });
+    const { field } = useController({ name, control });
 
     const handleIASummary = async (): Promise<void> => {
         try {

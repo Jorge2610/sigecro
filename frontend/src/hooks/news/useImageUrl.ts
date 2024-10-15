@@ -4,7 +4,7 @@ const useImageUrl = (
 ) => {
     const handleUpdateUrl = (): void => {
         const image = getImage();
-        if (image !== undefined) {
+        if (image) {
             setImageUrl(URL.createObjectURL(image));
         } else {
             setImageUrl("");

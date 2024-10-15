@@ -1,41 +1,36 @@
-import { postScraping } from "@/lib/api/scraping";
+import { getNewsByScraping } from "@/lib/api/scraping";
 import { useContext } from "react";
 import { AssistedRecordContext } from "@/store/AssitedRecordProvider";
 import { AssistedRecordNews } from "@/types/newsType";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
+import { useHandleToast } from "../useHandleToast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
     formAsssistedRegisterUrl,
     assistedRegisterUrlSchema,
-} from "@/types/registerType";
+} from "@/types/registerSchemas";
 
-const useScrapingNews = () => {
+const MESSAGE_ERROR = "No se pudo extraer la noticia.";
+
+const useAssistedRegister = () => {
     const { categories, setNewsData } = useContext(AssistedRecordContext);
     const router = useRouter();
-    const { toast } = useToast();
+    const { showToast } = useHandleToast();
     const form = useForm<formAsssistedRegisterUrl>({
         resolver: zodResolver(assistedRegisterUrlSchema),
         defaultValues: {
             url: "",
-            category_id: categories && categories[0],
+            category_id: categories && categories[0].id,
         },
     });
 
-    /**
-     * Extracts news data from a given URL and redirects to the preview page if successful.
-     */
     const handleScrapingNews = async () => {
         try {
-            const response = await postScraping(form.getValues().url);
+            const response = await getNewsByScraping(form.getValues().url);
             updateNewsData(response);
         } catch (error) {
-            toast({
-                title: "Extracción fallida",
-                description: "No se pudo extraer la noticia.",
-                variant: "destructive",
-            });
+            showToast("error", MESSAGE_ERROR);
         }
     };
 
@@ -46,7 +41,7 @@ const useScrapingNews = () => {
             date: new Date(response.dateTime),
             source: response.source,
             content: response.content,
-            category_id: form.getValues().category_id.id,
+            category_id: form.getValues().category_id,
         };
         setNewsData(newsData);
         router.push("/administrar-noticias/registro/asistido/vista-previa");
@@ -55,4 +50,4 @@ const useScrapingNews = () => {
     return { form, handleScrapingNews };
 };
 
-export { useScrapingNews };
+export { useAssistedRegister };

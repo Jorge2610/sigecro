@@ -24,7 +24,6 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { CategoryType } from "@/types/categoryType";
 import { useFileInput } from "@/hooks/useFileInput";
-import { wrap } from "module";
 
 interface InputProps<T extends FieldValues> {
     control: Control<T>;
@@ -44,7 +43,7 @@ interface InpuntSelectFormProps<T extends FieldValues> extends InputProps<T> {
 
 interface InputFileFormProps<T extends FieldValues> extends InputProps<T> {
     nameImage?: string;
-    updateImage: () => void;
+    updateImage?: () => void;
 }
 
 interface InputTagsFormProps<T extends FieldValues> extends InputProps<T> {

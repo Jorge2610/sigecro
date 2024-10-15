@@ -1,6 +1,6 @@
 import { InputTextAreaForm, InputTagsForm } from "./inputsForm";
 import { ButtonLoading } from "./button-with-loading";
-import { formAsssistedRecord } from "@/types/registerType";
+import { formAsssistedRecord } from "@/types/registerSchemas";
 import { Control } from "react-hook-form";
 import { useEffect, useState } from "react";
 

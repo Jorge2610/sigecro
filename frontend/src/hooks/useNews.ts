@@ -3,17 +3,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
     formAsssistedRecord,
     assistedRecordSchema,
-} from "@/types/registerType";
-import { useToast } from "@/components/ui/use-toast";
+} from "@/types/registerSchemas";
 import { useRouter } from "next/navigation";
-import { toastMessages } from "@/data/newsMessages";
 import { createNews } from "@/lib/api/news";
 import { AssistedRecordNews } from "@/types/newsType";
 import { sub } from "date-fns";
+import { useHandleToast } from "./useHandleToast";
 
 const useNews = (newsData: AssistedRecordNews) => {
     const router = useRouter();
-    const { toast } = useToast();
+    const { showToast } = useHandleToast();
     const form = useForm<formAsssistedRecord>({
         resolver: zodResolver(assistedRecordSchema),
         defaultValues: {
@@ -28,16 +27,9 @@ const useNews = (newsData: AssistedRecordNews) => {
             const formData = getFormData(form.getValues());
             await createNews(formData);
             router.push("/administrar-noticias");
-            toast({
-                title: toastMessages.successTitle,
-                description: toastMessages.successDesc,
-            });
+            showToast("success");
         } catch (error) {
-            toast({
-                title: toastMessages.errorTitle,
-                description: toastMessages.errorDesc,
-                variant: "destructive",
-            });
+            showToast("error");
         }
     };
 

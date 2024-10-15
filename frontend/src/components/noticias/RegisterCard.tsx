@@ -1,9 +1,18 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { cardProps } from "@/types/registerType";
 import { H2 } from "../ui/headings";
 
-const CardRegister = ({
+interface RegisterCardProps {
+    icon: string;
+    title: string;
+    description: string;
+    href: string;
+    buttonText: string;
+    secondHref?: string;
+    secondButtonText?: string;
+}
+
+const RegisterCard = ({
     icon,
     title,
     description,
@@ -11,7 +20,7 @@ const CardRegister = ({
     buttonText,
     secondHref = "",
     secondButtonText = "",
-}: cardProps) => {
+}: RegisterCardProps) => {
     return (
         <div className="bg-white p-4 flex flex-col gap-4 rounded border border-slate-200">
             <div className="flex items-center gap-4">
@@ -38,4 +47,4 @@ const CardRegister = ({
     );
 };
 
-export default CardRegister;
+export default RegisterCard;
