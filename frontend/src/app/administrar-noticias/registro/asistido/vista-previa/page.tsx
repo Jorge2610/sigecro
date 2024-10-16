@@ -1,12 +1,13 @@
 "use client";
 
 import NewsHelper from "@/components/noticias/NewsHelper";
-import { useContext, useState } from "react";
-import { AssistedRecordContext } from "@/store/AssitedRecordProvider";
+import { useState } from "react";
 import { PageNotFound } from "@/components/ui/error-page";
 import NewsView from "@/components/ui/news-view";
 import AssistedRecordForm from "@/components/noticias/assisted/AssistedRecordForm";
 import { Separator } from "@/components/ui/separator";
+import { useNewsDataContext } from "@/store/NewsDataProvider";
+import { formatNewsDataToNewsView } from "@/lib/formUtils";
 
 const helps = [
     "Revisa la información extraida.",
@@ -15,7 +16,7 @@ const helps = [
 ];
 
 const AssistedPreviewPage = () => {
-    const { newsData } = useContext(AssistedRecordContext);
+    const { newsData } = useNewsDataContext();
     const [imageUrl, setImageUrl] = useState<string>("");
 
     const handleImageUrl = (imageUrl: string): void => {
@@ -26,12 +27,7 @@ const AssistedPreviewPage = () => {
         <>
             <NewsHelper title="Registro asistido" helps={helps} />
             <NewsView
-                title={newsData.title}
-                url={newsData.url}
-                content={newsData.content}
-                dateTime={newsData.date}
-                source={newsData.source}
-                imageUrl={imageUrl}
+                newsData={formatNewsDataToNewsView(newsData, true, imageUrl)}
             />
             <Separator />
             <AssistedRecordForm

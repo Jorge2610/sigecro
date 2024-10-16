@@ -34,8 +34,18 @@ const H3 = ({ children, className }: props) => {
     );
 };
 
+const H4 = ({ children, className }: props) => {
+    return (
+        <h4
+            className={cn("font-medium text-md text-sig-blue font-lora", className)}
+        >
+            {children}
+        </h4>
+    );
+};
+
 const Head = ({ children }: props) => {
     return <p className="font-semibold text-sig-blue">{children}</p>;
 };
 
-export { H1, H2, H3, Head };
+export { H1, H2, H3, H4, Head };

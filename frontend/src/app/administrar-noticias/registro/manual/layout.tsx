@@ -1,4 +1,4 @@
-import { ManualNewsProvider } from "@/store/ManualNewsProvider";
+import { NewsDataProvider } from "@/store/NewsDataProvider";
 const LayoutManualRegisterNews = async ({
     children,
 }: {
@@ -7,7 +7,7 @@ const LayoutManualRegisterNews = async ({
     return (
         <div className="flex justify-center">
             <div className="flex flex-col gap-4 w-full max-w-[1024px]">
-                <ManualNewsProvider>{children}</ManualNewsProvider>
+                <NewsDataProvider>{children}</NewsDataProvider>
             </div>
         </div>
     );

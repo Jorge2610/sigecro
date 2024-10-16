@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Popup } from "@/components/ui/popup";
-import { useManualNewsContext } from "@/store/ManualNewsProvider";
 import { useManualRegister } from "@/hooks/news/useManualRegister";
 import SummaryButtons from "../SummaryButtons";
 import TagButton from "../TagButton";
@@ -31,25 +30,25 @@ import {
     category,
     popupCancel,
 } from "@/data/newsMessages";
+import { useNewsDataContext } from "@/store/NewsDataProvider";
 
 interface Props {
     categories: CategoryType[];
 }
 const NewsForm = ({ categories }: Props) => {
-    const { newsData } = useManualNewsContext();
-    const { form, onSubmit, cleanForm } = useManualRegister(categories);
+    const { newsData } = useNewsDataContext();
+    const { form, showPreview, cleanForm } = useManualRegister(categories);
     const { tags, handleTags, handleDuplicatedTags } = useTags(form, "tags");
 
     useEffect(() => {
-        newsData && form.reset(newsData);
-        newsData && handleTags(newsData.tags ?? []);
+        newsData.tags && handleTags(newsData.tags ?? []);
     }, []);
 
     return (
         <>
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={form.handleSubmit(showPreview)}
                     className="space-y-4"
                 >
                     <InputForm
@@ -100,7 +99,7 @@ const NewsForm = ({ categories }: Props) => {
                         max={300}
                     />
                     <InputSelectForm
-                        name="category_id"
+                        name="category"
                         label={category.label}
                         control={form.control}
                         placeholder={category.placeholder}

@@ -40,9 +40,9 @@ const formantNewsTitle = (text: string): string => {
 
 const getFormatedContent = (content: string[]): string => {
     let formatedContent: string = "";
-    content.map((paragraph) => {
+    for (const paragraph of content) {
         formatedContent += paragraph + "\n";
-    });
+    }
     return formatedContent;
 };
 

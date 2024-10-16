@@ -144,7 +144,7 @@ const Preview: React.FC<PreviewProps> = ({ imageURL, data }) => {
 };
 
 interface Props {
-    summary: string | undefined;
+    summary?: string;
 }
 const Summary = ({ summary }: Props) => {
     return (

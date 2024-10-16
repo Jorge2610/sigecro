@@ -5,7 +5,7 @@ import {
     InputTagsForm,
 } from "../../ui/inputsForm";
 import messages from "../newsMessages.json";
-import { AssistedRecordNews } from "@/types/newsType";
+import { NewsData } from "@/types/newsType";
 import { useNews } from "@/hooks/useNews";
 import { usePopup } from "@/hooks/news/usePopup";
 import { useTags } from "@/hooks/news/useTags";
@@ -14,56 +14,64 @@ import { getFormatedContent } from "@/lib/stringsUtil";
 import SummaryButtons from "../SummaryButtons";
 import TagButton from "../TagButton";
 import NewsPopups from "../NewsPopups";
+import { useAssistedRegister } from "@/hooks/news/useAssistedRegister";
+import { assitedFormToNewsData } from "@/lib/formUtils";
 
 interface AssistedFormProps {
-    newsData: AssistedRecordNews;
+    newsData: NewsData;
     setImageUrl: (url: string) => void;
 }
 
 const AssistedRecordForm = ({ ...props }: AssistedFormProps) => {
     const { newsData, setImageUrl } = props;
-    const { form, submitData } = useNews(newsData);
+    const { formPreview } = useAssistedRegister();
+    const { submitData } = useNews(
+        assitedFormToNewsData(newsData, formPreview)
+    );
     const { open, handleOpen, onSubmit } = usePopup(submitData);
-    const { tags, handleTags, handleDuplicatedTags } = useTags(form, "tags");
+    const { tags, handleTags, handleDuplicatedTags } = useTags(
+        formPreview,
+        "tags"
+    );
     const { handleUpdateUrl } = useImageUrl(setImageUrl, () => {
-        return form.getValues().image;
+        return formPreview.getValues().image;
     });
 
     return (
-        <Form {...form}>
+        <Form {...formPreview}>
             <form
-                onSubmit={form.handleSubmit(() => handleOpen(true))}
+                onSubmit={formPreview.handleSubmit(() => handleOpen(true))}
                 className="space-y-4"
             >
                 <InputFileForm
                     name="image"
                     label={messages.image.label}
-                    control={form.control}
-                    nameImage={form.getValues().image?.name}
+                    control={formPreview.control}
+                    nameImage={formPreview.getValues().image?.name}
                     updateImage={handleUpdateUrl}
                 />
                 <InputTextAreaForm
                     name="summary"
                     label="Resumen *"
-                    control={form.control}
+                    control={formPreview.control}
                     rows={5}
                     placeholder="Escriba el resumen..."
                 />
                 <SummaryButtons
-                    control={form.control}
-                    content={newsData.content}
+                    control={formPreview.control}
+                    content={newsData.content as string[]}
                     name="summary"
                 />
                 <InputTagsForm
                     setDuplicatedTags={handleDuplicatedTags}
-                    control={form.control}
+                    control={formPreview.control}
                     name="tags"
                     label={messages.tags.label}
                     tags={tags}
                     setTags={handleTags}
                 />
                 <TagButton
-                    content={getFormatedContent(newsData.content)}
+                    content={getFormatedContent(newsData.content as string[])}
                     setTags={handleTags}
                     tagsCount={tags.length}
                 />

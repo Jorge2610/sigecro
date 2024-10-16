@@ -1,37 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useContext } from "react";
 import { InputSelectForm, InputForm } from "@/components/ui/inputsForm";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { AssistedRecordContext } from "../../../store/AssitedRecordProvider";
 import { useAssistedRegister } from "@/hooks/news/useAssistedRegister";
 import { ButtonSubmitLoading } from "@/components/ui/button-with-loading";
 import { useLoadignState } from "@/hooks/useLoadingState";
+import { CategoryType } from "@/types/categoryType";
 
-const AssistedRecord = () => {
-    const { categories } = useContext(AssistedRecordContext);
-    const { form, handleScrapingNews } = useAssistedRegister();
+const AssistedRegister = ({ categories }: { categories: CategoryType[] }) => {
+    const { formUrl, handleScrapingNews } = useAssistedRegister(categories);
     const { loading, handleLoagindState } = useLoadignState(handleScrapingNews);
 
     return (
-        <Form {...form}>
+        <Form {...formUrl}>
             <form
                 className="space-y-4"
-                onSubmit={form.handleSubmit(handleLoagindState)}
+                onSubmit={formUrl.handleSubmit(handleLoagindState)}
             >
                 <InputSelectForm
-                    name="category_id"
+                    name="category"
                     label="Categoría"
-                    control={form.control}
+                    control={formUrl.control}
                     placeholder="Seleccione una categoría"
                     array={categories}
                 />
                 <InputForm
                     name="url"
                     label="URL *"
-                    control={form.control}
+                    control={formUrl.control}
                     placeholder="https://www.ejemplo.com"
                     type="url"
                 />
@@ -48,4 +46,4 @@ const AssistedRecord = () => {
     );
 };
 
-export default AssistedRecord;
+export default AssistedRegister;

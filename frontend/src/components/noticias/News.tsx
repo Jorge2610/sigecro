@@ -33,6 +33,7 @@ const News = ({data,imageURL}:NewsProps)=>{
                 </span>
                 {data?.date && format(data.date, "dd-MM-yyyy HH:mm")}
             </div>
+            {/* <Summary summary={data?.summary} /> */}
             {imageURL && (
                 <div className="w-full h-[300px]">
                     <Image
@@ -76,9 +77,22 @@ const News = ({data,imageURL}:NewsProps)=>{
                     </a>
                 </div>
             )}
-
         </div>
     );
 
 }
+
+interface SummaryProps {
+    summary?: string;
+}
+const Summary = ({ summary }: SummaryProps) => {
+    return (
+        <div className="w-full p-4 bg-sig-gray2 rounded-xl">
+            <h3 className="font-lora font-semibold text-sig-blue">Resumen</h3>
+            <br />
+            <p className="text-sm font-regular">{summary}</p>
+        </div>
+    );
+};
+
 export {News};

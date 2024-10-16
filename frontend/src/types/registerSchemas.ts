@@ -21,7 +21,10 @@ const assistedRegisterUrlSchema = z.object({
     url: z.string().regex(new RegExp(/https?:\/{2}(\w+\.)+\w+\/\w*/), {
         message: "La URL ingresada no es válida",
     }),
-    category_id: z.string(),
+    category: z.object({
+        id: z.string(),
+        name: z.string(),
+    }),
 });
 
 const assistedRecordSchema = z.object({
@@ -36,7 +39,6 @@ const assistedRecordSchema = z.object({
         })
         .optional(),
     tags: z.array(z.string().trim()).optional(),
-    status: z.enum(["draft", "published", "refused"]).default("published"),
 });
 
 const batchRegisterSchema = z.object({
@@ -73,10 +75,11 @@ const manualRegisterSchema = z.object({
             message: image.size,
         })
         .optional(),
-    status: z.enum(["draft", "published", "refused"]).default("published"),
     tags: z.array(z.string().trim()).optional(),
-    category_id: z.string(),
-    user_id: z.string(),
+    category: z.object({
+        id: z.string(),
+        name: z.string(),
+    }),
 });
 
 type formAsssistedRegisterUrl = z.infer<typeof assistedRegisterUrlSchema>;
