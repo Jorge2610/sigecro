@@ -36,11 +36,11 @@ const RegisterCard = ({
             <div className="flex justify-end gap-4">
                 {secondHref && (
                     <Button asChild variant={"outline"}>
-                        <Link href={secondHref}>{secondButtonText}</Link>
+                        <a href={secondHref}>{secondButtonText}</a>
                     </Button>
                 )}
                 <Button asChild>
-                    <Link href={href}>{buttonText}</Link>
+                    <a href={href}>{buttonText}</a>
                 </Button>
             </div>
         </div>

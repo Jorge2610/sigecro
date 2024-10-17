@@ -15,7 +15,7 @@ const ManualPreviewPage = () => {
     const { newsData } = useNewsDataContext();
     const { submitData } = useNews(newsData);
     const imageUrl = newsData.image && URL.createObjectURL(newsData.image);
-    const newsProp: NewsViewType = formatNewsDataToNewsView(
+    const newsViewData: NewsViewType = formatNewsDataToNewsView(
         newsData,
         false,
         imageUrl
@@ -23,7 +23,7 @@ const ManualPreviewPage = () => {
 
     return newsData.title ? (
         <>
-            <NewsView newsData={newsProp} />
+            <NewsView newsData={newsViewData} />
             <ActionButtons submitData={submitData} />
         </>
     ) : (
@@ -36,7 +36,7 @@ const ActionButtons = ({ submitData }: { submitData: () => Promise<void> }) => {
         <div className="flex flex-row justify-end gap-4">
             <Button asChild variant="outline">
                 <Link href="/administrar-noticias/registro/manual">
-                    Regresar
+                    Atrás
                 </Link>
             </Button>
             <Popup

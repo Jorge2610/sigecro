@@ -6,7 +6,6 @@ import { NewsData } from "@/types/newsType";
 type NewsContextType = {
     newsData: NewsData;
     updateNewsData: (newsData: NewsData) => void;
-    resetNewsData: () => void;
 };
 
 const emptyNewsData: NewsData = {
@@ -24,7 +23,6 @@ const emptyNewsData: NewsData = {
 const NewsDataContext = createContext<NewsContextType>({
     newsData: emptyNewsData,
     updateNewsData: () => {},
-    resetNewsData: () => {},
 });
 
 const useNewsDataContext = () => {
@@ -43,13 +41,9 @@ const NewsDataProvider = ({ children }: NewsDataProviderProps) => {
         setNewsData((_) => newsData);
     };
 
-    const resetNewsData = () => {
-        setNewsData((_) => emptyNewsData);
-    };
-
     return (
         <NewsDataContext.Provider
-            value={{ newsData: newsData, updateNewsData, resetNewsData }}
+            value={{ newsData: newsData, updateNewsData }}
         >
             {children}
         </NewsDataContext.Provider>

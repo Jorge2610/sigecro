@@ -3,7 +3,7 @@
 import { PendingURL } from "./colums";
 import { useState } from "react";
 import PendingUrlsDataTable from "./pendingUrlsDataTable";
-import axios from "axios";
+import { deletePendingUrl } from "@/lib/api/pendingUrl";
 
 type PendingUrlsProps = {
     data: PendingURL[];
@@ -21,7 +21,7 @@ const PendingUrls = ({ data }: PendingUrlsProps) => {
      */
     const handleDelete = async (selectedRowIds: number[]): Promise<void> => {
         try {
-            await axios.delete("/api/news/scraping/batch", {
+            await deletePendingUrl({
                 data: { ids: selectedRowIds },
             });
             const updatedData = tableData.filter(

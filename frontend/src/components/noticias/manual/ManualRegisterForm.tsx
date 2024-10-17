@@ -37,7 +37,7 @@ interface Props {
 }
 const NewsForm = ({ categories }: Props) => {
     const { newsData } = useNewsDataContext();
-    const { form, showPreview, cleanForm } = useManualRegister(categories);
+    const { form, showPreview } = useManualRegister(categories);
     const { tags, handleTags, handleDuplicatedTags } = useTags(form, "tags");
 
     useEffect(() => {
@@ -124,25 +124,20 @@ const NewsForm = ({ categories }: Props) => {
                         setTags={handleTags}
                         tagsCount={tags.length}
                     />
-                    <FormButtons cleanForm={cleanForm} />
+                    <FormButtons />
                 </form>
             </Form>
         </>
     );
 };
 
-interface FormButtonsProps {
-    cleanForm: () => void;
-}
-
-const FormButtons = ({ cleanForm }: FormButtonsProps) => {
+const FormButtons = () => {
     return (
         <div className="flex justify-end gap-4">
             <Popup
                 title={popupCancel.title}
                 description={popupCancel.description}
-                action={cleanForm}
-                href="/administrar-noticias"
+                href="/administrar-noticias/registro"
             >
                 <Button variant="outline">Cancelar</Button>
             </Popup>

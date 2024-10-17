@@ -1,4 +1,4 @@
-import NewsForm from "@/components/noticias/manual/NewsForm";
+import NewsForm from "@/components/noticias/manual/ManualRegisterForm";
 import NewsHelper from "@/components/noticias/NewsHelper";
 import React from "react";
 import { Head } from "@/components/ui/headings";

@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const AdministrarNoticias = () => {
     return (
         <Button asChild title={"Registrar noticia"}>
-            <a href={"/administrar-noticias/registro"}>Registrar noticia</a>
+            <Link href={"/administrar-noticias/registro"}>
+                Registrar noticia
+            </Link>
         </Button>
     );
 };

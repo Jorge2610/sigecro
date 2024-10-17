@@ -23,7 +23,7 @@ type AssistedRecordNews = Pick<
 type NewsData = Omit<News, "id" | "total_count" | "image_url"> & {
     image?: File;
 };
-// type NewsView = Partial<Omit<News, "id" | "total_count">>;
+
 type NewsViewType = Omit<
     News,
     | "id"

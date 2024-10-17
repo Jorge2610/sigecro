@@ -9,20 +9,16 @@ import { capitalizeWords, getFormatedContent } from "@/lib/stringsUtil";
 import { useRouter } from "next/navigation";
 import { useNewsDataContext } from "@/store/NewsDataProvider";
 import { manualFormToNewsData } from "@/lib/formUtils";
-import { NewsData } from "@/types/newsType";
-import { useEffect } from "react";
 
 const useManualRegister = (categories: CategoryType[]) => {
-    const { updateNewsData, resetNewsData, newsData } = useNewsDataContext();
+    const { updateNewsData, newsData } = useNewsDataContext();
     const router = useRouter();
+
     const defaultFormValues = {
         title: newsData.title,
         content: getFormatedContent(newsData.content),
         date:
-            newsData.date.getUTCFullYear() ===
-            new Date("2000-01-01").getUTCFullYear()
-                ? undefined
-                : newsData.date,
+            newsData.date.getUTCFullYear() === 2000 ? undefined : newsData.date,
         source: newsData.source,
         url: newsData.url,
         summary: newsData.summary,
@@ -38,22 +34,13 @@ const useManualRegister = (categories: CategoryType[]) => {
         defaultValues: defaultFormValues,
     });
 
-    useEffect(() => {
-        form.reset(defaultFormValues);
-    }, [newsData, form, categories]);
-
     const showPreview = (data: formManualRegister): void => {
         data.source = capitalizeWords(data.source);
         updateNewsData(manualFormToNewsData(newsData, data));
         router.push("/administrar-noticias/registro/manual/vista-previa");
     };
 
-    const cleanForm = (): void => {
-        resetNewsData();
-        //form.reset(defaultFormValues);
-    };
-
-    return { form, showPreview, cleanForm };
+    return { form, showPreview };
 };
 
 export { useManualRegister };

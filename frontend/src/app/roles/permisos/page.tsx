@@ -5,7 +5,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import PermissionsTable from "@/components/permisos/PermissionsTable";
+import PermissionsTable from "@/components/permissions/PermissionsTable";
 import axios from "axios";
 
 const Permisos = async () => {

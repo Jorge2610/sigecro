@@ -35,7 +35,7 @@ const AssistedRegister = ({ categories }: { categories: CategoryType[] }) => {
                 />
                 <div className="flex justify-end gap-4 mt-4">
                     <Button asChild variant={"outline"}>
-                        <Link href="/administrar-noticias/registro">Atrás</Link>
+                        <Link href="/administrar-noticias/registro">Cancelar</Link>
                     </Button>
                     <ButtonSubmitLoading state={loading}>
                         {loading ? "Procesando..." : "Extraer"}

@@ -4,7 +4,7 @@ import NewsHelper from "@/components/noticias/NewsHelper";
 import { useState } from "react";
 import { PageNotFound } from "@/components/ui/error-page";
 import NewsView from "@/components/ui/news-view";
-import AssistedRecordForm from "@/components/noticias/assisted/AssistedRecordForm";
+import AssistedRecordForm from "@/components/noticias/assisted/AssistedRegisterForm";
 import { Separator } from "@/components/ui/separator";
 import { useNewsDataContext } from "@/store/NewsDataProvider";
 import { formatNewsDataToNewsView } from "@/lib/formUtils";

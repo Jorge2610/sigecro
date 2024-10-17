@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import InputTags from "../noticias/manual/tags";
+import InputTags from "./tags";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { CategoryType } from "@/types/categoryType";
