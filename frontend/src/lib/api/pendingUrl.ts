@@ -7,7 +7,7 @@ const getPendignUrl = async () => {
 };
 
 const deletePendingUrl = async (data: {}) => {
-    const response = await axios.delete("/api/news/scraping/batch");
+    const response = await axios.delete("/api/news/scraping/batch", data);
     return response.data;
 };
 

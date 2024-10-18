@@ -22,7 +22,7 @@ const useBatchRegister = (categories: CategoryType[]) => {
         resolver: zodResolver(batchRegisterSchema),
         defaultValues: {
             urls: "",
-            category_id: categories[0].id,
+            category: categories[0],
         },
     });
 
@@ -31,7 +31,7 @@ const useBatchRegister = (categories: CategoryType[]) => {
             await createBatchUrl(
                 form.getValues().urls.trim(),
                 1,
-                form.getValues().category_id
+                form.getValues().category.id
             );
             showToast("success", SUCCESS_MESSAGE);
             await sleep(500);

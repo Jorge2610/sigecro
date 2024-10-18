@@ -1,6 +1,7 @@
 import ListCardRegister from "@/components/noticias/ListCardRegister";
 import { H1 } from "@/components/ui/headings";
-const Registro = () => {
+
+const RegisterPage = () => {
     return (
         <div className="flex flex-col gap-4">
             <H1>Registrar noticia</H1>
@@ -11,4 +12,4 @@ const Registro = () => {
     );
 };
 
-export default Registro;
+export default RegisterPage;

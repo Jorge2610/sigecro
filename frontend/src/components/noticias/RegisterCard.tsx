@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { H2 } from "../ui/headings";
 
 interface RegisterCardProps {

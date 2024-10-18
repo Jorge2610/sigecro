@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { Search } from "@/components/ui/search";
 import {
     Pagination,

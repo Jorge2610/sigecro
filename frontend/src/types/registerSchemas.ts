@@ -43,7 +43,10 @@ const assistedRecordSchema = z.object({
 
 const batchRegisterSchema = z.object({
     urls: z.string().min(15, { message: batchRegister.error }),
-    category_id: z.string(),
+    category: z.object({
+        id: z.string(),
+        name: z.string(),
+    }),
 });
 
 const manualRegisterSchema = z.object({

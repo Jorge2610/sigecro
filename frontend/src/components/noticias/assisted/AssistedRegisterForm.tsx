@@ -4,7 +4,7 @@ import {
     InputFileForm,
     InputTagsForm,
 } from "../../ui/inputsForm";
-import messages from "../newsMessages.json";
+import { image, summary, tag } from "@/data/newsMessages";
 import { NewsData } from "@/types/newsType";
 import { useNews } from "@/hooks/useNews";
 import { usePopup } from "@/hooks/news/usePopup";
@@ -13,9 +13,16 @@ import { useImageUrl } from "@/hooks/news/useImageUrl";
 import { getFormatedContent } from "@/lib/stringsUtil";
 import SummaryButtons from "../SummaryButtons";
 import TagButton from "../TagButton";
-import NewsPopups from "../NewsPopups";
 import { useAssistedRegister } from "@/hooks/news/useAssistedRegister";
 import { assitedFormToNewsData } from "@/lib/formUtils";
+import ButtonsWithPopup from "../../ui/buttons-with-popup";
+
+const POPUP_MESSAGES = {
+    primaryTitle: "Publicar",
+    primaryDescription: "¿Está seguro de que quiere publicar esta noticia?",
+    secondaryTitle: "Cancelar registro",
+    secondaryDescription: "Todos los cambios no guardados se perderán",
+};
 
 interface AssistedFormProps {
     newsData: NewsData;
@@ -45,17 +52,17 @@ const AssistedRecordForm = ({ ...props }: AssistedFormProps) => {
             >
                 <InputFileForm
                     name="image"
-                    label={messages.image.label}
+                    label={image.label}
                     control={formPreview.control}
                     nameImage={formPreview.getValues().image?.name}
                     updateImage={handleUpdateUrl}
                 />
                 <InputTextAreaForm
                     name="summary"
-                    label="Resumen *"
+                    label={summary.label}
                     control={formPreview.control}
                     rows={5}
-                    placeholder="Escriba el resumen..."
+                    placeholder={summary.placeholder}
                 />
                 <SummaryButtons
                     control={formPreview.control}
@@ -66,7 +73,7 @@ const AssistedRecordForm = ({ ...props }: AssistedFormProps) => {
                     setDuplicatedTags={handleDuplicatedTags}
                     control={formPreview.control}
                     name="tags"
-                    label={messages.tags.label}
+                    label={tag.label}
                     tags={tags}
                     setTags={handleTags}
                 />
@@ -75,11 +82,12 @@ const AssistedRecordForm = ({ ...props }: AssistedFormProps) => {
                     setTags={handleTags}
                     tagsCount={tags.length}
                 />
-                <NewsPopups
+                <ButtonsWithPopup
                     open={open}
                     setOpen={handleOpen}
                     handleSubmit={onSubmit}
                     secondaryHref="/administrar-noticias/registro/asistido"
+                    popupsMessages={POPUP_MESSAGES}
                 />
             </form>
         </Form>

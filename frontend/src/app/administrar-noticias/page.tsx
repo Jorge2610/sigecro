@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const AdministrarNoticias = () => {
+const ManageNewsPage = () => {
     return (
         <Button asChild title={"Registrar noticia"}>
             <Link href={"/administrar-noticias/registro"}>
@@ -11,4 +11,4 @@ const AdministrarNoticias = () => {
     );
 };
 
-export default AdministrarNoticias;
+export default ManageNewsPage;

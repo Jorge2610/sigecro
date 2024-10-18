@@ -124,14 +124,14 @@ const NewsForm = ({ categories }: Props) => {
                         setTags={handleTags}
                         tagsCount={tags.length}
                     />
-                    <FormButtons />
+                    <ActionButtons />
                 </form>
             </Form>
         </>
     );
 };
 
-const FormButtons = () => {
+const ActionButtons = () => {
     return (
         <div className="flex justify-end gap-4">
             <Popup
