@@ -12,4 +12,9 @@ const getCategories = async () => {
     return response.data.rows as CategoryType[];
 };
 
-export { createCategory, getCategories };
+const getUsedCategories = async () => {
+    const response = await axios.get<CategoryType[]>("/api/categories/filters");
+    return response.data;
+};
+
+export { createCategory, getCategories, getUsedCategories };

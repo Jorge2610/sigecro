@@ -6,29 +6,24 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import PermissionsTable from "@/components/permissions/PermissionsTable";
-import axios from "axios";
+import { getPermissions } from "@/lib/api/permissions";
 
-const Permisos = async () => {
-    try {
-        const res = await axios.get(`${process.env.API_HOST}/permissions`);
-        return (
-            <div className="border rounded-md bg-white">
-                <Table>
-                    <TableCaption>Lista de permisos SIGECRO</TableCaption>
-                    <TableHeader>
-                        <TableRow className="hidden md:table-row">
-                            <TableHead className="">#</TableHead>
-                            <TableHead>Permiso</TableHead>
-                            <TableHead>Descripción</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <PermissionsTable permissions={res.data}></PermissionsTable>
-                </Table>
-            </div>
-        );
-    } catch (error: any) {
-        return <div>No se pudo obtener la información.</div>;
-    }
+const PermissionsPage = async () => {
+    const permissions = await getPermissions();
+    return (
+        <div className="border rounded-md bg-white p-1">
+            <Table>
+                <TableHeader>
+                    <TableRow className="hidden md:table-row">
+                        <TableHead className="">#</TableHead>
+                        <TableHead>Permiso</TableHead>
+                        <TableHead>Descripción</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <PermissionsTable permissions={permissions}></PermissionsTable>
+            </Table>
+        </div>
+    );
 };
 
-export default Permisos;
+export default PermissionsPage;

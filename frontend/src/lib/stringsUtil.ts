@@ -34,7 +34,10 @@ const formantNewsTitle = (text: string): string => {
     text = text
         .replaceAll(" ", "-")
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace("?", "")
+        .replace("%", "")
+        ;
     return text;
 };
 

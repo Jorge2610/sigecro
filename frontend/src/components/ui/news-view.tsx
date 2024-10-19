@@ -10,7 +10,7 @@ interface NewsViewProps {
 
 const NewsView = ({ newsData }: NewsViewProps) => {
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 bg-white px-8 py-6 border border-slate-200 rounded-lg">
             {newsData.category_name && <H3 className="text-sig-blue">{newsData.category_name}</H3>}
             <H1>{newsData.title}</H1>
             <div className="flex items-center gap-2">

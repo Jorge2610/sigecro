@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const Roles = () => {
+const RolsPage = () => {
     return (
         <Button asChild title={"Ver permisos"}>
             <Link href={"/roles/permisos"}>Ver permisos</Link>
@@ -9,4 +9,4 @@ const Roles = () => {
     );
 };
 
-export default Roles;
+export default RolsPage;

@@ -38,7 +38,7 @@ const PermissionsTable = ({ permissions }: { permissions: any }) => {
                             <Button
                                 variant={"outline"}
                                 size={"icon"}
-                                onClick={(e) => updatePermissionsState(i)}
+                                onClick={() => updatePermissionsState(i)}
                                 title="Mostrar descripción"
                             >
                                 <span className="material-symbols-outlined text-sig-blue hover:cursor-pointer hover:text-sig-hblue">

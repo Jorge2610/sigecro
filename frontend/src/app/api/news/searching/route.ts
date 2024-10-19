@@ -9,7 +9,7 @@ const GET = async (request: NextRequest) => {
             request.nextUrl.searchParams.get("filters") != null &&
             filters != "[]"
         ) {
-            const res = await api.get("/news/advancedSearch", {
+            const response = await api.get("/news/advancedSearch", {
                 params: {
                     filters: request.nextUrl.searchParams.get("filters"),
                     page: request.nextUrl.searchParams.get("page"),
@@ -25,13 +25,10 @@ const GET = async (request: NextRequest) => {
                 },
             });
 
-            return NextResponse.json({
-                status: res.status,
-                data: res.data,
-            });
+            return NextResponse.json(response.data, { status: 200 });
         }
 
-        const res = await api.get("/news/search", {
+        const response = await api.get("/news/search", {
             params: {
                 search: request.nextUrl.searchParams.get("search"),
                 page: request.nextUrl.searchParams.get("page"),
@@ -46,10 +43,7 @@ const GET = async (request: NextRequest) => {
             },
         });
 
-        return NextResponse.json({
-            status: res.status,
-            data: res.data,
-        });
+        return NextResponse.json(response.data, { status: 200 });
     } catch (error) {
         return NextResponse.json(
             { error: "Failed to submit data" },

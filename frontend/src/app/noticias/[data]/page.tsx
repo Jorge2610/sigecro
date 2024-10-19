@@ -1,19 +1,17 @@
-import api from "@/services/apiConfig";
-import {News} from "@/components/noticias/News"
-const Noticia = async ({ params }: { params: { data: string } }) => {
-    let responseNews;
+import NewsView from "@/components/ui/news-view";
+import { getNews } from "@/lib/api/news";
 
+const NewsPage = async ({ params }: { params: { data: string } }) => {
     const splitedData = params.data.split("_");
     const id = splitedData[splitedData.length - 1];
-    try {
-        const response = await api.get(`/news/${id}`);
-        responseNews = response.data.data;
-    } catch (error) {
-        //console.log(error);
-        responseNews = [];
-    }
-    console.log(responseNews);
-    return responseNews?.length>0 ? <News imageURL={null} data={responseNews[0]}></News> : <div> no hay </div>;
+    const news = await getNews(id);
+    return (
+        <div className="flex justify-center">
+            <div className="max-w-[1024px]">
+                <NewsView newsData={news} />
+            </div>
+        </div>
+    );
 };
 
-export default Noticia;
+export default NewsPage;

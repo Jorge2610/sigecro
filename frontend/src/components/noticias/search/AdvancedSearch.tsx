@@ -8,8 +8,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-import { useState, KeyboardEvent } from "react";
+import { AdvancedSearchProps } from "@/types/advancedSearchType";
+import { useAdvancedSearch } from "@/hooks/news/useAdvancedSearch";
+import { Head } from "@/components/ui/headings";
 
 const labels = {
     placeholder: "Seleccione el criterio de búsqueda",
@@ -19,33 +20,7 @@ const labels = {
     item4: "Etiquetas",
 };
 
-const fieldToEnglish = {
-    "Todos los campos": "all_fields",
-    Título: "title",
-    Contenido: "content",
-    Etiquetas: "tags",
-};
-
-type Operator = "" | "NOT";
-
-interface FilterCondition {
-    [field: string]: {
-        value: string;
-        operator: Operator;
-    };
-}
-
-interface AdvancedFilter {
-    conditions: FilterCondition;
-    logic: string;
-}
-
-interface AdvancedSearchProps {
-    filters: AdvancedFilter[];
-    onSearch: (filters: AdvancedFilter[]) => void;
-}
-
-const helpText = {
+const HELP_TEXT = {
     title: "Ayuda de Búsqueda Avanzada",
     content: [
         "Esta herramienta te permite realizar búsquedas complejas usando múltiples criterios:",
@@ -61,119 +36,28 @@ const helpText = {
     ],
 };
 
+const MAX_FIELDS = 3;
 const AdvancedSearch = ({ filters, onSearch }: AdvancedSearchProps) => {
-    const [fieldsArray, setFieldsArray] = useState<string[]>(
-        filters.map((f) => {
-            const field = Object.keys(f.conditions)[0];
-            return (
-                Object.entries(fieldToEnglish).find(
-                    ([_, v]) => v === field
-                )?.[0] || ""
-            );
-        })
-    );
-    const [selecKey, setSelecKey] = useState(0);
-    const [showHelp, setShowHelp] = useState<boolean>(false);
-    const [inputValues, setInputValues] = useState<{ [key: number]: string }>(
-        Object.fromEntries(
-            filters.map((f, i) => [i, Object.values(f.conditions)[0].value])
-        )
-    );
-    const [operatorValues, setOperatorValues] = useState<{
-        [key: number]: string;
-    }>({});
-    const [errors, setErrors] = useState<{ [key: number]: string }>({});
-
-    const maxFields = 3;
-
-    const handleChange = (e: string) => {
-        if (fieldsArray.length < maxFields) {
-            setFieldsArray([...fieldsArray, e]);
-            setSelecKey((prev) => prev + 1);
-        }
-    };
-
-    const handleInputChange = (index: number, value: string) => {
-        setInputValues((prev) => ({ ...prev, [index]: value }));
-        if (errors[index]) {
-            setErrors((prev) => {
-                const newErrors = { ...prev };
-                delete newErrors[index];
-                return newErrors;
-            });
-        }
-    };
-
-    const handleOperatorChange = (index: number, value: string) => {
-        setOperatorValues((prev) => ({ ...prev, [index]: value }));
-    };
-
-    const handleClear = () => {
-        setFieldsArray([]);
-        setInputValues({});
-        setOperatorValues({});
-        setErrors({});
-        setSelecKey((prev) => prev + 1);
-        onSearch([]);
-    };
-
-    const validateInputs = () => {
-        const newErrors: { [key: number]: string } = {};
-        let isValid = true;
-
-        // Solo validamos el primer campo
-        if (!inputValues[0] || inputValues[0].trim() === "") {
-            newErrors[0] = "Este campo es requerido";
-            isValid = false;
-        }
-
-        setErrors(newErrors);
-        return isValid;
-    };
-
-    const handleSearch = (): void => {
-        if (!validateInputs()) {
-            return;
-        }
-
-        const newFilters: AdvancedFilter[] = fieldsArray
-            .map((field, index) => {
-                // Solo incluimos en el filtro si hay un valor
-                if (!inputValues[index] || inputValues[index].trim() === "") {
-                    return null;
-                }
-
-                const englishField =
-                    fieldToEnglish[field as keyof typeof fieldToEnglish];
-                return {
-                    conditions: {
-                        [englishField]: {
-                            value: inputValues[index],
-                            operator:
-                                operatorValues[index] === "NOT" ? "NOT" : "",
-                        },
-                    },
-                    logic:
-                        operatorValues[index] === "NOT"
-                            ? "AND"
-                            : operatorValues[index],
-                };
-            })
-            .filter((filter): filter is AdvancedFilter => filter !== null);
-
-        onSearch(newFilters);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            handleSearch();
-        }
-    };
+    const {
+        fieldsArray,
+        selecKey,
+        showHelp,
+        inputValues,
+        setShowHelp,
+        errors,
+        handleChange,
+        handleCloseField,
+        handleClear,
+        handleSearch,
+        handleOperatorChange,
+        handleInputChange,
+        handleKeyDown,
+    } = useAdvancedSearch(filters, onSearch);
 
     return (
         <div className="space-y-4">
             <div className={"flex justify-between items-center"}>
-                <p className="font-semibold text-sig-blue">Búsqueda Avanzada</p>
+                <Head>Búsqueda avanzada</Head>
                 <Button
                     variant="ghost"
                     className="w-10"
@@ -182,22 +66,11 @@ const AdvancedSearch = ({ filters, onSearch }: AdvancedSearchProps) => {
                     <span className="material-symbols-outlined">help</span>
                 </Button>
             </div>
-            {showHelp && (
-                <Alert>
-                    <AlertTitle>{helpText.title}</AlertTitle>
-                    <AlertDescription>
-                        <ul className="list-disc pl-4 space-y-1">
-                            {helpText.content.map((text, index) => (
-                                <li key={index}>{text}</li>
-                            ))}
-                        </ul>
-                    </AlertDescription>
-                </Alert>
-            )}
+            <AdvancedHelper showHelp={showHelp} />
             <Select
                 key={selecKey}
                 onValueChange={handleChange}
-                disabled={fieldsArray.length >= maxFields}
+                disabled={fieldsArray.length >= MAX_FIELDS}
             >
                 <SelectTrigger className="w-full">
                     <SelectValue placeholder={labels.placeholder} />
@@ -209,81 +82,17 @@ const AdvancedSearch = ({ filters, onSearch }: AdvancedSearchProps) => {
                     <SelectItem value={labels.item4}>{labels.item4}</SelectItem>
                 </SelectContent>
             </Select>
-
-            <div className="flex flex-col gap-4 mt-4">
-                {fieldsArray?.map((field, index) => (
-                    <div key={index} className="space-y-2">
-                        <div className="flex justify-between">
-                            <span
-                                className={`text-sm ${
-                                    errors[index] ? "text-sig-red" : ""
-                                }`}
-                            >
-                                {field} {index === 0 ? "*" : ""}
-                            </span>
-                            <Button
-                                variant="ghost"
-                                className="h-6 w-6 hover:bg-sig-red hover:text-white"
-                                onClick={() => {
-                                    setFieldsArray(
-                                        fieldsArray.filter(
-                                            (_, i) => i !== index
-                                        )
-                                    );
-                                    const newInputValues = { ...inputValues };
-                                    delete newInputValues[index];
-                                    setInputValues(newInputValues);
-                                    const newOperatorValues = {
-                                        ...operatorValues,
-                                    };
-                                    delete newOperatorValues[index];
-                                    setOperatorValues(newOperatorValues);
-                                    const newErrors = { ...errors };
-                                    delete newErrors[index];
-                                    setErrors(newErrors);
-                                }}
-                            >
-                                X
-                            </Button>
-                        </div>
-                        <div className="flex flex-nowrap flex-row w-full gap-4">
-                            {index > 0 && (
-                                <Select
-                                    defaultValue="AND"
-                                    onValueChange={(value) =>
-                                        handleOperatorChange(index, value)
-                                    }
-                                >
-                                    <SelectTrigger className="w-20">
-                                        <SelectValue placeholder="Operador" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="AND">AND</SelectItem>
-                                        <SelectItem value="OR">OR</SelectItem>
-                                        <SelectItem value="NOT">NOT</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            )}
-                            <Input
-                                placeholder="Ingresa el valor"
-                                className={`${index < 0 && "w-full"}`}
-                                value={inputValues[index] || ""}
-                                onChange={(e) =>
-                                    handleInputChange(index, e.target.value)
-                                }
-                                onKeyDown={handleKeyDown}
-                            />
-                        </div>
-                        {errors[index] && (
-                            <span className="text-red-500 text-sm">
-                                {errors[index]}
-                            </span>
-                        )}
-                    </div>
-                ))}
-            </div>
-            <div className="flex justify-end mt-4">
-                <div className="flex gap-4">
+            <FieldsArray
+                fieldsArray={fieldsArray}
+                errors={errors}
+                inputValues={inputValues}
+                setOperatorValues={handleOperatorChange}
+                setInputValues={handleInputChange}
+                closeField={handleCloseField}
+                handleKeyDown={handleKeyDown}
+            />
+            <div className="flex justify-end">
+                <div className="space-x-4">
                     <Button
                         variant="outline"
                         className="hover:bg-sig-red hover:text-white"
@@ -297,6 +106,100 @@ const AdvancedSearch = ({ filters, onSearch }: AdvancedSearchProps) => {
                 </div>
             </div>
         </div>
+    );
+};
+
+interface FieldsArrayProps {
+    fieldsArray: string[];
+    errors: { [key: number]: string };
+    inputValues: { [key: number]: string };
+    setOperatorValues: (index: number, value: string) => void;
+    setInputValues: (index: number, value: string) => void;
+    handleKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+    closeField: (index: number) => void;
+}
+const FieldsArray = ({
+    fieldsArray,
+    errors,
+    inputValues,
+    setOperatorValues,
+    setInputValues,
+    handleKeyDown,
+    closeField,
+}: FieldsArrayProps) => {
+    return (
+        <div className="flex flex-col gap-4">
+            {fieldsArray?.map((field, index) => (
+                <div key={index} className="">
+                    <div className="flex justify-between">
+                        <span
+                            className={`text-sm ${
+                                errors[index] ? "text-sig-red" : ""
+                            }`}
+                        >
+                            {field} {index === 0 ? "*" : ""}
+                        </span>
+                        <Button
+                            variant="ghost"
+                            className="h-6 w-6 hover:bg-sig-red hover:text-white"
+                            onClick={() => closeField(index)}
+                        >
+                            X
+                        </Button>
+                    </div>
+                    <div className="flex flex-nowrap flex-row w-full">
+                        {index > 0 && (
+                            <Select
+                                defaultValue="AND"
+                                onValueChange={(value) =>
+                                    setOperatorValues(index, value)
+                                }
+                            >
+                                <SelectTrigger className="w-20">
+                                    <SelectValue placeholder="Operador" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="AND">AND</SelectItem>
+                                    <SelectItem value="OR">OR</SelectItem>
+                                    <SelectItem value="NOT">NOT</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        )}
+                        <Input
+                            placeholder="Ingresa el valor"
+                            className={`${index < 0 && "w-full"}`}
+                            value={inputValues[index] || ""}
+                            onChange={(e) =>
+                                setInputValues(index, e.target.value)
+                            }
+                            onKeyDown={handleKeyDown}
+                        />
+                    </div>
+                    {errors[index] && (
+                        <span className="text-red-500 text-sm">
+                            {errors[index]}
+                        </span>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const AdvancedHelper = ({ showHelp }: { showHelp: boolean }) => {
+    return (
+        showHelp && (
+            <Alert>
+                <AlertTitle>{HELP_TEXT.title}</AlertTitle>
+                <AlertDescription>
+                    <ul className="list-disc pl-4">
+                        {HELP_TEXT.content.map((text, index) => (
+                            <li key={index}>{text}</li>
+                        ))}
+                    </ul>
+                </AlertDescription>
+            </Alert>
+        )
     );
 };
 

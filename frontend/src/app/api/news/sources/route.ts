@@ -3,11 +3,8 @@ import api from "@/services/apiConfig";
 
 const GET = async (request: NextRequest) => {
     try {
-        const res = await api.get("/news/all_sources");  
-        return NextResponse.json({
-            status: res.status,
-            data: res.data,
-        });
+        const response = await api.get("/news/all_sources");
+        return NextResponse.json(response.data, { status: 200 });
     } catch (error) {
         return NextResponse.json(
             { error: "Failed to submit data" },

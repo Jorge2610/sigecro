@@ -1,47 +1,18 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { Form } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import { InputForm } from "./inputsForm";
 import { Button } from "@/components/ui/button";
+import { useSearch } from "@/hooks/useSearch";
 
-const formSchema = z.object({
-    search: z.string().trim(),
-});
-
-const Search = ({
-    placeholder,
-    setSearch,
-    initialValue = "",
-}: {
+interface SearchProps {
     placeholder?: string;
-    setSearch: React.Dispatch<React.SetStateAction<string> | any>;
+    setSearch?: (value: string) => void;
     initialValue?: string;
-}) => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            search: initialValue,
-        },
-    });
+}
 
-    useEffect(() => {
-        form.setValue("search", initialValue);
-    }, [initialValue, form]);
-
-    const onSubmit = (data: z.infer<typeof formSchema>): void => {
-        setSearch(data.search);
-    };
-
-    const clear = () => {
-        form.reset({ search: "" });
-        setSearch("");
-    };
-
+const Search = ({ placeholder, setSearch, initialValue = "" }: SearchProps) => {
+    const { form, onSubmit, clear } = useSearch(setSearch, initialValue);
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
