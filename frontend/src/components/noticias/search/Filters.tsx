@@ -1,12 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import axios from "axios";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -26,64 +21,14 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { cn } from "@/lib/utils";
-
-interface Category {
-    id: string;
-    name: string;
-}
-
-interface Source {
-    source: string;
-}
-
-interface Tag {
-    id: string;
-    name: string;
-}
+import { useFilter } from "@/hooks/news/useFilter";
+import { FilterFormValues } from "@/types/filterType";
 
 interface FormattedItem {
     id: string;
     label: string;
 }
 
-const FormSchema = z.object({
-    categories: z.array(z.string()).default([]),
-    sources: z.array(z.string()).default([]),
-    tags: z.array(z.string()).default([]),
-    dateRange: z
-        .object({
-            from: z.date().optional(),
-            to: z.date().optional(),
-        })
-        .refine(
-            (data) => {
-                if (data.from && data.to) {
-                    return data.to >= data.from;
-                }
-                return true;
-            },
-            {
-                message:
-                    "La fecha final no puede ser anterior a la fecha inicial",
-                path: ["to"],
-            }
-        )
-        .refine(
-            (data) => {
-                if (data.to && data.from) {
-                    return data.from <= data.to;
-                }
-                return true;
-            },
-            {
-                message:
-                    "La fecha inicial no puede ser posterior a la fecha final",
-                path: ["from"],
-            }
-        ),
-});
-
-type FilterFormValues = z.infer<typeof FormSchema>;
 interface FilterProps {
     isVisible: boolean;
     isAdvanced: boolean;
@@ -102,123 +47,11 @@ const Filters = ({
     setIsVisible,
     onFilterSubmit,
 }: FilterProps) => {
-    const [categories, setCategories] = useState<FormattedItem[]>([]);
-    const [sources, setSources] = useState<FormattedItem[]>([]);
-    const [tags, setTags] = useState<FormattedItem[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    const form = useForm<FilterFormValues>({
-        resolver: zodResolver(FormSchema),
-        defaultValues: {
-            categories: [],
-            sources: [],
-            tags: [],
-            dateRange: {
-                from: undefined,
-                to: undefined,
-            },
-        },
-    });
-
-    useEffect(() => {
-        Promise.all([getCategories(), getSources(), getTags()]).finally(() =>
-            setIsLoading(false)
-        );
-    }, []);
-
-    useEffect(() => {
-        clear();
-    }, [isAdvanced]);
-
-    const formatData = <T extends unknown>(
-        data: T[] | undefined,
-        formatFn: (item: T) => FormattedItem
-    ): FormattedItem[] => {
-        if (!Array.isArray(data)) {
-            console.warn("Expected array, got:", typeof data);
-            return [];
-        }
-        return data.map(formatFn);
-    };
-
-    const getCategories = async () => {
-        try {
-            const response = await axios.get<Category[]>(
-                "/api/categories/filters"
-            );
-            const formattedCategories = formatData(
-                response.data,
-                (category: Category) => ({
-                    id: category.id,
-                    label: category.name,
-                })
-            );
-            setCategories(formattedCategories);
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-            setCategories([]);
-        }
-    };
-
-    const getSources = async () => {
-        try {
-            const response = await axios.get<{ data: Source[] }>(
-                "/api/news/sources"
-            );
-            const sourcesArray = Array.isArray(response.data.data)
-                ? response.data.data
-                : Object.keys(response.data.data || {}).map((key) => ({
-                      source: key,
-                  }));
-
-            const formattedSources = formatData(
-                sourcesArray,
-                (source: Source) => ({
-                    id: source.source,
-                    label: source.source,
-                })
-            );
-            setSources(formattedSources);
-        } catch (error) {
-            console.error("Error fetching sources:", error);
-            setSources([]);
-        }
-    };
-
-    const getTags = async () => {
-        try {
-            const response = await axios.get<Tag[]>("/api/news/tags/filters");
-            const formattedTags = formatData(response.data, (tag: Tag) => ({
-                id: tag.name,
-                label: tag.name,
-            }));
-            setTags(formattedTags);
-        } catch (error) {
-            console.error("Error fetching tags:", error);
-            setTags([]);
-        }
-    };
-
-    const onSubmit = (data: FilterFormValues) => {
-        onFilterSubmit(
-            data.categories.length > 0
-                ? data.categories.map((category) => parseInt(category))
-                : null,
-            data.tags.length > 0 ? data.tags : null,
-            data.sources.length > 0 ? data.sources : null,
-            data.dateRange.from ? data.dateRange.from : null,
-            data.dateRange.to ? data.dateRange.to : null
-        );
-    };
-
-    const clear = () => {
-        form.reset();
-        setIsVisible(false);
-        onFilterSubmit(null, null, null, null, null);
-    };
+    const { form, isLoading, onSubmit, categories, sources, tags, clear } =
+        useFilter(isAdvanced, onFilterSubmit, setIsVisible);
 
     if (isLoading) {
-        return <div>Loading filters...</div>;
+        return <div>Cargando filtros...</div>;
     }
 
     return (
@@ -304,7 +137,7 @@ const SectionFilter = ({ title, items, name, form }: SectionFilterProps) => {
         if (maxItems > items.length) {
             setMaxItems(items.length);
         }
-    }, [maxItems]);
+    }, [items.length, maxItems]);
 
     return (
         <>
@@ -413,7 +246,10 @@ const DateRangeFilter = ({ form }: { form: any }) => {
                                         )}
                                     >
                                         {field.value?.from ? (
-                                            format(field.value.from, "P")
+                                            format(
+                                                field.value.from,
+                                                "dd-MM-yyyy"
+                                            )
                                         ) : (
                                             <span>Fecha inicial</span>
                                         )}
@@ -426,6 +262,7 @@ const DateRangeFilter = ({ form }: { form: any }) => {
                                 align="start"
                             >
                                 <Calendar
+                                    locale={es}
                                     mode="single"
                                     selected={field.value?.from}
                                     onSelect={(date) =>
@@ -456,7 +293,7 @@ const DateRangeFilter = ({ form }: { form: any }) => {
                                         )}
                                     >
                                         {field.value?.to ? (
-                                            format(field.value.to, "P")
+                                            format(field.value.to, "dd-MM-yyyy")
                                         ) : (
                                             <span>Fecha final</span>
                                         )}
@@ -469,6 +306,7 @@ const DateRangeFilter = ({ form }: { form: any }) => {
                                 align="start"
                             >
                                 <Calendar
+                                    locale={es}
                                     mode="single"
                                     selected={field.value?.to}
                                     onSelect={(date) =>

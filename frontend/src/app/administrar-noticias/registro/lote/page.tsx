@@ -1,6 +1,6 @@
 import NewsHelper from "@/components/noticias/NewsHelper";
 import BatchRecord from "@/components/noticias/batch-record/batchRecord";
-import axios from "axios";
+import { getCategories } from "@/lib/api/categories";
 
 const helps = [
     "Selecciona una categoría la cual será común para todas las URLs.",
@@ -9,15 +9,8 @@ const helps = [
     'Monitorea el progreso en la sección "URLs pendientes".',
 ];
 
-const Lote = async () => {
-    const categories = await axios
-        .get(`${process.env.API_HOST}/categories`)
-        .then((res) => {
-            if (res.status === 200) {
-                return res.data.rows;
-            }
-        });
-
+const BatchPage = async () => {
+    const categories = await getCategories();
     return (
         <div className="flex justify-center">
             <div className="flex flex-col w-full max-w-[1024px]">
@@ -28,4 +21,4 @@ const Lote = async () => {
     );
 };
 
-export default Lote;
+export default BatchPage;

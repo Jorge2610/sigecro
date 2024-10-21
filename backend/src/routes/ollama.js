@@ -3,7 +3,7 @@ import { getSummary, getTags } from "../controllers/ollamaC.js";
 
 const router = Router();
 
-router.get("/tags", getTags);
-router.get("/summary", getSummary);
+router.post("/tags", getTags);
+router.post("/summary", getSummary);
 
 export default router;

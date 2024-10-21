@@ -1,5 +1,5 @@
 import CardNews from "./card-news";
-import { News } from "../noticias/newsInterfaces";
+import { News } from "../../types/newsType";
 
 type ListNewsProps = {
     news: News[];

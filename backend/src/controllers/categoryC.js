@@ -46,7 +46,7 @@ const addCategory = async (req, res) => {
         res.sendStatus(201);
     } catch (error) {
         console.error("ERROR ON category.getAllCategories");
-        res.sedStatus(500);
+        error.code === "23505" ? res.sendStatus(409) : res.sendStatus(500);
     }
 };
 export { getAllCategories, getCategoriesUsed, addCategory };

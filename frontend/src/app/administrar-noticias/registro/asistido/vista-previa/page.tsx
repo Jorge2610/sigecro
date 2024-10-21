@@ -1,10 +1,13 @@
 "use client";
 
-import AutomaticPreview from "@/components/noticias/automatico/AutomaticPreview";
 import NewsHelper from "@/components/noticias/NewsHelper";
-import { useContext, useEffect } from "react";
-import { AutomaticContext } from "@/components/noticias/automatico/AutomaticProvider";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { PageNotFound } from "@/components/ui/error-page";
+import NewsView from "@/components/ui/news-view";
+import AssistedRecordForm from "@/components/noticias/assisted/AssistedRegisterForm";
+import { Separator } from "@/components/ui/separator";
+import { useNewsDataContext } from "@/store/NewsDataProvider";
+import { formatNewsDataToNewsView } from "@/lib/formUtils";
 
 const helps = [
     "Revisa la información extraida.",
@@ -12,30 +15,29 @@ const helps = [
     'Haz clic en "Publicar" para finalizar.',
 ];
 
-const VistaPrevia = () => {
-    const context = useContext(AutomaticContext);
-    const newsData = context?.newsData;
-    const router = useRouter();
+const AssistedPreviewPage = () => {
+    const { newsData } = useNewsDataContext();
+    const [imageUrl, setImageUrl] = useState<string>("");
 
-    useEffect(() => {
-        if (newsData.title === "") {
-            router.push("/administrar-noticias/registro/asistido");
-        }
-    }, []);
+    const handleImageUrl = (imageUrl: string): void => {
+        setImageUrl((_) => imageUrl);
+    };
 
-    return (
-        <div>
+    return newsData.title ? (
+        <>
             <NewsHelper title="Registro asistido" helps={helps} />
-            {newsData.title !== "" ? (
-                <AutomaticPreview newsData={newsData} />
-            ) : (
-                <div className="mt-4">
-                    Vista previa no disponible. Redireccionando la página, por
-                    favor, espere...
-                </div>
-            )}
-        </div>
+            <NewsView
+                newsData={formatNewsDataToNewsView(newsData, true, imageUrl)}
+            />
+            <Separator />
+            <AssistedRecordForm
+                newsData={newsData}
+                setImageUrl={handleImageUrl}
+            />
+        </>
+    ) : (
+        <PageNotFound />
     );
 };
 
-export default VistaPrevia;
+export default AssistedPreviewPage;

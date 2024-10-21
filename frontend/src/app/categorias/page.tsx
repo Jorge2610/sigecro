@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { H1 } from "@/components/ui/headings";
 
-const Categoria = async () => {
-  return (
-    <>
-      <h1 className="pb-4">Categoria</h1>
-      <Link href="categorias/crear-categoria" className="p-1">
-        <Button>Registrar categoria</Button>
-      </Link>
-    </>
-  );
+const CategoryPage = async () => {
+    return (
+        <div className="space-y-4">
+            <H1>Categoría</H1>
+            <Button asChild>
+                <Link href="categorias/crear-categoria">
+                    Registrar categoría
+                </Link>
+            </Button>
+        </div>
+    );
 };
 
-export default Categoria;
+export default CategoryPage;

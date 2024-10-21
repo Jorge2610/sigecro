@@ -1,36 +1,53 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { useContext, useEffect } from "react";
-import { NewsManualContext } from "@/components/noticias/manual/ManualNewsProvider";
-import { useRouter } from "next/navigation";
-import Preview from "@/components/noticias/manual/NewsPreview";
+import NewsView from "@/components/ui/news-view";
+import { NewsViewType } from "@/types/newsType";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Popup } from "@/components/ui/popup";
+import { popupPublic } from "@/data/newsMessages";
+import { useNews } from "@/hooks/useNews";
+import { formatNewsDataToNewsView } from "@/lib/formUtils";
+import { useNewsDataContext } from "@/store/NewsDataProvider";
+import { PageNotFound } from "@/components/ui/error-page";
 
-const VistaPrevia = () => {
-    const context = useContext(NewsManualContext);
-    const newsData = context?.newsData;
-    const imageURL = context?.imageURL;
+const ManualPreviewPage = () => {
+    const { newsData } = useNewsDataContext();
+    const { submitData } = useNews(newsData);
+    const imageUrl = newsData.image && URL.createObjectURL(newsData.image);
+    const newsViewData: NewsViewType = formatNewsDataToNewsView(
+        newsData,
+        false,
+        imageUrl
+    );
 
-    const router = useRouter();
+    return newsData.title ? (
+        <>
+            <NewsView newsData={newsViewData} />
+            <ActionButtons submitData={submitData} />
+        </>
+    ) : (
+        <PageNotFound />
+    );
+};
 
-    useEffect(() => {
-        if (newsData === null) {
-            router.push("/administrar-noticias/registro/manual");
-        }
-    }, [newsData]);
-
+const ActionButtons = ({ submitData }: { submitData: () => Promise<void> }) => {
     return (
-        <div>
-            {newsData ? (
-                <Preview
-                    data={newsData}
-                    imageURL={imageURL ?? null}
-                />
-            ) : (
-                "Vista previa no disponible, readirecionando pagina por favor espere..."
-            )}
+        <div className="flex flex-row justify-end gap-4">
+            <Button asChild variant="outline">
+                <Link href="/administrar-noticias/registro/manual">
+                    Atrás
+                </Link>
+            </Button>
+            <Popup
+                title={popupPublic.title}
+                description={popupPublic.description}
+                action={submitData}
+            >
+                <Button>Publicar</Button>
+            </Popup>
         </div>
     );
 };
 
-export default VistaPrevia;
+export default ManualPreviewPage;

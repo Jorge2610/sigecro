@@ -1,6 +1,6 @@
 import NewsHelper from "@/components/noticias/NewsHelper";
-import ProgramedCard from "@/components/noticias/programado/ProgramedCard";
-import axios from "axios";
+import ProgramedCard from "@/components/noticias/programmed/ProgramedCard";
+import { getSources } from "@/lib/api/sources";
 
 const helps: Array<string> = [
     "Haz clic en la fuente que deseas configurar para ver los tópicos disponibles.",
@@ -17,9 +17,8 @@ interface Source {
     topics: Array<{ id: number; name: string; active: boolean }>;
 }
 
-const Programado = async () => {
-    const response = await axios.get(`${process.env.API_HOST}/news/sources`);
-    const sources: Array<Source> = response.data;
+const ProgrammedPage = async () => {
+    const sources: Array<Source> = await getSources();
     return (
         <div className="flex justify-center">
             <div className="flex flex-col gap-4 w-full max-w-[1024px]">
@@ -41,4 +40,4 @@ const Programado = async () => {
     );
 };
 
-export default Programado;
+export default ProgrammedPage;

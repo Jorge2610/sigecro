@@ -16,7 +16,11 @@ const setURLsBatch = async (req, res) => {
         return;
     }
     const urls = req.body.urls.split("\n");
-    const valuesPlaceholders = getPlaceHolders(urls);
+    const valuesPlaceholders = getPlaceHolders(
+        urls,
+        req.body.user_id,
+        req.body.category_id
+    );
     const values = urls.flat();
     try {
         await URLs.setURLsBatch(valuesPlaceholders, values);
@@ -69,12 +73,14 @@ const deleteURLs = async (req, res) => {
  * Generates placeholder strings for a batch of URLs.
  *
  * @param {string[]} urls - An array of URLs.
+ * @param {number} userId - The ID of the user.
+ * @param {number} categoryId - The ID of the category.
  * @returns {string} A string containing placeholders for the URLs, user ID, and category ID.
  */
-const getPlaceHolders = (urls) => {
+const getPlaceHolders = (urls, userId, categoryId) => {
     let valuesPlaceholders = "";
     for (let i = 0; i < urls.length; i++) {
-        urls[i] = [urls[i], req.body.user_id, req.body.category_id];
+        urls[i] = [urls[i], userId, categoryId];
         valuesPlaceholders += `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`;
         if (i < urls.length - 1) {
             valuesPlaceholders += ", ";
