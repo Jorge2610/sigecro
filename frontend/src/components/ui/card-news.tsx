@@ -30,6 +30,7 @@ const CardNews = ({ data }: CardNewsProps) => {
                         ) : (
                             <a
                                 href={data.url}
+                                target="_blank"
                                 className="underline underline-offset-1 hover:text-sky-600"
                             >
                                 {data.source}

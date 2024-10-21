@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,7 +23,6 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useFilter } from "@/hooks/news/useFilter";
 import { FilterFormValues } from "@/types/filterType";
-import { DateTimePicker } from "@/components/ui/datetime-picker";
 
 interface FormattedItem {
     id: string;
@@ -137,8 +137,7 @@ const SectionFilter = ({ title, items, name, form }: SectionFilterProps) => {
         if (maxItems > items.length) {
             setMaxItems(items.length);
         }
-    }, [maxItems]);
-
+    }, [items.length, maxItems]);
 
     return (
         <>
@@ -234,25 +233,98 @@ const DateRangeFilter = ({ form }: { form: any }) => {
                     >
                         Rango de fechas
                     </FormLabel>
-                    <div className="flex flex-col items-center gap-4 ">
-                        <FormControl className="w-full">
-                            <DateTimePicker
-                                value={field.value?.from}
-                                onChange={(date) => field.onChange({ ...field.value, from: date })}
-                                placeholder="Fecha inicial"
-                                granularity="day"
-                                displayFormat={{ hour24: "dd-MM-yyyy" }}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <DateTimePicker
-                                value={field.value?.to}
-                                onChange={(date) => field.onChange({ ...field.value, to: date })}
-                                placeholder="Fecha final"
-                                granularity="day"
-                                displayFormat={{ hour24: "dd-MM-yyyy" }}
-                            />
-                        </FormControl>
+                    <div className="flex flex-col items-center gap-4">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <FormControl>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full pl-3 text-left font-normal",
+                                            !field.value?.from &&
+                                                "text-muted-foreground"
+                                        )}
+                                    >
+                                        {field.value?.from ? (
+                                            format(
+                                                field.value.from,
+                                                "dd-MM-yyyy"
+                                            )
+                                        ) : (
+                                            <span>Fecha inicial</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                                className="w-auto p-0"
+                                align="start"
+                            >
+                                <Calendar
+                                    locale={es}
+                                    mode="single"
+                                    selected={field.value?.from}
+                                    onSelect={(date) =>
+                                        field.onChange({
+                                            ...field.value,
+                                            from: date,
+                                        })
+                                    }
+                                    disabled={(date) =>
+                                        date > new Date() ||
+                                        (field.value?.to
+                                            ? date > field.value.to
+                                            : false)
+                                    }
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <FormControl>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full pl-3 text-left font-normal",
+                                            !field.value?.to &&
+                                                "text-muted-foreground"
+                                        )}
+                                    >
+                                        {field.value?.to ? (
+                                            format(field.value.to, "dd-MM-yyyy")
+                                        ) : (
+                                            <span>Fecha final</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                                className="w-auto p-0"
+                                align="start"
+                            >
+                                <Calendar
+                                    locale={es}
+                                    mode="single"
+                                    selected={field.value?.to}
+                                    onSelect={(date) =>
+                                        field.onChange({
+                                            ...field.value,
+                                            to: date,
+                                        })
+                                    }
+                                    disabled={(date) =>
+                                        date > new Date() ||
+                                        (field.value?.from
+                                            ? date < field.value.from
+                                            : false)
+                                    }
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
                     </div>
                     <FormMessage />
                 </FormItem>
@@ -260,6 +332,5 @@ const DateRangeFilter = ({ form }: { form: any }) => {
         />
     );
 };
-
 
 export default Filters;
