@@ -40,13 +40,16 @@ const getDateTime = (text) => {
  * @returns {string[]} An array of strings containing the extracted content paragraphs.
  */
 const getContent = ($) => {
-    const content = [];
+    let content = [];
     $(".field-items p").each((i, element) => {
         const text = $(element).text().trim();
         if (!text.includes("Te podría interesar")) {
             content.push(text);
         }
     });
+    if (content.length === 1) {
+        content = content[0].split("\n");
+    }
     return content;
 };
 
